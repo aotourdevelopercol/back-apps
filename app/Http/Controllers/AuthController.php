@@ -26,7 +26,7 @@ class AuthController extends Controller
         ]);
 
     }
-
+    
     public function eliminarcuenta(Request $request)
     {
 
@@ -46,7 +46,6 @@ class AuthController extends Controller
         }
 
     }
-
 
     /**
      * Crea un nuevo usuario y un subcentro asociado.
@@ -111,7 +110,6 @@ class AuthController extends Controller
             ], 500);
         }
     }
-
     public function login(Request $request)
     {
         try {
