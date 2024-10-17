@@ -14,6 +14,7 @@ use App\Models\Conductor;
 use App\Models\ReferenciasPayu;
 use App\Models\ViajeAplicacion;
 use App\Models\TokenPayU;
+use Illuminate\Support\Facades\Log;
 
 use Illuminate\Http\Request;
 use Response;
@@ -257,20 +258,34 @@ class ViajesController extends Controller
     }
     public function consultarcodigo(Request $request)
     {
+        try {
 
-        $id = $request->id;
+            $id = $request->id;
 
-        $viaje = DB::table('viajes')
-            ->select('id', 'codigo')
-            ->where('id', $id)
-            ->first();
+            $viaje = DB::table('viajes')
+                ->select('id', 'codigo_viaje')
+                ->where('id', $id)
+                ->first();
 
-        $codigo = $viaje->codigo;
+            $codigo = $viaje->codigo_viaje;
 
-        return Response::json([
-            'response' => true,
-            'codigo' => $codigo
-        ]);
+            return Response::json([
+                'response' => true,
+                'codigo' => $codigo
+            ]);
+
+        } catch (\Exception $e) {
+            // Registrar el error en el log
+            Log::error('Error al consultar el codigo: ' . $e->getMessage(), [
+                'stack' => $e->getTraceAsString() // Guarda el trace del error
+            ]);
+
+            // Responder con un error genérico
+            return response()->json([
+                'respuesta' => false,
+                'mensaje' => 'Ocurrió un error al editar el lugar. Por favor, inténtalo de nuevo.'
+            ]);
+        }
 
     }
     public function consultartarjetas(Request $request)
@@ -371,13 +386,13 @@ class ViajesController extends Controller
 
         if ($ActualizarIdioma->idioma != $idIdioma) {
             $ActualizarIdioma = DB::table('users')
-            ->where('id', $id) // Asegúrate de que $id es correcto
-            ->update(['idioma' => $idIdioma]); // Obtiene el primer registro
+                ->where('id', $id) // Asegúrate de que $id es correcto
+                ->update(['idioma' => $idIdioma]); // Obtiene el primer registro
 
             $nuevoIdioma = DB::table('users')
-            ->where('id', $id) // Asegúrate de que $id es correcto
-            ->select('idioma')
-            ->first();
+                ->where('id', $id) // Asegúrate de que $id es correcto
+                ->select('idioma')
+                ->first();
 
             $tipo = Tipo::obtenerTipoPorCodigoYId($nuevoIdioma->idioma);
 
@@ -388,13 +403,13 @@ class ViajesController extends Controller
                 'codigo-lenguaje' => $tipo->codigo,
             ]);
 
-        }else {
+        } else {
 
             $tipo = Tipo::obtenerTipoPorCodigoYId($ActualizarIdioma->idioma);
 
             return response()->json([
                 'CODE' => "SAME_LANGUAGE",
-                'idioma' => $tipo->nombre, 
+                'idioma' => $tipo->nombre,
                 'id-lenguaje' => $tipo->id,
                 'codigo-lenguaje' => $tipo->codigo,
             ]);
@@ -452,35 +467,50 @@ class ViajesController extends Controller
     }
     public function editarlugar(Request $request)
     {
+        try {
+            // Obtener los parámetros del request
+            $id = $request->id;
+            $nombre = $request->nombre;
+            $direccion = $request->direccion;
+            $latitude = $request->latitude;
+            $longitude = $request->longitude;
 
-        $id = $request->id;
-        $nombre = $request->nombre;
-        $direccion = $request->direccion;
-        $latitude = $request->latitude;
-        $longitude = $request->longitude;
+            // Buscar el lugar por ID
+            $lugar = LugarF::find($id);
 
-        $lugar = LugarF::find($id);
+            // Verificar si se encontró el lugar
+            if ($lugar) {
+                // Actualizar los campos
+                $lugar->nombre = $nombre;
+                $lugar->direccion = $direccion;
+                $lugar->latitude = $latitude;  // Asegúrate de asignar los valores correctos
+                $lugar->longitude = $longitude;
+                $lugar->save();
 
-        if ($lugar) {
+                // Respuesta exitosa
+                return response()->json([
+                    'respuesta' => true
+                ]);
+            } else {
+                // Si no se encuentra el lugar, devolver falso
+                return response()->json([
+                    'respuesta' => false,
+                    'mensaje' => 'Lugar no encontrado'
+                ]);
+            }
 
-            $lugar->nombre = $nombre;
-            $lugar->direccion = $direccion;
-            $lugar->latitude;
-            $lugar->longitude;
-            $lugar->save();
-
-            return Response::json([
-                'respuesta' => true
+        } catch (\Exception $e) {
+            // Registrar el error en el log
+            Log::error('Error al editar el lugar: ' . $e->getMessage(), [
+                'stack' => $e->getTraceAsString() // Guarda el trace del error
             ]);
 
-        } else {
-
-            return Response::json([
-                'respuesta' => false
+            // Responder con un error genérico
+            return response()->json([
+                'respuesta' => false,
+                'mensaje' => 'Ocurrió un error al editar el lugar. Por favor, inténtalo de nuevo.'
             ]);
-
         }
-
     }
     public function eliminarlugar(Request $request)
     {
@@ -544,25 +574,29 @@ class ViajesController extends Controller
     }
     public function guardarlugar(Request $request)
     {
+        try {
+            $nombre = $request->nombre;
+            $direccion = $request->direccion;
+            $latitude = $request->latitude;
+            $longitude = $request->longitude;
+            $id = $request->id;
 
-        $nombre = $request->nombre;
-        $direccion = $request->direccion;
-        $latitude = $request->latitude;
-        $longitude = $request->longitude;
-        $id = $request->id;
+            $lugar = new LugarF;
+            $lugar->nombre = $nombre;
+            $lugar->direccion = $direccion;
+            $lugar->latitude = $latitude;
+            $lugar->longitude = $longitude;
+            $lugar->id = $id;
 
-        $lugar = new LugarF;
-        $lugar->nombre = $nombre;
-        $lugar->direccion = $direccion;
-        $lugar->latitude = $latitude;
-        $lugar->longitude = $longitude;
-        $lugar->usuario = $id;
+            $lugar->save();
 
-        $lugar->save();
+            return Response::json([
+                'respuesta' => true
+            ]);
 
-        return Response::json([
-            'respuesta' => true
-        ]);
+        } catch (\Exception $e) {
+            \Log::error('error' . $e->getMessage());
+        }
 
     }
     public function listaridiomas(Request $request)
@@ -574,28 +608,37 @@ class ViajesController extends Controller
     }
     public function listarlugares(Request $request)
     {
+        try {
+            $id = $request->id;
 
-        $id = $request->id;
+            $consulta = DB::table('lugares')
+                ->where('id', $id)
+                ->get();
 
-        $consulta = DB::table('lugares')
-            ->where('usuario', $id)
-            ->get();
+            if ($consulta) {
 
-        if ($consulta) {
+                return Response::json([
+                    'respuesta' => true,
+                    'lugares' => $consulta
+                ]);
 
-            return Response::json([
-                'respuesta' => true,
-                'lugares' => $consulta
-            ]);
+            } else {
 
-        } else {
+                return Response::json([
+                    'respuesta' => false,
+                    'lugares' => $consulta
+                ]);
 
-            return Response::json([
-                'respuesta' => false,
-                'lugares' => $consulta
+            }
+        } catch (\Exception $e) {
+            // Registrar el error en el log
+            Log::error('Error al editar el lugar: ' . $e->getMessage(), [
+                'stack' => $e->getTraceAsString() // Guarda el trace del error
             ]);
 
         }
+
+
 
     }
     public function misviajes(Request $request)
