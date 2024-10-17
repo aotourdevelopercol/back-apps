@@ -50,7 +50,7 @@ Route::post('/consultar-codigo', [ViajesController::class, 'consultarcodigo']);
 Route::post('/consultar-tarjetas', [ViajesController::class, 'consultartarjetas']);
 Route::post('/calcular-tarifa-servicio', [ViajesController::class, 'calculartarifaservicio']);
 Route::post('/cambiar-idioma', [ViajesController::class, 'cambiaridioma']);
-Route::post('/contactos', [ViajesController::class, 'contatos']);
+Route::post('/contactos', [ViajesController::class, 'contactos']);
 Route::post('/editar-datos', [ViajesController::class, 'editardatos']);
 Route::post('/editar-lugar', [ViajesController::class, 'editarlugar']);
 Route::post('/eliminar-lugar', [ViajesController::class, 'eliminarlugar']);
