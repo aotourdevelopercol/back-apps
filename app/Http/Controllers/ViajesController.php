@@ -643,56 +643,57 @@ class ViajesController extends Controller
     }
     public function misviajes(Request $request)
     {
+        $id = $request->id;
+        $fecha = $request->fecha;
 
-        try {
-            $id = $request->id;
-            $fecha = $request->fecha;
-
-            $consulta = "SELECT 
+        $consulta = "
+            SELECT
                 v.id,
                 v.fecha_viaje,
                 v.hora_viaje,
                 v.detalle_recorrido,
                 v.fk_estado,
                 v.recoger_pasajero,
-                c.primer_nombre as nombres, c.primer_apellido as apellidos, c.celular, 
+                c.primer_nombre AS nombres,
+                c.primer_apellido AS apellidos,
+                c.celular,
                 v2.placa,
                 v2.marca,
                 v2.modelo,
-                e.nombre as clase,
+                e.nombre AS clase,
                 v2.ano,
                 v2.color,
-                JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) as destinos
-                from viajes v 
-                left join conductores c on c.id = v.fk_conductor
-                left join vehiculos v2 on v2.id = v.fk_vehiculo
-                left join estados e on e.id = v2.fk_tipo_vehiculo
-                left join destinos d on d.fk_viaje = v.id
-                WHERE v.fecha_viaje = '" . $fecha . "' and v.estado_eliminacion is null and v.estado_papelera is null and app_user_id = " . $id . "
-                GROUP BY v.id order by v.fecha_viaje asc, v.hora_viaje asc limit 1";
+                JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
+            FROM
+                viajes v
+            LEFT JOIN
+                conductores c ON c.id = v.fk_conductor
+            LEFT JOIN
+                vehiculos v2 ON v2.id = v.fk_vehiculo
+            LEFT JOIN
+                estados e ON e.id = v2.fk_tipo_vehiculo
+            LEFT JOIN
+                destinos d ON d.fk_viaje = v.id
+            WHERE
+                v.fecha_viaje = ?
+                AND v.estado_eliminacion IS NULL
+                AND v.estado_papelera IS NULL
+                AND v.app_user_id = ?
+            GROUP BY
+                v.id
+            ORDER BY
+                v.fecha_viaje ASC, v.hora_viaje ASC
+            LIMIT 1
+        ";
 
-            $servicios = DB::select($consulta);
+        $servicios = DB::select($consulta, [$fecha, $id]);
 
-            if (count($servicios)) {
-
-                return Response::json([
-                    'response' => true,
-                    'servicios' => $servicios,
-                ]);
-
-            } else {
-
-                return Response::json([
-                    'response' => false,
-                ]);
-            }
-        } catch (\Exception $e) {
-            \Log::error('error' . $e->getMessage());
-        }
-
-
-
+        return Response::json([
+            'response' => !empty($servicios),
+            'servicios' => $servicios ?: null,
+        ]);
     }
+
     public function obtenerusuario(Request $request)
     {
         // Obtenemos el ID del usuario desde la solicitud
