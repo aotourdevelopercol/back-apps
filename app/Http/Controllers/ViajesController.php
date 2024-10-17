@@ -680,7 +680,21 @@ class ViajesController extends Controller
                 AND v.estado_papelera IS NULL
                 AND v.app_user_id = ?
             GROUP BY
-                v.id
+                v.id,
+                v.fecha_viaje,
+                v.hora_viaje,
+                v.detalle_recorrido,
+                v.fk_estado,
+                v.recoger_pasajero,
+                c.primer_nombre,
+                c.primer_apellido,
+                c.celular,
+                v2.placa,
+                v2.marca,
+                v2.modelo,
+                e.nombre,
+                v2.ano,
+                v2.color
             ORDER BY
                 v.fecha_viaje ASC, v.hora_viaje ASC
             LIMIT 1
@@ -692,6 +706,7 @@ class ViajesController extends Controller
             'response' => !empty($servicios),
             'servicios' => $servicios ?: null,
         ]);
+
     }
 
     public function obtenerusuario(Request $request)
