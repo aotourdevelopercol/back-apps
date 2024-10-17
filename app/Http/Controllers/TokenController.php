@@ -48,7 +48,7 @@ class TokenController extends Controller
         'sub' => $email,  // Usar el correo como 'sub' (subject)
         'email' => $email,
         'codigo' => $codigo,
-        'exp' => now()->addMinute()->timestamp
+        'exp' => now()->addHour()->timestamp
     ])->make();
 
     $token = JWTAuth::encode($payload)->get();

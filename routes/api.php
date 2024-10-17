@@ -13,6 +13,8 @@ use App\Http\Controllers\ProveedoresBienvenidoController;
 use App\Http\Controllers\ProveedoresDocumentosAprobadosCController;
 use App\Http\Controllers\TokenController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\AuthController;
+
 
 
 
@@ -30,5 +32,10 @@ Route::post('/aviso', [ProveedoresAvisoController :: class, 'enviarCorreo']);
 
 // Ruta de la validación del correo electronico para la app
 Route::post('/validate-email', [TokenController::class, 'validateEmail']);
-// 
 Route::post('/validate-codigo', [VerificationController::class, 'verifyCode']);
+
+// Ruta autenticación 
+Route::post('/createuser', [AuthController::class, 'createuser']);
+Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout']);
+Route::post('/eliminar-cuenta', [AuthController::class, 'eliminarcuenta']);
