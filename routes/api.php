@@ -57,6 +57,7 @@ Route::post('/eliminar-lugar', [ViajesController::class, 'eliminarlugar']);
 Route::post('/eliminar-token', [ViajesController::class, 'eliminartoken']);
 Route::post('/guardar-id-registration', [ViajesController::class, 'guardaridregistration']);
 Route::post('/guardar-lugar', [ViajesController::class, 'guardarlugar']);
+Route::post('/listar-idiomas', [ViajesController::class, 'listaridiomas']);
 Route::post('/listar-lugares', [ViajesController::class, 'listarlugares']);
 Route::post('/misviajes', [ViajesController::class, 'misviajes']);
 Route::post('/obtener-usuario', [ViajesController::class, 'obtenerusuario']);
