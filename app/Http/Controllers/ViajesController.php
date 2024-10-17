@@ -644,36 +644,53 @@ class ViajesController extends Controller
     public function misviajes(Request $request)
     {
 
-        $id = $request->id;
-        $fecha = $request->fecha;
+        try {
+            $id = $request->id;
+            $fecha = $request->fecha;
 
-        $consulta = "SELECT
-		v.id, v.fecha_viaje, v.hora_viaje, v.recoger_en, v.dejar_en, v.codigo, v.detalle_recorrido, v.fk_estado, v.recoger_pasajero,
-        c.nombres, c.apellidos, c.celular,
-        v.placa, v.marca, v.modelo, v.clase, v.ano, v.color,
-        JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) as destinos,
-        FROM
-            viajes v
-        left JOIN conductores c on c.id = v.fk_conductor
-        left JOIN vehiculos veh on veh.id = v.fk_vehiculo
-        WHERE v.fecha_viaje = '" . $fecha . "' and v.estado_eliminacion is null and v.estado_papelera is null and app_user_id = " . $id . "
-        GROUP BY v.id order by v.fecha_viaje asc, v.hora_viaje asc limit 1";
+            $consulta = "SELECT 
+                v.id,
+                v.fecha_viaje,
+                v.hora_viaje,
+                v.detalle_recorrido,
+                v.fk_estado,
+                v.recoger_pasajero,
+                c.primer_nombre as nombres, c.primer_apellido as apellidos, c.celular, 
+                v2.placa,
+                v2.marca,
+                v2.modelo,
+                e.nombre as clase,
+                v2.ano,
+                v2.color,
+                JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) as destinos
+                from viajes v 
+                left join conductores c on c.id = v.fk_conductor
+                left join vehiculos v2 on v2.id = v.fk_vehiculo
+                left join estados e on e.id = v2.fk_tipo_vehiculo
+                left join destinos d on d.fk_viaje = v.id
+                WHERE v.fecha_viaje = '" . $fecha . "' and v.estado_eliminacion is null and v.estado_papelera is null and app_user_id = " . $id . "
+                GROUP BY v.id order by v.fecha_viaje asc, v.hora_viaje asc limit 1";
 
-        $servicios = DB::select($consulta);
+            $servicios = DB::select($consulta);
 
-        if (count($servicios)) {
+            if (count($servicios)) {
 
-            return Response::json([
-                'response' => true,
-                'servicios' => $servicios,
-            ]);
+                return Response::json([
+                    'response' => true,
+                    'servicios' => $servicios,
+                ]);
 
-        } else {
+            } else {
 
-            return Response::json([
-                'response' => false,
-            ]);
+                return Response::json([
+                    'response' => false,
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('error' . $e->getMessage());
         }
+
+
 
     }
     public function obtenerusuario(Request $request)
