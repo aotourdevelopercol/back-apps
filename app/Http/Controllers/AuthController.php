@@ -192,26 +192,40 @@ class AuthController extends Controller
     {
         $validate = $request->validate([
             'email' => 'required|string',
-            'codigo' => 'required|string',
             'nueva-password' => 'required|string'
         ]);
 
-        $user = new User();
+        try {
+            // Obtener el usuario por email
+            $user = User::where('email', $validate['email'])->first();
 
-        if ($user->save()) {
+            // Validar si el usuario existe
+            if (!$user) {
+                return response()->json(['CODE' => 'USER_NOT_FOUND'], 404);
+            }
 
+            // Verificar si la nueva contraseña es la misma que la actual
+            if (Hash::check($validate['nueva-password'], $user->password)) {
+                return response()->json(['CODE' => 'SAME_PASSWORD_ERROR', 'message' => 'La nueva contraseña no puede ser igual a la anterior.'], 400);
+            }
+
+            // Si es diferente, encriptar la nueva contraseña
             $password = bcrypt($validate['nueva-password']);
 
+            // Actualizar la contraseña
             DB::table('users')
-                ->where('username', $user->username)
+                ->where('email', $validate['email'])  // puedes usar también username si prefieres
                 ->update([
                     'password' => $password
                 ]);
 
-            return response()->json(['CODE' => 'PASSWORD_CHANGED']);
+            return response()->json(['CODE' => 'PASSWORD_CHANGED'], 200);
+        } catch (\Exception $e) {
+            \Log::error('Error: ', [
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['CODE' => 'ERROR', 'message' => 'Error al cambiar la contraseña.'], 500);
         }
-
-
     }
 
 }

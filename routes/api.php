@@ -42,7 +42,7 @@ Route::post('/createuser', [AuthController::class, 'createuser']);
 Route::post('/eliminar-cuenta', [AuthController::class, 'eliminarcuenta']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
-Route::post('/cambio-pasword', [AuthController::class, 'cambiarContraseña']);
+Route::post('/cambio-password', [AuthController::class, 'cambiarContraseña']);
 
 
 //Rutas de viajes controller 
