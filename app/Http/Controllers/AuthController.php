@@ -26,7 +26,7 @@ class AuthController extends Controller
         ]);
 
     }
-    
+
     public function eliminarcuenta(Request $request)
     {
 
@@ -127,7 +127,7 @@ class AuthController extends Controller
 
             // Validar credenciales
             $credentials = $request->validate([
-                
+
                 'username' => 'required|string', // Asegurarse de que se proporcione un correo electrónico válido
                 'password' => 'required|string', // Asegurarse de que se proporcione una contraseña
             ]);
@@ -186,6 +186,32 @@ class AuthController extends Controller
                 // Mensaje del error desconocido.
             ], 500);
         }
+    }
+
+    public function cambiarContraseña(Request $request)
+    {
+        $validate = $request->validate([
+            'email' => 'required|string',
+            'codigo' => 'required|string',
+            'nueva-password' => 'required|string'
+        ]);
+
+        $user = new User();
+
+        if ($user->save()) {
+
+            $password = bcrypt($validate['nueva-password']);
+
+            DB::table('users')
+                ->where('username', $user->username)
+                ->update([
+                    'password' => $password
+                ]);
+
+            return response()->json(['CODE' => 'PASSWORD_CHANGED']);
+        }
+
+
     }
 
 }

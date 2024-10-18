@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ViajesController;
+use App\Http\Controllers\whatsapp\WhatsappController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InscripcionProveedoresController;
@@ -32,6 +33,7 @@ Route::post('/inscripcion', [InscripcionProveedoresController::class, 'enviarCor
 Route::post('/revision', [ProveedoresRevisionController :: class, 'enviarCorreo']);
 
 // Ruta de la validación del correo electronico para la app
+Route::post('/recuperar-password', [TokenController::class, 'recuperarContraseña']);
 Route::post('/validate-email', [TokenController::class, 'validateEmail']);
 Route::post('/validate-codigo', [VerificationController::class, 'verifyCode']);
 
@@ -40,6 +42,8 @@ Route::post('/createuser', [AuthController::class, 'createuser']);
 Route::post('/eliminar-cuenta', [AuthController::class, 'eliminarcuenta']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
+Route::post('/cambio-pasword', [AuthController::class, 'cambiarContraseña']);
+
 
 //Rutas de viajes controller 
 Route::post('/actualizar-ubicacion', [ViajesController::class, 'actualizarubicacion']);
@@ -66,3 +70,8 @@ Route::post('/reestablecer-contrasena-cliente', [ViajesController::class, 'reest
 Route::post('/reintentar-pago', [ViajesController::class, 'reintentarpago']);
 Route::post('/servicio-activo', [ViajesController::class, 'servicioactivo']);
 Route::post('/servicios-pedidos', [ViajesController::class, 'serviciospedidos']);
+
+
+
+// Rutas de whatsapp
+Route::post('/enviar-wapp', [WhatsappController::class, 'enviarWhatsApp']);

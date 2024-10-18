@@ -751,17 +751,17 @@ class ViajesController extends Controller
     }
     public function proximasrutas(Request $request)
     {
+        try {
+            $user = $request->id;
+            $us = User::find($user);
 
-        $user = $request->id;
-        $us = User::find($user);
+            $fechaActual = date('Y-m-d');
+            $horaActual = date('H:i');
 
-        $fechaActual = date('Y-m-d');
-        $horaActual = date('H:i');
+            $diezdias = strtotime('4 day', strtotime($fechaActual));
+            $diezdias = date('Y-m-d', $diezdias);
 
-        $diezdias = strtotime('4 day', strtotime($fechaActual));
-        $diezdias = date('Y-m-d', $diezdias);
-
-        $consulta = "SELECT
+            $consulta = "SELECT
 		v.id,
 		v.fk_estado,
 		v.detalle_recorrido,
@@ -793,25 +793,29 @@ class ViajesController extends Controller
         WHERE v.fecha_viaje between '" . $fechaActual . "' and '" . $diezdias . "' and prq.id_empleado = " . $us->identificacion . " AND v.fk_estado = 58 and v.estado_eliminacion is null and v.estado_papelera is null
         GROUP BY v.id order by v.fecha_viaje asc, v.hora_viaje asc limit 1";
 
-        $servicios = DB::select($consulta);
+            $servicios = DB::select($consulta);
 
-        if (count($servicios)) {
+            if (count($servicios)) {
 
-            return Response::json([
-                'respuesta' => true,
-                'servicios' => $servicios,
-                'user_id' => $user
-            ]);
+                return Response::json([
+                    'respuesta' => true,
+                    'servicios' => $servicios,
+                    'user_id' => $user
+                ]);
 
-        } else {
+            } else {
 
-            return Response::json([
-                'respuesta' => false,
-                'servicios' => $servicios,
-                'user_id' => $user
-            ]);
+                return Response::json([
+                    'respuesta' => false,
+                    'servicios' => $servicios,
+                    'user_id' => $user
+                ]);
 
+            }
+        } catch (\Exception $e) {
+            \Log::error('error' . $e->getMessage());
         }
+
 
     }
     public function reestablecercontrasenacliente(Request $request)
@@ -963,7 +967,6 @@ class ViajesController extends Controller
         }
 
     }
-
     // Revisar por erro en el condicional
     public function servicioactivo(Request $request)
     {
