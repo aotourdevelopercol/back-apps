@@ -160,7 +160,7 @@
 			<!-- BANNER IMAGE -->
 				<tr>
 					<td style="text-align: center; padding: 15px 20px; color: #ffffff">
-						<a href=""><img src="{{url('images/logotipo.png')}}" alt="" width="400" style="max-width: 100%;"></a>
+						<a href=""><img src="{{url('images/logo-header-white.png')}}" alt="" width="400" style="max-width: 100%;"></a>
 					</td>
 				</tr>
 

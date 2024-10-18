@@ -5,9 +5,10 @@ use Response;
 use App\Models\User;
 use App\Models\Subcentro;
 use Illuminate\Support\Facades\Log;
-use Auth;
+
 use DB;
 use Hash;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Http\Request;
 
@@ -15,17 +16,37 @@ class AuthController extends Controller
 {
 
     public function logout(Request $request)
-    {
+{
+    // Verifica si hay un usuario autenticado
+    $user = Auth::user();
 
-        $user = Auth::user();
+    if ($user) {
+        try {
+            // Elimina todos los tokens del usuario autenticado
+            $user->tokens()->delete();
 
-        $user->tokens()->delete();
-
-        return Response::json([
-            'response' => true
-        ]);
-
+            // Retorna una respuesta JSON exitosa
+            return response()->json([
+                'response' => true
+            ], 200);
+        } catch (\Exception $e) {
+            // Captura cualquier excepción y retorna un mensaje de error
+            \Log::error('Error al cerrar sesión:', [
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json([
+                'code' => 'EXCEPTION',
+                'message' => $e->getMessage()
+            ], 200);
+        }
     }
+
+    // Si no hay un usuario autenticado, retorna un error 401 (Unauthorized)
+    return response()->json([
+        'response' => true,
+        'message' => 'LOGOUT'
+    ], 200);
+}
 
     public function eliminarcuenta(Request $request)
     {

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ProveedoresMailController\ProveedorMailController;
 use App\Http\Controllers\ViajesController;
 use App\Http\Controllers\whatsapp\WhatsappController;
 use Illuminate\Http\Request;
@@ -25,6 +26,8 @@ use App\Http\Controllers\AuthController;
 Route::post('/aviso', [ProveedoresAvisoController :: class, 'enviarCorreo']);
 Route::post('/bienvenido', [ProveedoresBienvenidoController :: class, 'enviarCorreo']);
 Route::post('/capacitar', [ProveedoresCapacitarController :: class, 'enviarCorreo']);
+Route::post('/cuenta-de-cobro-corregir', [ProveedorMailController :: class, 'cuentaDeCobroPorCorregir']);
+Route::post('/cuenta-de-cobro-radicada', [ProveedorMailController :: class, 'cuentaDeCobroRadicada']);
 Route::post('/documentosActualizados', [ProveedoresDocumentosActualizadosController :: class, 'enviarCorreo']);
 Route::post('/documentoAprobados', [ProveedoresDocumentosAprobadosController :: class, 'enviarCorreo']);
 Route::post('/documentosAprovadosC', [ProveedoresDocumentosAprobadosCController :: class, 'enviarCorreo']);
