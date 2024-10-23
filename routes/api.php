@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProveedoresMailController\ProveedorMailController;
-use App\Http\Controllers\ViajesController;
+
+use App\Http\Controllers\viajes\Viajescontroller;
 use App\Http\Controllers\whatsapp\WhatsappController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InscripcionProveedoresController;
 use App\Http\Controllers\ProveedoresRevisionController;
@@ -49,6 +49,7 @@ Route::post('/cambio-password', [AuthController::class, 'cambiarContraseña']);
 
 
 //Rutas de viajes controller 
+/*
 Route::post('/actualizar-ubicacion', [ViajesController::class, 'actualizarubicacion']);
 Route::post('/add-token', [ViajesController::class, 'addtoken']);
 Route::post('/calificacion-de-ruta', [ViajesController::class, 'calificacionderuta']);
@@ -73,7 +74,11 @@ Route::post('/reestablecer-contrasena-cliente', [ViajesController::class, 'reest
 Route::post('/reintentar-pago', [ViajesController::class, 'reintentarpago']);
 Route::post('/servicio-activo', [ViajesController::class, 'servicioactivo']);
 Route::post('/servicios-pedidos', [ViajesController::class, 'serviciospedidos']);
+*/
 
+
+// Rutas de viajes controller 
+Route::post('/listar-viajes-generales', [Viajescontroller::class, 'listarViajesGenerales']);
 
 
 // Rutas de whatsapp

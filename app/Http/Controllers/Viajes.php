@@ -20,7 +20,7 @@ use Illuminate\Http\Request;
 use Response;
 use DB;
 
-class ViajesController extends Controller
+class Viajes extends Controller
 {
     // Codigo modificado, porque la función original no tenia variables definidas y generaba errores: Validar si la corrección esta OK
     public function actualizarubicacion(Request $request)
