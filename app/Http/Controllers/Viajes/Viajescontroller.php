@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\ViajesU;
 use Response;
+use Auth;
 
 class Viajescontroller extends Controller
 {
@@ -86,6 +88,7 @@ class Viajescontroller extends Controller
 
             // Comprobar si hay múltiples estados de viaje
             if (!empty($validatedData['estado_viaje'])) {
+                Log::info('Estado de viaje: '.json_encode($validatedData['estado_viaje']));
                 $placeholders = implode(',', array_fill(0, count($validatedData['estado_viaje']), '?'));
                 $query .= " AND e.codigo IN ($placeholders)";
                 $params = array_merge($params, $validatedData['estado_viaje']);
@@ -118,6 +121,145 @@ class Viajescontroller extends Controller
         } catch (\Throwable $th) {
             \Log::error('Error al listar viajes generales: ' . $th->getMessage());
         }
+
+    }
+
+    // formulario de solicitud de viaje ejecutivo
+    public function requesttrips(Request $request) {
+
+        $viajes = $request->viajes;
+        $fk_sede = $request->fk_sede;
+        $centro = $request->centrodecosto_id;
+
+        if( count($viajes)>1 ) {
+            $tipo = 2;
+        }else{
+            $tipo = 1;
+        }
+
+        $know = DB::table('info_adicional_viajes')
+        ->where('fk_centrodecosto', $centro)
+        ->first();
+
+        for ($a=0; $a < count($viajes); $a++){
+
+            $fk_ciudad = $viajes[$a]['fk_ciudad'];
+            $hora = $viajes[$a]['hora'];
+            $fecha = $viajes[$a]['fecha'];
+            $detalles = $viajes[$a]['detalles'];
+            $desde = $viajes[$a]['desde'];
+            $hasta = $viajes[$a]['hasta'];
+            $vuelo = $viajes[$a]['vuelo'];
+            $centrodecosto = $viajes[$a]['centrodecosto'];
+            $infoAdicional = null;
+
+            if($know) {
+
+                if($know->campo1!=null) {
+
+                    if( $know->campo2!=null or $know->campo3!=null or $know->campo4!=null or $know->campo5!=null ) {
+                        $complement = ' / ';
+                    }else{
+                        $complement = '';
+                    }
+
+                    if( isset($viajes[$a]['campo1']) ) {
+                        $infoAdicional .= $know->campo1.': '.$viajes[$a]['campo1'].$complement;
+                    }
+
+                }
+
+                if($know->campo2!=null) {
+
+                    if( $know->campo3!=null or $know->campo4!=null or $know->campo5!=null ) {
+                        $complement = ' / ';
+                    }else{
+                        $complement = '';
+                    }
+
+                    if( isset($viajes[$a]['campo2']) ) {
+                        $infoAdicional .= $know->campo2.': '.$viajes[$a]['campo2'].$complement;
+                    }
+
+                }
+
+                if($know->campo3!=null) {
+
+                    if( $know->campo4!=null or $know->campo5!=null ) {
+                        $complement = ' / ';
+                    }else{
+                        $complement = '';
+                    }
+
+                    if( isset($viajes[$a]['campo3']) ) {
+                        $infoAdicional .= $know->campo3.': '.$viajes[$a]['campo3'].$complement;
+                    }
+
+                }
+
+                if($know->campo4!=null) {
+
+                    if( $know->campo5!=null ) {
+                        $complement = ' / ';
+                    }else{
+                        $complement = '';
+                    }
+
+                    if( isset($viajes[$a]['campo4']) ) {
+                        $infoAdicional .= $know->campo4.': '.$viajes[$a]['campo4'].$complement;
+                    }
+
+                }
+
+                if($know->campo5!=null) {
+
+                    $complement = '';
+
+                    if( isset($viajes[$a]['campo5']) ) {
+                        $infoAdicional .= $know->campo5.': '.$viajes[$a]['campo5'];
+                    }
+
+                }
+
+            }
+
+            $viaje = new ViajesU;
+            $viaje->fecha_solicitud = date('Y-m-d');
+            $viaje->fecha = $fecha;
+            $viaje->desde = $desde;
+            $viaje->hasta = $hasta;
+            $viaje->hora = $hora;
+            $viaje->detalles = $detalles;
+            $viaje->fk_sede = $fk_sede;
+            $viaje->fk_centrodecosto = $centro;
+            $viaje->fk_ciudad = $fk_ciudad;
+            $viaje->vuelo = $vuelo;
+            $viaje->centrodecosto = $centrodecosto;
+            $viaje->tipo_solicitud = $tipo;
+            $viaje->created_at = date('Y-m-d H:i:s');
+            $viaje->creado_por = Auth::check() ? Auth::user()->id : 6164;
+            $viaje->info_adicional = $infoAdicional;
+            $viaje->save();
+
+            $pasajeros = $viajes[$a]['pasajeros'];
+
+            for ($i=0; $i < count($pasajeros); $i++){
+
+                $pax = DB::table('viajes_upnet_pasajeros')
+                ->insert([
+                    'nombre' => $pasajeros[$i]['nombre'],
+                    'celular' => $pasajeros[$i]['celular'],
+                    'correo' => $pasajeros[$i]['correo'],
+                    'fk_viaje_upnet' => $viaje->id
+                ]);
+
+            }
+
+        }
+
+        return Response::json([
+            'response' => true
+        ]);
 
     }
 
