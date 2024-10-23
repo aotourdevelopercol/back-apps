@@ -2,7 +2,8 @@
 
 use App\Http\Controllers\ProveedoresMailController\ProveedorMailController;
 
-use App\Http\Controllers\viajes\Viajescontroller;
+use App\Http\Controllers\Viajes;
+use App\Http\Controllers\viajesEnGeneral\ViajesEnGeneralController;
 use App\Http\Controllers\whatsapp\WhatsappController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InscripcionProveedoresController;
@@ -49,38 +50,38 @@ Route::post('/cambio-password', [AuthController::class, 'cambiarContraseña']);
 
 
 //Rutas de viajes controller 
-/*
-Route::post('/actualizar-ubicacion', [ViajesController::class, 'actualizarubicacion']);
-Route::post('/add-token', [ViajesController::class, 'addtoken']);
-Route::post('/calificacion-de-ruta', [ViajesController::class, 'calificacionderuta']);
-Route::post('/confirmar-direccion', [ViajesController::class, 'confirmardireccion']);
-Route::post('/consultar-codigo', [ViajesController::class, 'consultarcodigo']);
-Route::post('/consultar-tarjetas', [ViajesController::class, 'consultartarjetas']);
-Route::post('/calcular-tarifa-servicio', [ViajesController::class, 'calculartarifaservicio']);
-Route::post('/cambiar-idioma', [ViajesController::class, 'cambiaridioma']);
-Route::post('/contactos', [ViajesController::class, 'contactos']);
-Route::post('/editar-datos', [ViajesController::class, 'editardatos']);
-Route::post('/editar-lugar', [ViajesController::class, 'editarlugar']);
-Route::post('/eliminar-lugar', [ViajesController::class, 'eliminarlugar']);
-Route::post('/eliminar-token', [ViajesController::class, 'eliminartoken']);
-Route::post('/guardar-id-registration', [ViajesController::class, 'guardaridregistration']);
-Route::post('/guardar-lugar', [ViajesController::class, 'guardarlugar']);
-Route::post('/listar-idiomas', [ViajesController::class, 'listaridiomas']);
-Route::post('/listar-lugares', [ViajesController::class, 'listarlugares']);
-Route::post('/misviajes', [ViajesController::class, 'misviajes']);
-Route::post('/obtener-usuario', [ViajesController::class, 'obtenerusuario']);
-Route::post('/proximas-rutas', [ViajesController::class, 'proximasrutas']);
-Route::post('/reestablecer-contrasena-cliente', [ViajesController::class, 'reestablecercontrasenacliente']);
-Route::post('/reintentar-pago', [ViajesController::class, 'reintentarpago']);
-Route::post('/servicio-activo', [ViajesController::class, 'servicioactivo']);
-Route::post('/servicios-pedidos', [ViajesController::class, 'serviciospedidos']);
-*/
+
+Route::post('/actualizar-ubicacion', [Viajes::class, 'actualizarubicacion']);
+Route::post('/add-token', [Viajes::class, 'addtoken']);
+Route::post('/calificacion-de-ruta', [Viajes::class, 'calificacionderuta']);
+Route::post('/confirmar-direccion', [Viajes::class, 'confirmardireccion']);
+Route::post('/consultar-codigo', [Viajes::class, 'consultarcodigo']);
+Route::post('/consultar-tarjetas', [Viajes::class, 'consultartarjetas']);
+Route::post('/calcular-tarifa-servicio', [Viajes::class, 'calculartarifaservicio']);
+Route::post('/cambiar-idioma', [Viajes::class, 'cambiaridioma']);
+Route::post('/contactos', [Viajes::class, 'contactos']);
+Route::post('/editar-datos', [Viajes::class, 'editardatos']);
+Route::post('/editar-lugar', [Viajes::class, 'editarlugar']);
+Route::post('/eliminar-lugar', [Viajes::class, 'eliminarlugar']);
+Route::post('/eliminar-token', [Viajes::class, 'eliminartoken']);
+Route::post('/guardar-id-registration', [Viajes::class, 'guardaridregistration']);
+Route::post('/guardar-lugar', [Viajes::class, 'guardarlugar']);
+Route::post('/listar-idiomas', [Viajes::class, 'listaridiomas']);
+Route::post('/listar-lugares', [Viajes::class, 'listarlugares']);
+Route::post('/misviajes', [Viajes::class, 'misviajes']);
+Route::post('/obtener-usuario', [Viajes::class, 'obtenerusuario']);
+Route::post('/proximas-rutas', [Viajes::class, 'proximasrutas']);
+Route::post('/reestablecer-contrasena-cliente', [Viajes::class, 'reestablecercontrasenacliente']);
+Route::post('/reintentar-pago', [Viajes::class, 'reintentarpago']);
+Route::post('/servicio-activo', [Viajes::class, 'servicioactivo']);
+Route::post('/servicios-pedidos', [Viajes::class, 'serviciospedidos']);
+
 
 
 // Rutas de viajes controller requesttrips
-Route::post('/consultar-cliente', [Viajescontroller::class, 'consultclient']);
-Route::post('/listar-viajes-generales', [Viajescontroller::class, 'listarViajesGenerales']);
-Route::post('/crear-solicitud-viaje', [Viajescontroller::class, 'requesttrips']);
+Route::post('/consultar-cliente', [ViajesEnGeneralController::class, 'consultclient']);
+Route::post('/listar-viajes-generales', [ViajesEnGeneralController::class, 'listarViajesGenerales']);
+Route::post('/crear-solicitud-viaje', [ViajesEnGeneralController::class, 'requesttrips']);
 
 
 // Rutas de whatsapp
