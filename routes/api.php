@@ -77,9 +77,10 @@ Route::post('/servicios-pedidos', [ViajesController::class, 'serviciospedidos'])
 */
 
 
-// Rutas de viajes controller 
+// Rutas de viajes controller requesttrips
 Route::post('/consultar-cliente', [Viajescontroller::class, 'consultclient']);
 Route::post('/listar-viajes-generales', [Viajescontroller::class, 'listarViajesGenerales']);
+Route::post('/crear-solicitud-viaje', [Viajescontroller::class, 'requesttrips']);
 
 
 // Rutas de whatsapp
