@@ -78,6 +78,7 @@ Route::post('/servicios-pedidos', [ViajesController::class, 'serviciospedidos'])
 
 
 // Rutas de viajes controller 
+Route::post('/consultar-cliente', [Viajescontroller::class, 'consultclient']);
 Route::post('/listar-viajes-generales', [Viajescontroller::class, 'listarViajesGenerales']);
 
 

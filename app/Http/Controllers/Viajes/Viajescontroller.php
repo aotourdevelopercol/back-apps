@@ -6,9 +6,24 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Log;
+use Response;
 
 class Viajescontroller extends Controller
 {
+    // Consulta de clientes 
+    public function consultclient(Request $request) {
+
+        $query = "SELECT * FROM info_adicional_viajes  WHERE fk_centrodecosto = ".$request->cliente."";
+
+        $consulta = DB::select($query);
+
+        return Response::json([
+            'response' => true,
+            'consulta' => $consulta
+        ]);
+    }
+
+    // Consulta de viajes
     function listarViajesGenerales(Request $request)
     {
 
