@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\ProveedoresMailController\ProveedorMailController;
 
+use App\Http\Controllers\ViajeController;
 use App\Http\Controllers\Viajes;
-use App\Http\Controllers\viajesEnGeneral\ViajesEnGeneralController;
+
 use App\Http\Controllers\whatsapp\WhatsappController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InscripcionProveedoresController;
@@ -79,9 +80,9 @@ Route::post('/servicios-pedidos', [Viajes::class, 'serviciospedidos']);
 
 
 // Rutas de viajes controller requesttrips
-Route::post('/consultar-cliente', [ViajesEnGeneralController::class, 'consultclient']);
-Route::post('/listar-viajes-generales', [ViajesEnGeneralController::class, 'listarViajesGenerales']);
-Route::post('/crear-solicitud-viaje', [ViajesEnGeneralController::class, 'requesttrips']);
+Route::post('/consultar-cliente', [ViajeController::class, 'consultclient']);
+Route::post('/listar-viajes-generales', [ViajeController::class, 'listarViajesGenerales']);
+Route::post('/crear-solicitud-viaje', [ViajeController::class, 'requesttrips']);
 
 
 // Rutas de whatsapp

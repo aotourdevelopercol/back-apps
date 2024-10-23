@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Controllers\ViajesEnGeneral;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use DB;
 use Illuminate\Support\Facades\Log;
@@ -10,7 +9,8 @@ use App\Models\ViajesU;
 use Response;
 use Auth;
 
-class ViajesEnGeneralController extends Controller
+
+class ViajeController extends Controller
 {
      // Consulta de clientes 
      public function consultclient(Request $request)
