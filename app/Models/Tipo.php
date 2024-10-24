@@ -23,7 +23,7 @@ class Tipo extends Model
     }
 
 
-    public static function obtenerTipoPorCodigoYId( $id)
+    public static function obtenerTipoPorCodigoYId($id)
     {
         return DB::table('tipos as t')
             ->leftJoin('tipo_maestros as tm', 'tm.id', '=', 't.fk_tipo_maestros')
@@ -31,5 +31,15 @@ class Tipo extends Model
             ->where('t.id', $id)
             ->select('t.*') // Selecciona todas las columnas de 'tipos'
             ->first(); // Devuelve el primer resultado
+    }
+
+    // Método para obtener todos los tipos estado pasando estado maestro
+    public static function obtenerTiposPorEstadoMaestro($estado)
+    {
+        return DB::table('tipos as t')
+            ->leftJoin('tipo_maestros as tm', 'tm.id', '=', 't.fk_tipo_maestros')
+            ->where('tm.codigo', $estado) // Filtro por el código "TIP_VIAJE"
+            ->select('t.*') // Selecciona todas las columnas de la tabla 'tipos'
+            ->get(); // Obtén los resultados
     }
 }

@@ -606,6 +606,7 @@ class Viajes extends Controller
 
         return response()->json($tipos);
     }
+    
     public function listarlugares(Request $request)
     {
         try {
