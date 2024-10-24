@@ -213,13 +213,13 @@ class ViajeController extends Controller
                 $viaje->fecha_solicitud = date('Y-m-d');
                 $viaje->fecha = $viajes[$a]['fecha'];
                 $viaje->hora = $viajes[$a]['hora'];
-                $viaje->desde = $viajes[$a]['latitude_desde'];
-                $viaje->hasta = $viajes[$a]['longitude_desde'];
-                $viaje->detalles = $viajes[$a]['detalles'];
+                $viaje->desde = $viajes[$a]['desde'] ?? null;
+                $viaje->hasta = $viajes[$a]['hasta'] ?? null;
+                $viaje->detalles = $viajes[$a]['detalles'] ?? null;
                 $viaje->fk_sede = 1;
                 $viaje->fk_centrodecosto = 489;
                 $viaje->fk_ciudad = 2;
-                $viaje->vuelo = $viajes[$a]['vuelo'];
+                $viaje->vuelo = $viajes[$a]['vuelo'] ?? null;
                 $viaje->tipo_solicitud = $tipo;
                 $viaje->created_at = date('Y-m-d H:i:s');
                 $viaje->creado_por = 2;
