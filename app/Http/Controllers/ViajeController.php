@@ -183,10 +183,10 @@ class ViajeController extends Controller
             // En este caso, se retornan los resultados de la consulta.
             $results = DB::select($query, $params);
 
-            return response(json_encode([
-                'Listado: ' => $results,
-                'Mensaje: ' => 'true'
-            ]));
+            return response([
+                'response' => true,
+                'listado' => $results,
+            ]);
         } catch (\Throwable $th) {
             \Log::error('Error al listar viajes generales: ' . $th->getMessage());
         }
@@ -244,6 +244,10 @@ class ViajeController extends Controller
 
         } catch (\Throwable $th) {
             \Log::error('Error al solicitar viaje ejecutivo: ' . $th->getMessage());
+            return response(json_encode([
+                'response' => false,
+                'codigo' => 'FAIL',
+            ]));
         }
 
 
