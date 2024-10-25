@@ -95,7 +95,7 @@ class ViajeController extends Controller
         ]);
     }
 
-    // Listar Viajes activos    
+    // Listar Viajes activos
     public function listarViajesActivos(Request $request)
     {
         $validateData = $request->validate([
@@ -104,9 +104,9 @@ class ViajeController extends Controller
 
         try {
 
-            $query = "SELECT 
-            v.id, 
-            v.fecha_viaje, 
+            $query = "SELECT
+            v.id,
+            v.fecha_viaje,
             v.hora_viaje,
             v.recoger_pasajero,
 	        v.codigo_viaje,
@@ -132,24 +132,24 @@ class ViajeController extends Controller
         left join vehiculos v2 on v2.id = v.fk_vehiculo
         left join conductores c2 on c2.id = v.fk_conductor
         left join pasajeros_ejecutivos pe on pe.fk_viaje = v.id
-        left join estados e on e.id = v.fk_estado 
-        left join destinos d on d.fk_viaje = v.id 
+        left join estados e on e.id = v.fk_estado
+        left join destinos d on d.fk_viaje = v.id
         left join tipos t on t.id = v.tipo_traslado
         left join tipos t2 on t2.id = v2.fk_tipo_vehiculo
         where v.app_user_id = ? and pe.app_user_id = ? and e.codigo = 'INICIADO'
-        GROUP BY 
-            v.id, 
-            v.fecha_viaje, 
+        GROUP BY
+            v.id,
+            v.fecha_viaje,
             v.hora_viaje,
             v.recoger_pasajero,
 	        v.codigo_viaje,
-            t.id, 
-            t.codigo, 
-            t.nombre, 
-            e.id, 
-            e.codigo, 
-            e.nombre, 
-            pe.id, 
+            t.id,
+            t.codigo,
+            t.nombre,
+            e.id,
+            e.codigo,
+            e.nombre,
+            pe.id,
             pe.nombre,
             v2.placa,
             v2.modelo,
@@ -166,7 +166,7 @@ class ViajeController extends Controller
 
             return Response::json([
                 'response' => true,
-                'listado' => $results[0],
+                'listado' => $results,
             ]);
 
         } catch (\Throwable $th) {
@@ -283,7 +283,7 @@ class ViajeController extends Controller
 
         try {
 
-            $query = "SELECT 
+            $query = "SELECT
                         rs.id,
                         rs.fecha,
                         rs.hora,
@@ -333,7 +333,7 @@ class ViajeController extends Controller
     public function listarViajesPendientesEjecutivos($appUserId, $fecha)
     {
         try {
-            $query = "SELECT 
+            $query = "SELECT
                         vu.id,
                         vu.fecha,
                         vu.hora,
