@@ -234,13 +234,16 @@ class ViajeController extends Controller
                 $validatedData['codigo_viaje'] ?? null, // Este es para la comparación "OR NULL"
             ];
 
-            if (!empty($validatedData['fecha'])) {
-                $query .= " AND v.fecha_viaje = ?";
-                $params = array_merge($params, [$validatedData['fecha']]); // Wrap in array
+            if (!isset($validatedData['fecha'])) {
+                if (!empty($validatedData['fecha'])) {
+                    $query .= " AND v.fecha_viaje = ?";
+                    $params = array_merge($params, [$validatedData['fecha']]); // Wrap in array
+                }
+
             }
 
             // Comprobar si hay múltiples estados de viaje
-            if (!empty($validatedData['estado_viaje'])) {
+            if (!isset($validatedData['estado_viaje']) || !empty($validatedData['estado_viaje'])) {
                 $placeholders = implode(',', array_fill(0, count($validatedData['estado_viaje']), '?'));
                 $query .= " AND e.codigo IN ($placeholders)";
                 $params = array_merge($params, $validatedData['estado_viaje']);
@@ -252,11 +255,11 @@ class ViajeController extends Controller
             // En este caso, se retornan los resultados de la consulta.
             $results = DB::select($query, $params);
 
-            $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, $validatedData['fecha']);
-            $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos($validatedData['app_user_id'], $validatedData['fecha']);
+            $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, !empty($validatedData['fecha']));
+           $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos(!empty($validatedData['app_user_id']), !empty($validatedData['fecha']));
 
             // Combina todos los resultados en un solo array si existen datos
-            if (!empty($listaVijesPendientes)) {
+          if (!empty($listaVijesPendientes)) {
                 $results = array_merge($results, $listaVijesPendientes);
             }
             if (!empty($listaVijesPendientesEjecutivos)) {
