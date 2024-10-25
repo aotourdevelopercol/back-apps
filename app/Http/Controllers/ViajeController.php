@@ -145,7 +145,6 @@ class ViajeController extends Controller
                      prq.id_empleado = ?
                      OR
                      v.app_user_id = ?)
-                 )
                  AND (t.codigo = ? or ? is null)";
 
             $params = [
