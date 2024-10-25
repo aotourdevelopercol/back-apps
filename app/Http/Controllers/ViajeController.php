@@ -123,9 +123,9 @@ class ViajeController extends Controller
             v2.marca,
             v2.color,
             c2.foto as foto_conductor,
-            e2.id as id_tipo_vehiculo,
-            e2.codigo as codigo_tipo_vehiculo,
-            e2.nombre as nombre_tipo_vehiculo,
+            t2.id as id_tipo_vehiculo,
+            t2.codigo as codigo_tipo_vehiculo,
+            t2.nombre as nombre_tipo_vehiculo,
             UPPER(CONCAT(c2.primer_nombre, ' ', c2.primer_apellido)) AS nombre_conductor,
             JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
         from viajes v
@@ -135,7 +135,7 @@ class ViajeController extends Controller
         left join estados e on e.id = v.fk_estado
         left join destinos d on d.fk_viaje = v.id
         left join tipos t on t.id = v.tipo_traslado
-        left join estados e2 on e2.id = v2.fk_tipo_vehiculo
+        left join tipos t2 on t2.id = v2.fk_tipo_vehiculo
         where v.app_user_id = ? and pe.app_user_id = ? and e.codigo = 'INICIADO'
         GROUP BY
             v.id,
@@ -166,7 +166,7 @@ class ViajeController extends Controller
 
             return Response::json([
                 'response' => true,
-                'listado' => $results[0],
+                'listado' => $results,
             ]);
 
         } catch (\Throwable $th) {
