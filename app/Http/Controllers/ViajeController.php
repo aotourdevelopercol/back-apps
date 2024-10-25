@@ -116,7 +116,7 @@ class ViajeController extends Controller
             e.id as id_estado,
             e.codigo as codigo_estado,
             e.nombre as nombre_estado,
-            pe.id,
+            pe.id as id_pasajero,
             pe.nombre AS nombre_pasajero,
             v2.placa,
             v2.modelo,
