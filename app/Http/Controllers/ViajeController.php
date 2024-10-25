@@ -137,28 +137,7 @@ class ViajeController extends Controller
         left join tipos t on t.id = v.tipo_traslado
         left join tipos t2 on t2.id = v2.fk_tipo_vehiculo
         where v.app_user_id = ? and pe.app_user_id = ? and e.codigo = 'INICIADO'
-        GROUP BY
-            v.id,
-            v.fecha_viaje,
-            v.hora_viaje,
-            v.recoger_pasajero,
-	        v.codigo_viaje,
-            t.id,
-            t.codigo,
-            t.nombre,
-            e.id,
-            e.codigo,
-            e.nombre,
-            pe.id,
-            pe.nombre,
-            v2.placa,
-            v2.modelo,
-            v2.marca,
-            v2.color,
-            c2.foto,
-            t2.codigo,
-            t2.nombre,
-            nombre_conductor;";
+        GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22;";
 
             $params = [$validateData['app_user_id'], $validateData['app_user_id']];
 
