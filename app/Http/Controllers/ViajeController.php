@@ -142,17 +142,15 @@ class ViajeController extends Controller
              WHERE
                  v.estado_eliminacion IS NULL
                  AND (
-                     (prq.id_empleado = ? OR ? IS NULL)
+                     prq.id_empleado = ?
                      OR
-                     (v.app_user_id = ? OR ? IS NULL)
+                     v.app_user_id = ?)
                  )
                  AND (t.codigo = ? or ? is null)";
 
             $params = [
                 $user->codigo_empleado,
-                $user->codigo_empleado, // Este es para la comparación "OR NULL"
                 $validatedData['app_user_id'],
-                $validatedData['app_user_id'], // Este es para la comparación "OR NULL"
                 $validatedData['codigo_viaje'] ?? null,
                 $validatedData['codigo_viaje'] ?? null, // Este es para la comparación "OR NULL"
             ];
