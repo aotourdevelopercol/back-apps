@@ -25,66 +25,68 @@ class Viajes extends Controller
     // Codigo modificado, porque la función original no tenia variables definidas y generaba errores: Validar si la corrección esta OK
     public function actualizarubicacion(Request $request)
     {
+        try {
+            // Obtener el ID del servicio desde la solicitud
+            $servicio_id = $request->id;
 
-        // Obtener el ID del servicio desde la solicitud
-        $servicio_id = $request->id;
+            // Buscar el viaje en la tabla 'viajes' con el ID proporcionado
+            $viaje = DB::table('viajes')
+                ->select('id', 'fk_estado') // Asegúrate de seleccionar los campos necesarios
+                ->where('id', $servicio_id)
+                ->first();
 
-        // Buscar el viaje en la tabla 'viajes' con el ID proporcionado
-        $viaje = DB::table('viajes')
-            ->select('id', 'fk_estado', 'recorrido_gps') // Asegúrate de seleccionar los campos necesarios
-            ->where('id', $servicio_id)
-            ->first();
+            // Verificar si el viaje fue encontrado
+            if (!$viaje) {
+                return Response::json([
+                    'response' => false,
+                    'message' => 'Viaje no encontrado',
+                ]);
+            }
 
-        // Verificar si el viaje fue encontrado
-        if (!$viaje) {
+            // Buscar las coordenadas del GPS para el viaje
+            $gps = DB::table('gps')
+                ->where('fk_viaje', $servicio_id)
+                ->first();
+
+            // Verificar si se encontraron coordenadas GPS
+            if (!$gps) {
+                return Response::json([
+                    'response' => false,
+                    'message' => 'Datos GPS no encontrados',
+                ]);
+            }
+
+            // Decodificar las coordenadas JSON
+            $value = json_decode($gps->coordenadas);
+
+            // Verificar que las coordenadas no estén vacías
+            if (empty($value)) {
+                return Response::json([
+                    'response' => false,
+                    'message' => 'No hay coordenadas disponibles',
+                ]);
+            }
+
+            // Contar los puntos en el recorrido GPS
+            $cantidad_puntos = count($value);
+
+            // Obtener la última ubicación del recorrido
+            $ultima_ubicacion = $value[$cantidad_puntos - 1];
+
+            // Devolver la respuesta JSON con los datos solicitados
             return Response::json([
-                'response' => false,
-                'message' => 'Viaje no encontrado',
+                'response' => true,
+                'servicio_id' => $servicio_id,
+                'ultima_ubicacion' => $ultima_ubicacion, // Última coordenada
+                'cantidad_puntos' => $cantidad_puntos,    // Cantidad de puntos en el recorrido
+                'estado_servicio_app' => $viaje->fk_estado, // Estado del servicio
+                'recogido' => $viaje->recoger_pasajero ?? 'No definido' // Verificar si la propiedad existe
             ]);
+        } catch (\Throwable $th) {
+            \Log::error('Error al actualizar ubicación: ' . $th->getMessage());
         }
+        ;
 
-        // Buscar las coordenadas del GPS para el viaje
-        $gps = DB::table('gps')
-            ->where('fk_viaje', $servicio_id)
-            ->first();
-
-        // Verificar si se encontraron coordenadas GPS
-        if (!$gps) {
-            return Response::json([
-                'response' => false,
-                'message' => 'Datos GPS no encontrados',
-            ]);
-        }
-
-        // Decodificar las coordenadas JSON
-        $value = json_decode($gps->coordenadas);
-
-        // Verificar que las coordenadas no estén vacías
-        if (empty($value)) {
-            return Response::json([
-                'response' => false,
-                'message' => 'No hay coordenadas disponibles',
-            ]);
-        }
-
-        // Contar los puntos en el recorrido GPS
-        $cantidad_puntos = count($value);
-
-        // Obtener la última ubicación del recorrido
-        $ultima_ubicacion = $value[$cantidad_puntos - 1];
-
-        // Decodificar el recorrido GPS desde el viaje (si existe)
-        $parseRecorrido = json_decode($viaje->recorrido_gps);
-
-        // Devolver la respuesta JSON con los datos solicitados
-        return Response::json([
-            'response' => true,
-            'servicio_id' => $servicio_id,
-            'ultima_ubicacion' => $ultima_ubicacion, // Última coordenada
-            'cantidad_puntos' => $cantidad_puntos,    // Cantidad de puntos en el recorrido
-            'estado_servicio_app' => $viaje->fk_estado, // Estado del servicio
-            'recogido' => $viaje->recoger_pasajero ?? 'No definido' // Verificar si la propiedad existe
-        ]);
 
     }
     public function addtoken(Request $request)
@@ -606,7 +608,7 @@ class Viajes extends Controller
 
         return response()->json($tipos);
     }
-    
+
     public function listarlugares(Request $request)
     {
         try {
