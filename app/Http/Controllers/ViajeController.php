@@ -100,8 +100,9 @@ class ViajeController extends Controller
 
 
         $validatedData = $request->validate([
-            'fecha_inicio' => ['required', 'string'],
-            'fecha_fin' => ['required', 'string'],
+            'fecha' => ['nullable', 'string'],
+            'fecha_inicio' => ['nullable', 'string'],
+            'fecha_fin' => ['nullable', 'string'],
             'id_empleado' => ['nullable', 'string'],
             'app_user_id' => ['nullable', 'string'],
             'codigo_viaje' => ['nullable', 'string'],
@@ -122,6 +123,10 @@ class ViajeController extends Controller
                  t.nombre AS nombre_tipo_ruta,
                  v2.placa,
                  v2.modelo,
+                 v2.marca,
+                 v2.color,
+                 e2.codigo as codigo_tipo_vehiculo,
+                 e2.nombre as nombre_tipo_vehiculo,
                  UPPER(CONCAT(c2.primer_nombre, ' ', c2.primer_apellido)) AS nombre_completo,
                  JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
              FROM
@@ -136,7 +141,6 @@ class ViajeController extends Controller
              LEFT JOIN pasajeros_ejecutivos pe ON pe.fk_viaje = v.id
              WHERE
                  v.estado_eliminacion IS NULL
-                 AND v.fecha_viaje BETWEEN ? AND ?
                  AND (
                      (prq.id_empleado = ? OR ? IS NULL)
                      OR
@@ -145,39 +149,33 @@ class ViajeController extends Controller
                  AND (t.codigo = ? or ? is null)";
 
             $params = [
-                $validatedData['fecha_inicio'],
-                $validatedData['fecha_fin'],
                 $validatedData['id_empleado'],
                 $validatedData['id_empleado'], // Este es para la comparación "OR NULL"
-                $validatedData['app_user_id'],
-                $validatedData['app_user_id'], // Este es para la comparación "OR NULL"
+                $validatedData['app_user_id'] ?? 6428,
+                $validatedData['app_user_id'] ?? 6428, // Este es para la comparación "OR NULL"
                 $validatedData['codigo_viaje'] ?? null,
                 $validatedData['codigo_viaje'] ?? null, // Este es para la comparación "OR NULL"
             ];
 
+            if (!empty($validatedData['fecha'])) {
+                $query .= " AND v.fecha_viaje = ?";
+                $params = array_merge($params, $validatedData['fecha']);
+            }
+
+            if (!empty($validatedData['fecha_inicio']) && !empty($validatedData['fecha_fin'])) {
+                $query .= " AND v.fecha_viaje BETWEEN ? AND ?";
+                $params = array_merge($params, $validatedData['fecha_inicio']);
+                $params = array_merge($params, $validatedData['fecha_fin']);
+            }
+
             // Comprobar si hay múltiples estados de viaje
             if (!empty($validatedData['estado_viaje'])) {
-
                 $placeholders = implode(',', array_fill(0, count($validatedData['estado_viaje']), '?'));
                 $query .= " AND e.codigo IN ($placeholders)";
                 $params = array_merge($params, $validatedData['estado_viaje']);
             }
 
-            $query .= " GROUP BY
-                         v.id,
-                         v.fecha_viaje,
-                         v.hora_viaje,
-                         v.cantidad,
-                         e.id,
-                         e.codigo,
-                         e.nombre,
-                         t.id,
-                         t.codigo,
-                         t.nombre,
-                         v2.placa,
-                         v2.modelo,
-                         nombre_completo";
-
+            $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17"
 
             // Aqui se ejecutaria la consulta y se obtendrian los resultados.
             // En este caso, se retornan los resultados de la consulta.
@@ -232,7 +230,7 @@ class ViajeController extends Controller
                     ->insert([
                         'nombre' => 'Omar Mugno',
                         'celular' => '3106560877',
-                        'correo' => 'luisvalenciadev@outlook.com',
+                        'correo' => 'Omar.mugno@gmail.com',
                         'fk_viaje_upnet' => $viaje->id
                     ]);
             }
