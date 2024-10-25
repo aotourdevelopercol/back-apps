@@ -84,6 +84,7 @@ Route::post('/calificar-viaje', [ViajeController::class, 'calificarViaje']);
 Route::post('/consultar-cliente', [ViajeController::class, 'consultclient']);
 Route::post('/listar-estados-viaje', [ViajeController::class, 'listarEstadosPorMaestro']);
 Route::post('/listar-tipos-viaje', [ViajeController::class, 'listarTiposDeViaje']);
+Route::post('/listar-viajes-activos', [ViajeController::class, 'listarViajesActivos']);
 Route::post('/listar-viajes-generales', [ViajeController::class, 'listarViajesGenerales']);
 Route::post('/crear-solicitud-viaje', [ViajeController::class, 'requesttrips']);
 
