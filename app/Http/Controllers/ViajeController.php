@@ -137,6 +137,7 @@ class ViajeController extends Controller
              LEFT JOIN destinos d ON d.fk_viaje = v.id
              LEFT JOIN tipos t ON t.id = v.tipo_traslado
              LEFT JOIN estados e ON e.id = v.fk_estado
+             LEFT JOIN estados e2 ON e2.id = v2.fk_tipo_vehiculo
              LEFT JOIN pasajeros_rutas_qr prq ON prq.fk_viaje = v.id
              LEFT JOIN pasajeros_ejecutivos pe ON pe.fk_viaje = v.id
              WHERE
