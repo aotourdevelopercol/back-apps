@@ -100,7 +100,7 @@ class ViajeController extends Controller
 
         $validatedData = $request->validate([
             'fecha' => ['nullable', 'string'],
-            'app_user_id' => ['nullable', 'number'],
+            'app_user_id' => ['nullable', 'string'],
             'codigo_viaje' => ['nullable', 'string'],
             'estado_viaje' => ['nullable', 'array'],
         ]);
