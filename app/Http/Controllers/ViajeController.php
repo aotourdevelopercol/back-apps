@@ -172,8 +172,18 @@ class ViajeController extends Controller
             // En este caso, se retornan los resultados de la consulta.
             $results = DB::select($query, $params);
 
+            $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, $validatedData['fecha']);
+            $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos($validatedData['app_user_id'], $validatedData['fecha']);
+
+            // Combina todos los resultados en un solo array si existen datos
+            if (!empty($listaVijesPendientes)) {
+                $results = array_merge($results, $listaVijesPendientes);
+            }
+            if (!empty($listaVijesPendientesEjecutivos)) {
+                $results = array_merge($results, $listaVijesPendientesEjecutivos);
+            }
+
             return Response::json([
-                'user' => $user->codigo_empleado,
                 'response' => true,
                 'listado' => $results,
             ]);
@@ -181,6 +191,111 @@ class ViajeController extends Controller
             \Log::error('Error al listar viajes generales: ' . $th->getMessage());
         }
 
+    }
+
+
+    // Consulta de viajes pendientes Rutas
+    private function listarViajesPendientesRutas($appUserId, $fecha)
+    {
+
+        try {
+
+            $query = "SELECT 
+                        rs.id,
+                        rs.fecha,
+                        rs.hora,
+                        null as cantidad_pasajeros,
+                        81 AS id_estado,
+                        'NOPROMAN' AS codigo_estado,
+                        'NO PROGRAMADO' AS nombre_estado,
+                        70 AS id_tipo_ruta,
+                        'RUTA' AS codigo_tipo_ruta,
+                        'RUTA' AS nombre_tipo_ruta,
+                        null as placa,
+                        null as modelo,
+                        null as marca,
+                        null as color,
+                        null as codigo_tipo_vehiculo,
+                        null as nombre_tipo_vehiculo,
+                        null AS nombre_completo,
+                        null AS destinos
+                        from rutas_solicitadas rs
+                        left join rutas_solicitadas_pasajeros rsp on rsp.fk_rutas_solicitadas = rs.id
+                        where rsp.empleado_id = ?";
+
+
+            $params = [
+                $appUserId,
+            ];
+
+            if (!empty($fecha)) {
+                $query .= " AND rs.fecha = ?";
+                $params = array_merge($params, [$fecha]); // Wrap in array
+            }
+
+            $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17;";
+
+            $results = DB::select($query, $params);
+
+            return $results;
+
+        } catch (\Throwable $th) {
+            \Log::error('Error al listar viajes pendientes: ' . $th->getMessage());
+        }
+
+    }
+
+
+    // Consulta de viajes pendientes ejecutivos
+    public function listarViajesPendientesEjecutivos($appUserId, $fecha)
+    {
+        try {
+            $query = "SELECT 
+                        vu.id,
+                        vu.fecha,
+                        vu.hora,
+                        null as cantidad_pasajeros,
+                        81 AS id_estado,
+                        'NOPROMAN' AS codigo_estado,
+                        'NO PROGRAMADO' AS nombre_estado,
+                        70 AS id_tipo_ruta,
+                        'RUTA' AS codigo_tipo_ruta,
+                        'RUTA' AS nombre_tipo_ruta,
+                        null as placa,
+                        null as modelo,
+                        null as marca,
+                        null as color,
+                        null as codigo_tipo_vehiculo,
+                        null as nombre_tipo_vehiculo,
+                        null AS nombre_completo,
+                        null AS destinos
+                        from viajes_upnet vu
+                        left join viajes_upnet_pasajeros vup on vup.fk_viaje_upnet = vu.id
+                        where vu.app_user = ?";
+
+            $params = [
+                $appUserId,
+            ];
+
+
+            if (!empty($fecha)) {
+                $query .= " AND vu.fecha = ?";
+                $params = array_merge($params, [$fecha]); // Wrap in array
+            }
+            $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17;";
+
+            $results = DB::select($query, $params);
+
+            Log::info('Viajes pendientes ejecutivos: ' . json_encode($query));
+            // Registrar la consulta y los parámetros de forma separada
+            Log::info('Consulta SQL de viajes pendientes ejecutivos: ', ['query' => $query, 'params' => $params]);
+
+
+            return $results;
+
+        } catch (\Throwable $th) {
+            \Log::error('Error al listar viajes pendientes ejecutivos: ' . $th->getMessage());
+        }
     }
 
     // formulario de solicitud de viaje ejecutivo
