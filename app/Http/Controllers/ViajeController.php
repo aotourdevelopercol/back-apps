@@ -176,7 +176,6 @@ class ViajeController extends Controller
 
             return response([
                 'response' => true,
-                'sql' => $query,
                 'listado' => $results,
             ]);
         } catch (\Throwable $th) {
