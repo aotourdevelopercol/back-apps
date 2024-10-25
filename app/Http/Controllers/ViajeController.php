@@ -166,7 +166,7 @@ class ViajeController extends Controller
 
             return Response::json([
                 'response' => true,
-                'listado' => $results,
+                'listado' => $results[0],
             ]);
 
         } catch (\Throwable $th) {
