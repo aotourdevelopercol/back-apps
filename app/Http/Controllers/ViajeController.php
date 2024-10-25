@@ -98,14 +98,14 @@ class ViajeController extends Controller
     function listarViajesGenerales(Request $request)
     {
 
-
         $validatedData = $request->validate([
             'fecha' => ['nullable', 'string'],
-            'id_empleado' => ['nullable', 'string'],
-            'app_user_id' => ['nullable', 'string'],
+            'app_user_id' => ['nullable', 'number'],
             'codigo_viaje' => ['nullable', 'string'],
             'estado_viaje' => ['nullable', 'array'],
         ]);
+
+        $user = User::where('id', $validatedData['app_user_id'])->first();
 
         try {
             $query = "SELECT
@@ -148,10 +148,10 @@ class ViajeController extends Controller
                  AND (t.codigo = ? or ? is null)";
 
             $params = [
-                $validatedData['id_empleado'],
-                $validatedData['id_empleado'], // Este es para la comparación "OR NULL"
-                $validatedData['app_user_id'] ?? 6428,
-                $validatedData['app_user_id'] ?? 6428, // Este es para la comparación "OR NULL"
+                $user->codigo_empleado,
+                $user->codigo_empleado, // Este es para la comparación "OR NULL"
+                $validatedData['app_user_id'],
+                $validatedData['app_user_id'], // Este es para la comparación "OR NULL"
                 $validatedData['codigo_viaje'] ?? null,
                 $validatedData['codigo_viaje'] ?? null, // Este es para la comparación "OR NULL"
             ];
@@ -174,7 +174,8 @@ class ViajeController extends Controller
             // En este caso, se retornan los resultados de la consulta.
             $results = DB::select($query, $params);
 
-            return response([
+            return Response::json([
+                'user' => $user->codigo_empleado,
                 'response' => true,
                 'listado' => $results,
             ]);
