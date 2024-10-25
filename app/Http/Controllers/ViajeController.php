@@ -101,8 +101,6 @@ class ViajeController extends Controller
 
         $validatedData = $request->validate([
             'fecha' => ['nullable', 'string'],
-            'fecha_inicio' => ['nullable', 'string'],
-            'fecha_fin' => ['nullable', 'string'],
             'id_empleado' => ['nullable', 'string'],
             'app_user_id' => ['nullable', 'string'],
             'codigo_viaje' => ['nullable', 'string'],
@@ -163,11 +161,6 @@ class ViajeController extends Controller
                 $params = array_merge($params, [$validatedData['fecha']]); // Wrap in array
             }
 
-            if (!empty($validatedData['fecha_inicio']) && !empty($validatedData['fecha_fin'])) {
-                $query .= " AND v.fecha_viaje BETWEEN ? AND ?";
-                $params = array_merge($params, [$validatedData['fecha_inicio'], $validatedData['fecha_fin']]); // Wrap in array
-            }
-
             // Comprobar si hay múltiples estados de viaje
             if (!empty($validatedData['estado_viaje'])) {
                 $placeholders = implode(',', array_fill(0, count($validatedData['estado_viaje']), '?'));
@@ -183,6 +176,7 @@ class ViajeController extends Controller
 
             return response([
                 'response' => true,
+                'sql' => $query,
                 'listado' => $results,
             ]);
         } catch (\Throwable $th) {
