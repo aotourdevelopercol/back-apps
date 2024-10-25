@@ -9,6 +9,7 @@ use App\Models\Tipo;
 use DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\ViajesU;
+use App\Models\User;
 use Response;
 use Auth;
 
