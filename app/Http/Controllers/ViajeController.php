@@ -159,13 +159,12 @@ class ViajeController extends Controller
 
             if (!empty($validatedData['fecha'])) {
                 $query .= " AND v.fecha_viaje = ?";
-                $params = array_merge($params, $validatedData['fecha']);
+                $params = array_merge($params, [$validatedData['fecha']]); // Wrap in array
             }
 
             if (!empty($validatedData['fecha_inicio']) && !empty($validatedData['fecha_fin'])) {
                 $query .= " AND v.fecha_viaje BETWEEN ? AND ?";
-                $params = array_merge($params, $validatedData['fecha_inicio']);
-                $params = array_merge($params, $validatedData['fecha_fin']);
+                $params = array_merge($params, [$validatedData['fecha_inicio'], $validatedData['fecha_fin']]); // Wrap in array
             }
 
             // Comprobar si hay múltiples estados de viaje
