@@ -490,12 +490,12 @@ class Viajes extends Controller
                 $lugar->save();
 
                 // Respuesta exitosa
-                return response()->json([
+                return Response::json([
                     'respuesta' => true
                 ]);
             } else {
                 // Si no se encuentra el lugar, devolver falso
-                return response()->json([
+                return Response::json([
                     'respuesta' => false,
                     'mensaje' => 'Lugar no encontrado'
                 ]);
