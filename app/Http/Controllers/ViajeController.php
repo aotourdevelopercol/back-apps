@@ -399,8 +399,6 @@ class ViajeController extends Controller
                 'FINALIZADO'
             ];
 
-            \Log::info('SQL: ' . $query . ' PARAM: ' . $params);
-
             $results = DB::select($query, $params);
 
             return $results;
