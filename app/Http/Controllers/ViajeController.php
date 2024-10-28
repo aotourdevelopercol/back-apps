@@ -147,7 +147,7 @@ class ViajeController extends Controller
 
             return Response::json([
                 'response' => true,
-                'calificacion' => $calification[0],
+                'calificacion' => $calification,
                 'listado' => $results[0],
             ]);
 
