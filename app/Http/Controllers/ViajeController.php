@@ -403,7 +403,7 @@ class ViajeController extends Controller
 
             $results = DB::select($query, $params);
 
-            \Log::info('RESULT: ' . $results);
+            \Log::info($results);
 
             return $results;
 
