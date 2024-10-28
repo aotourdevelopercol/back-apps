@@ -143,8 +143,11 @@ class ViajeController extends Controller
 
             $results = DB::select($query, $params);
 
+            $calification = $this->calificationtrip($validateData['app_user_id'], null);
+
             return Response::json([
                 'response' => true,
+                'calificacion' => $calification[0],
                 'listado' => $results[0],
             ]);
 
@@ -357,6 +360,51 @@ class ViajeController extends Controller
 
         } catch (\Throwable $th) {
             \Log::error('Error al listar viajes pendientes ejecutivos: ' . $th->getMessage());
+        }
+    }
+
+    private function calificationtrip($idEmpleado, $appUserId) {
+        try {
+            $query = "SELECT
+                v.id,
+                v.fecha_viaje,
+                v.hora_viaje,
+                cv.id as id_calificacion
+                FROM
+                    viajes v
+                LEFT JOIN pasajeros_rutas_qr prq ON prq.fk_viaje = v.id
+                LEFT JOIN pasajeros_ejecutivos pe ON pe.fk_viaje = v.id
+                LEFT JOIN calificacion_viajes cv ON cv.fk_viaje = v.id
+                LEFT JOIN estados e ON e.id = v.fk_estado
+                WHERE
+                    v.fecha_viaje = ?
+                    AND
+                    v.estado_eliminacion IS NULL
+                    AND
+                    (
+                        prq.id_empleado = ?
+                        OR
+                        v.app_user_id = ?
+                    )
+                    AND e.codigo IN (?)
+                    AND cv.id is null
+                GROUP BY v.id, v.fecha_viaje, v.hora_viaje, cv.id
+                ORDER BY v.hora_viaje DESC
+                LIMIT 1;";
+
+            $params = [
+                date('Y-m-d'),
+                $idEmpleado ?? null,
+                $appUserId ?? null,
+                'FINALIZADO'
+            ];
+
+            $results = DB::select($query, $params);
+
+            return $results;
+
+        }catch (\Throwable $th) {
+            \Log::error('Error al obtener la ultima calificacion pendiente por revisar: ' . $th->getMessage());
         }
     }
 
