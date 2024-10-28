@@ -147,7 +147,7 @@ class ViajeController extends Controller
 
             return Response::json([
                 'response' => true,
-                'calificacion' => $calification,
+                'calificacion' => $calification[0],
                 'listado' => $results[0],
             ]);
 
@@ -369,12 +369,19 @@ class ViajeController extends Controller
                 v.id,
                 v.fecha_viaje,
                 v.hora_viaje,
-                cv.id as id_calificacion
+                CONCAT(c.primer_nombre, ' ' ,c.primer_apellido) as conductor,
+                e2.nombre as tipo_de_vehiculo,
+                cv.id as id_calificacion,
+                JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
                 FROM
                     viajes v
                 LEFT JOIN pasajeros_rutas_qr prq ON prq.fk_viaje = v.id
                 LEFT JOIN pasajeros_ejecutivos pe ON pe.fk_viaje = v.id
                 LEFT JOIN calificacion_viajes cv ON cv.fk_viaje = v.id
+                LEFT JOIN vehiculos v2 on v2.id = v.fk_vehiculo
+                LEFT JOIN estados e2 on e2.id = v2.fk_tipo_vehiculo
+                LEFT JOIN conductores c on c.id = v.fk_conductor
+                LEFT JOIN destinos d ON d.fk_viaje = v.id
                 LEFT JOIN estados e ON e.id = v.fk_estado
                 WHERE
                     v.fecha_viaje = ?
@@ -388,7 +395,7 @@ class ViajeController extends Controller
                     )
                     AND e.codigo IN (?)
                     AND cv.id is null
-                GROUP BY v.id, v.fecha_viaje, v.hora_viaje, cv.id
+                GROUP BY 1,2,3,4,5,6
                 ORDER BY v.hora_viaje DESC
                 LIMIT 1;";
 
