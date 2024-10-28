@@ -403,8 +403,6 @@ class ViajeController extends Controller
 
             $results = DB::select($query, $params);
 
-            \Log::info($results);
-
             return $results;
 
         }catch (\Throwable $th) {
