@@ -297,7 +297,7 @@ class ViajeController extends Controller
                                             WHEN rs.fk_tipo_ruta = 67 THEN c.razonsocial
                                             ELSE rsp.direccion
                                         END,
-                            'coordenadas', 0,
+                            'coordenadas', null,
                             'orden', 1
                         ),
                         JSON_OBJECT(
@@ -305,8 +305,8 @@ class ViajeController extends Controller
                                             WHEN rs.fk_tipo_ruta = 67 THEN rsp.direccion
                                             ELSE c.razonsocial
                                         END,
-                            'coordenadas', 0,
-                            'orden', 1
+                            'coordenadas', null,
+                            'orden', 2
                         )
                     ) AS destinos
                 FROM
@@ -364,13 +364,13 @@ class ViajeController extends Controller
                     JSON_ARRAY(
                                         JSON_OBJECT(
                                             'direccion', vu.desde,
-                                            'coordenadas', 0,
+                                            'coordenadas', null,
                                             'orden', 1
                                         ),
                                         JSON_OBJECT(
                                             'direccion', vu.hasta,
-                                            'coordenadas', 0,
-                                            'orden', 1
+                                            'coordenadas', null,
+                                            'orden', 2
                                         )
                                     ) AS destinos
                 FROM
