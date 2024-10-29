@@ -241,8 +241,8 @@ class ViajeController extends Controller
                 // Verifica si estado_viaje contiene alguno de los textos específicos
                 $estadoViaje = $validatedData['estado_viaje'];
 
-                if (in_array($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
-                    \Log::info('Paso');
+                // if (in_array($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
+                    // \Log::info('Paso');
 
                     $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, !empty($validatedData['fecha']));
                     $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos(!empty($validatedData['app_user_id']), !empty($validatedData['fecha']));
@@ -254,7 +254,7 @@ class ViajeController extends Controller
                         $results = array_merge($results, $listaVijesPendientesEjecutivos);
                     }
                 }
-            }
+            // }
 
             return Response::json([
                 'response' => true,
