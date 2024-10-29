@@ -237,10 +237,12 @@ class ViajeController extends Controller
             // En este caso, se retornan los resultados de la consulta.
             $results = DB::select($query, $params);
 
-            if (!isset($validatedData['estado_viaje']) || !empty($validatedData['estado_viaje'])) {
+            if (!empty($validatedData['estado_viaje'])) {
                 // Verifica si estado_viaje contiene alguno de los textos específicos
                 $estadoViaje = $validatedData['estado_viaje'];
-                if (in_array($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR"])) {
+                \Log::info('Estados' . $estados);
+
+                if (in_array($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
 
                     $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, !empty($validatedData['fecha']));
                     $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos(!empty($validatedData['app_user_id']), !empty($validatedData['fecha']));
