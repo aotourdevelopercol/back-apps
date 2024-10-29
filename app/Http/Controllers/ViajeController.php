@@ -237,15 +237,21 @@ class ViajeController extends Controller
             // En este caso, se retornan los resultados de la consulta.
             $results = DB::select($query, $params);
 
-            // $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, !empty($validatedData['fecha']));
-            // $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos(!empty($validatedData['app_user_id']), !empty($validatedData['fecha']));
+            if (!isset($validatedData['estado_viaje']) || !empty($validatedData['estado_viaje'])) {
+                // Verifica si estado_viaje contiene alguno de los textos específicos
+                $estadoViaje = $validatedData['estado_viaje'];
+                if (in_array($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR"])) {
 
-            // Combina todos los resultados en un solo array si existen datos
-          if (!empty($listaVijesPendientes)) {
-                $results = array_merge($results, $listaVijesPendientes);
-            }
-            if (!empty($listaVijesPendientesEjecutivos)) {
-                $results = array_merge($results, $listaVijesPendientesEjecutivos);
+                    $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, !empty($validatedData['fecha']));
+                    $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos(!empty($validatedData['app_user_id']), !empty($validatedData['fecha']));
+                    // Combina todos los resultados en un solo array si existen datos
+                    if (!empty($listaVijesPendientes)) {
+                            $results = array_merge($results, $listaVijesPendientes);
+                        }
+                    if (!empty($listaVijesPendientesEjecutivos)) {
+                        $results = array_merge($results, $listaVijesPendientesEjecutivos);
+                    }
+                }
             }
 
             return Response::json([
@@ -266,28 +272,48 @@ class ViajeController extends Controller
         try {
 
             $query = "SELECT
-                        rs.id,
-                        rs.fecha,
-                        rs.hora,
-                        null as cantidad_pasajeros,
-                        81 AS id_estado,
-                        'NOPROMAN' AS codigo_estado,
-                        'NO PROGRAMADO' AS nombre_estado,
-                        70 AS id_tipo_ruta,
-                        'RUTA' AS codigo_tipo_ruta,
-                        'RUTA' AS nombre_tipo_ruta,
-                        null as placa,
-                        null as modelo,
-                        null as marca,
-                        null as color,
-                        null as codigo_tipo_vehiculo,
-                        null as nombre_tipo_vehiculo,
-                        null AS nombre_completo,
-                        null AS destinos
-                        from rutas_solicitadas rs
-                        left join rutas_solicitadas_pasajeros rsp on rsp.fk_rutas_solicitadas = rs.id
+                    rs.id,
+                    rs.fecha,
+                    rs.hora,
+                    NULL AS cantidad_pasajeros,
+                    81 AS id_estado,
+                    'NOPROMAN' AS codigo_estado,
+                    'NO PROGRAMADO' AS nombre_estado,
+                    70 AS id_tipo_ruta,
+                    'RUTA' AS codigo_tipo_ruta,
+                    'RUTA' AS nombre_tipo_ruta,
+                    NULL AS placa,
+                    NULL AS modelo,
+                    NULL AS marca,
+                    NULL AS color,
+                    NULL AS codigo_tipo_vehiculo,
+                    NULL AS nombre_tipo_vehiculo,
+                    NULL AS nombre_completo,
+                    JSON_ARRAY(
+                        JSON_OBJECT(
+                            'direccion', CASE
+                                            WHEN rs.fk_tipo_ruta = 67 THEN c.razonsocial
+                                            ELSE rsp.direccion
+                                        END,
+                            'coordenadas', 0,
+                            'orden', 1
+                        ),
+                        JSON_OBJECT(
+                            'direccion', CASE
+                                            WHEN rs.fk_tipo_ruta = 67 THEN rsp.direccion
+                                            ELSE c.razonsocial
+                                        END,
+                            'coordenadas', 0,
+                            'orden', 1
+                        )
+                    ) AS destinos
+                FROM
+                    rutas_solicitadas rs
+                LEFT JOIN
+                    centrosdecosto c ON c.id = rs.fk_centrodecosto
+                LEFT JOIN
+                    rutas_solicitadas_pasajeros rsp ON rsp.fk_rutas_solicitadas = rs.id
                         where rsp.empleado_id = ?";
-
 
             $params = [
                 $appUserId,
@@ -316,26 +342,43 @@ class ViajeController extends Controller
     {
         try {
             $query = "SELECT
-                        vu.id,
-                        vu.fecha,
-                        vu.hora,
-                        null as cantidad_pasajeros,
-                        81 AS id_estado,
-                        'NOPROMAN' AS codigo_estado,
-                        'NO PROGRAMADO' AS nombre_estado,
-                        70 AS id_tipo_ruta,
-                        'RUTA' AS codigo_tipo_ruta,
-                        'RUTA' AS nombre_tipo_ruta,
-                        null as placa,
-                        null as modelo,
-                        null as marca,
-                        null as color,
-                        null as codigo_tipo_vehiculo,
-                        null as nombre_tipo_vehiculo,
-                        null AS nombre_completo,
-                        null AS destinos
-                        from viajes_upnet vu
-                        left join viajes_upnet_pasajeros vup on vup.fk_viaje_upnet = vu.id
+                    vu.id,
+                    vu.fecha,
+                    vu.hora,
+                    null as cantidad_pasajeros,
+                    81 AS id_estado,
+                    'NOPROMAN' AS codigo_estado,
+                    'NO PROGRAMADO' AS nombre_estado,
+                    69 AS id_tipo_ruta,
+                    'EJEC' AS codigo_tipo_ruta,
+                    'EJECUTIVO' AS nombre_tipo_ruta,
+                    null as placa,
+                    null as modelo,
+                    null as marca,
+                    null as color,
+                    null as codigo_tipo_vehiculo,
+                    null as nombre_tipo_vehiculo,
+                    null AS nombre_completo,
+                    JSON_ARRAY(
+                                        JSON_OBJECT(
+                                            'direccion', vu.desde,
+                                            'coordenadas', 0,
+                                            'orden', 1
+                                        ),
+                                        JSON_OBJECT(
+                                            'direccion', vu.hasta,
+                                            'coordenadas', 0,
+                                            'orden', 1
+                                        )
+                                    ) AS destinos
+                FROM
+                    viajes_upnet vu
+                LEFT JOIN
+                                    centrosdecosto c ON
+                    c.id = vu.centrodecosto
+                LEFT JOIN
+                                    viajes_upnet_pasajeros vup ON
+                    vup.fk_viaje_upnet = vu.id
                         where vu.app_user = ?";
 
             $params = [
