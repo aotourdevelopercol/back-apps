@@ -238,23 +238,36 @@ class ViajeController extends Controller
             $results = DB::select($query, $params);
 
             if (!empty($validatedData['estado_viaje'])) {
-                // Verifica si estado_viaje contiene alguno de los textos específicos
-                $estadoViaje = $validatedData['estado_viaje'];
+                // Verifica el valor de estado_viaje
+                $estadoViaje = trim($validatedData['estado_viaje']); // Eliminar espacios en blanco
 
-                // if (in_array($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
-                    // \Log::info('Paso');
+                // Depuración: Verifica el valor
+                error_log("Estado de viaje recibido: " . $estadoViaje);
+
+                // Verifica si estado_viaje contiene alguno de los textos específicos
+                if (in_array($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
+                    // Si entra aquí, significa que el valor coincide
+                    error_log("Estado de viaje es válido: " . $estadoViaje);
 
                     $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, !empty($validatedData['fecha']));
                     $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos(!empty($validatedData['app_user_id']), !empty($validatedData['fecha']));
+
                     // Combina todos los resultados en un solo array si existen datos
                     if (!empty($listaVijesPendientes)) {
-                            $results = array_merge($results, $listaVijesPendientes);
-                        }
+                        $results = array_merge($results, $listaVijesPendientes);
+                    }
                     if (!empty($listaVijesPendientesEjecutivos)) {
                         $results = array_merge($results, $listaVijesPendientesEjecutivos);
                     }
+                } else {
+                    // Depuración: El estado de viaje no es válido
+                    error_log("Estado de viaje no coincide con las opciones válidas.");
                 }
-            // }
+            } else {
+                // Depuración: estado_viaje está vacío
+                error_log("Estado de viaje está vacío.");
+            }
+
 
             return Response::json([
                 'response' => true,
@@ -268,7 +281,7 @@ class ViajeController extends Controller
 
 
     // Consulta de viajes pendientes Rutas
-    private function listarViajesPendientesRutas($appUserId, $fecha)
+    private function listarViajesPendientesRutas($idEmpleado, $fecha)
     {
 
         try {
@@ -318,7 +331,7 @@ class ViajeController extends Controller
                         where rsp.empleado_id = ?";
 
             $params = [
-                $appUserId,
+                $idEmpleado
             ];
 
             if (!empty($fecha)) {
