@@ -238,16 +238,14 @@ class ViajeController extends Controller
             $results = DB::select($query, $params);
 
             if (!empty($validatedData['estado_viaje'])) {
-                // Verifica el valor de estado_viaje
-                $estadoViaje = trim($validatedData['estado_viaje']); // Eliminar espacios en blanco
 
                 // Depuración: Verifica el valor
-                error_log("Estado de viaje recibido: " . $estadoViaje);
+                error_log("Estado de viaje recibido: " . $validatedData['estado_viaje']);
 
                 // Verifica si estado_viaje contiene alguno de los textos específicos
-                if (in_array($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
+                if (in_array($validatedData['estado_viaje'], ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
                     // Si entra aquí, significa que el valor coincide
-                    error_log("Estado de viaje es válido: " . $estadoViaje);
+                    error_log("Estado de viaje es válido: " . $validatedData['estado_viaje']);
 
                     $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, !empty($validatedData['fecha']));
                     $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos(!empty($validatedData['app_user_id']), !empty($validatedData['fecha']));
