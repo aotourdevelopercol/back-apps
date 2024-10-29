@@ -238,14 +238,17 @@ class ViajeController extends Controller
             $results = DB::select($query, $params);
 
             if (!empty($validatedData['estado_viaje'])) {
-
                 // Depuración: Verifica el valor
-                error_log("Estado de viaje recibido: " . $validatedData['estado_viaje']);
+                error_log("Estado de viaje recibido: " . print_r($validatedData['estado_viaje'], true));
 
                 // Verifica si estado_viaje contiene alguno de los textos específicos
-                if (in_array($validatedData['estado_viaje'], ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
-                    // Si entra aquí, significa que el valor coincide
-                    error_log("Estado de viaje es válido: " . $validatedData['estado_viaje']);
+                // Asegúrate de manejar el caso si es un array
+                $estadoViaje = (array)$validatedData['estado_viaje']; // Convierte a array si no lo es
+
+                // Si estado_viaje es un array, verifica si alguno de sus elementos está en la lista
+                if (is_array($estadoViaje) && array_intersect($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
+                    // Si entra aquí, significa que al menos un valor coincide
+                    error_log("Estado de viaje es válido: " . print_r($estadoViaje, true));
 
                     $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, !empty($validatedData['fecha']));
                     $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos(!empty($validatedData['app_user_id']), !empty($validatedData['fecha']));
@@ -265,7 +268,6 @@ class ViajeController extends Controller
                 // Depuración: estado_viaje está vacío
                 error_log("Estado de viaje está vacío.");
             }
-
 
             return Response::json([
                 'response' => true,
