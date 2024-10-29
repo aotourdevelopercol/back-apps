@@ -238,21 +238,11 @@ class ViajeController extends Controller
             $results = DB::select($query, $params);
 
             if (!empty($validatedData['estado_viaje'])) {
-                // Depuración: Verifica el valor
-                error_log("Estado de viaje recibido: " . print_r($validatedData['estado_viaje'], true));
-
-                // Verifica si estado_viaje contiene alguno de los textos específicos
-                // Asegúrate de manejar el caso si es un array
                 $estadoViaje = (array)$validatedData['estado_viaje']; // Convierte a array si no lo es
-
                 // Si estado_viaje es un array, verifica si alguno de sus elementos está en la lista
                 if (is_array($estadoViaje) && array_intersect($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
-                    // Si entra aquí, significa que al menos un valor coincide
-                    error_log("Estado de viaje es válido: " . print_r($estadoViaje, true));
-
-                    $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, !empty($validatedData['fecha']));
-                    $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos(!empty($validatedData['app_user_id']), !empty($validatedData['fecha']));
-
+                    // $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, !empty($validatedData['fecha']));
+                    // $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos(!empty($validatedData['app_user_id']), !empty($validatedData['fecha']));
                     // Combina todos los resultados en un solo array si existen datos
                     if (!empty($listaVijesPendientes)) {
                         $results = array_merge($results, $listaVijesPendientes);
@@ -260,13 +250,7 @@ class ViajeController extends Controller
                     if (!empty($listaVijesPendientesEjecutivos)) {
                         $results = array_merge($results, $listaVijesPendientesEjecutivos);
                     }
-                } else {
-                    // Depuración: El estado de viaje no es válido
-                    error_log("Estado de viaje no coincide con las opciones válidas.");
                 }
-            } else {
-                // Depuración: estado_viaje está vacío
-                error_log("Estado de viaje está vacío.");
             }
 
             return Response::json([
