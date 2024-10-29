@@ -237,12 +237,18 @@ class ViajeController extends Controller
             // En este caso, se retornan los resultados de la consulta.
             $results = DB::select($query, $params);
 
+            $fechaAux = "";
+            if (!empty($validatedData['fecha'])) {
+                $fechaAux = $validatedData['fecha'];
+            }
+
             if (!empty($validatedData['estado_viaje'])) {
                 $estadoViaje = (array)$validatedData['estado_viaje']; // Convierte a array si no lo es
                 // Si estado_viaje es un array, verifica si alguno de sus elementos está en la lista
                 if (is_array($estadoViaje) && array_intersect($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
-                    // $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, !empty($validatedData['fecha']));
-                    // $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos(!empty($validatedData['app_user_id']), !empty($validatedData['fecha']));
+                    $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, $fechaAux);
+
+                    $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos($validatedData['app_user_id'], $fechaAux);
                     // Combina todos los resultados en un solo array si existen datos
                     if (!empty($listaVijesPendientes)) {
                         $results = array_merge($results, $listaVijesPendientes);
@@ -323,7 +329,7 @@ class ViajeController extends Controller
                 $params = array_merge($params, [$fecha]); // Wrap in array
             }
 
-            $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17;";
+            $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18;";
 
             $results = DB::select($query, $params);
 
@@ -339,6 +345,7 @@ class ViajeController extends Controller
     // Consulta de viajes pendientes ejecutivos
     public function listarViajesPendientesEjecutivos($appUserId, $fecha)
     {
+
         try {
             $query = "SELECT
                     vu.id,
@@ -384,6 +391,7 @@ class ViajeController extends Controller
                 $appUserId,
             ];
 
+           
 
             if (!empty($fecha)) {
                 $query .= " AND vu.fecha = ?";
@@ -393,9 +401,7 @@ class ViajeController extends Controller
 
             $results = DB::select($query, $params);
 
-            Log::info('Viajes pendientes ejecutivos: ' . json_encode($query));
-            // Registrar la consulta y los parámetros de forma separada
-            Log::info('Consulta SQL de viajes pendientes ejecutivos: ', ['query' => $query, 'params' => $params]);
+            
 
 
             return $results;
