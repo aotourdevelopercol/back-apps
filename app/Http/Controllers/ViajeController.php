@@ -514,7 +514,7 @@ class ViajeController extends Controller
                 $viaje->detalles = $viajeData['detalles'] ?? null;
                 $viaje->fk_sede = $fk_sede;
                 $viaje->fk_centrodecosto = $centro;
-                $viaje->fk_ciudad = 2;
+                $viaje->fk_ciudad = $query->ciudad_user;
                 $viaje->vuelo = $viajeData['vuelo'] ?? null;
                 $viaje->tipo_solicitud = $tipo;
                 $viaje->created_at = date('Y-m-d H:i:s');
