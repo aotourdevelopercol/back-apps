@@ -25,7 +25,7 @@ class ViajeController extends Controller
             $validatedData = $request->validate([
                 'fk_viaje' => 'required|integer',
                 'fk_user' => 'required|integer',
-                'calificacion' => 'required|integer|min:1|max:5', // Asumiendo que la calificación es de 1 a 5
+                'calificacion' => 'required|numeric', // Asumiendo que la calificación es de 1 a 5
                 'comentario' => 'required|string',
             ]);
 
