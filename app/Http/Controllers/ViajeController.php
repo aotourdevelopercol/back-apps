@@ -111,6 +111,8 @@ class ViajeController extends Controller
 
         try {
 
+            $user = User::where('id', $validatedData['app_user_id'])->first();
+
             $query = "SELECT
             v.id,
             v.fecha_viaje,
@@ -120,11 +122,19 @@ class ViajeController extends Controller
             t.id as id_tipo,
             t.codigo as codigo_tipo,
             t.nombre as nombre_tipo,
+            t3.id as id_tipo_ruta,
+            t3.codigo as codigo_tipo_ruta,
+            t3.nombre as nombre_tipo_ruta,
             e.id as id_estado,
             e.codigo as codigo_estado,
             e.nombre as nombre_estado,
-            pe.id as id_pasajero,
-            pe.nombre AS nombre_pasajero,
+            (case when pe.id is null then prq.id_empleado else pe.id end) as id_pasajero,
+            (case when pe.nombre is null then prq.nombre else pe.nombre end) as nombre_pasajero,
+            t4.id as id_estado_pasajero_ruta,
+            t4.codigo as codigo_estado_pasajero_ruta,
+            t4.nombre as nombre_estado_pasajero_ruta,
+            prq.recoger_a as recoger_ruta_pasajero,
+            prq.codigo_viaje as codigo_ruta_pasajero,
             v2.placa,
             v2.modelo,
             v2.marca,
@@ -139,14 +149,18 @@ class ViajeController extends Controller
         left join vehiculos v2 on v2.id = v.fk_vehiculo
         left join conductores c2 on c2.id = v.fk_conductor
         left join pasajeros_ejecutivos pe on pe.fk_viaje = v.id
+        left join pasajeros_rutas_qr prq on prq.fk_viaje = v.id
         left join estados e on e.id = v.fk_estado
         left join destinos d on d.fk_viaje = v.id
         left join tipos t on t.id = v.tipo_traslado
         left join tipos t2 on t2.id = v2.fk_tipo_vehiculo
-        where v.app_user_id = ? and pe.app_user_id = ? and e.codigo = 'INICIADO'
-        GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22;";
+        left join tipos t3 on t3.id = v.tipo_ruta
+        left join tipos t4 on t4.id = prq.estado_ruta
+        where v.app_user_id = ? and (pe.app_user_id = ? or prq.id_empleado = ?) and e.codigo = 'INICIADO'
+        GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
+       	LIMIT 1;";
 
-            $params = [$validateData['app_user_id'], $validateData['app_user_id']];
+            $params = [$validateData['app_user_id'], $validateData['app_user_id'],$user->codigo_empleado];
 
             $results = DB::select($query, $params);
 
