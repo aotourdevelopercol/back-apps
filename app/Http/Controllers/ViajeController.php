@@ -26,7 +26,7 @@ class ViajeController extends Controller
                 'fk_viaje' => 'required|integer',
                 'fk_user' => 'required|integer',
                 'calificacion' => 'required|numeric', // Asumiendo que la calificación es de 1 a 5
-                'comentario' => 'required|string',
+                'comentario' => 'nullable|string',
             ]);
 
             // Insertar el registro
