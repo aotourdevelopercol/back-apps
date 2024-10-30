@@ -588,7 +588,7 @@ class Viajes extends Controller
             $lugar->direccion = $direccion;
             $lugar->latitude = $latitude;
             $lugar->longitude = $longitude;
-            $lugar->id = $id;
+            $lugar->fk_user_app = $id;
 
             $lugar->save();
 
@@ -615,7 +615,7 @@ class Viajes extends Controller
             $id = $request->id;
 
             $consulta = DB::table('lugares')
-                ->where('id', $id)
+                ->where('fk_user_app', $id)
                 ->get();
 
             if ($consulta) {
