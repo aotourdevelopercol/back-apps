@@ -278,8 +278,8 @@ class ViajeController extends Controller
 
             $query = "SELECT
                     rs.id,
-                    rs.fecha,
-                    rs.hora,
+                    rs.fecha as fecha_viaje,
+                    rs.hora as hora_viaje,
                     NULL AS cantidad_pasajeros,
                     81 AS id_estado,
                     'NOPROMAN' AS codigo_estado,
@@ -349,8 +349,8 @@ class ViajeController extends Controller
         try {
             $query = "SELECT
                     vu.id,
-                    vu.fecha,
-                    vu.hora,
+                    vu.fecha as fecha_viaje,
+                    vu.hora as hora_viaje,
                     null as cantidad_pasajeros,
                     81 AS id_estado,
                     'NOPROMAN' AS codigo_estado,
@@ -391,7 +391,7 @@ class ViajeController extends Controller
                 $appUserId,
             ];
 
-           
+
 
             if (!empty($fecha)) {
                 $query .= " AND vu.fecha = ?";
@@ -401,7 +401,7 @@ class ViajeController extends Controller
 
             $results = DB::select($query, $params);
 
-            
+
 
 
             return $results;
