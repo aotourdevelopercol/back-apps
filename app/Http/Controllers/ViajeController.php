@@ -111,7 +111,7 @@ class ViajeController extends Controller
 
         try {
 
-            $user = User::where('id', $validatedData['app_user_id'])->first();
+            $user = User::where('id', $validateData['app_user_id'])->first();
 
             $query = "SELECT
             v.id,
@@ -492,7 +492,7 @@ class ViajeController extends Controller
         try {
             // Ejecutar la consulta para obtener el usuario
             $query = DB::selectOne("
-            SELECT u.id, u.centrodecosto_id, u.subcentrodecosto_id, c.fk_sede as sede_user, c.ciudad as ciudad_user, ec.nombre, ec.telefono, ec.correo, u.master 
+            SELECT u.id, u.centrodecosto_id, u.subcentrodecosto_id, c.fk_sede as sede_user, c.ciudad as ciudad_user, ec.nombre, ec.telefono, ec.correo, u.master
             FROM users u
             LEFT JOIN centrosdecosto c ON c.id = u.centrodecosto_id
             LEFT JOIN empleados_clientes ec ON ec.codigo_empleado = u.codigo_empleado
