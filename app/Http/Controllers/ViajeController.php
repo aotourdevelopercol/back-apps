@@ -432,7 +432,7 @@ class ViajeController extends Controller
                 LEFT JOIN destinos d ON d.fk_viaje = v.id
                 LEFT JOIN estados e ON e.id = v.fk_estado
                 WHERE
-                    v.fecha_viaje = ?
+                    v.fecha_viaje = '2024-10-29'
                     AND
                     v.estado_eliminacion IS NULL
                     AND
@@ -448,13 +448,13 @@ class ViajeController extends Controller
                 LIMIT 1;";
 
             $params = [
-                date('Y-m-d'),
                 $idEmpleado ?? null,
                 $appUserId ?? null,
                 'FINALIZADO'
             ];
 
             $results = DB::select($query, $params);
+
             \Log::info(json_encode($params));
 
             return $results;
