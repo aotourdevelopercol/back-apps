@@ -37,10 +37,17 @@ class ViajeController extends Controller
                 'comentario' => $validatedData['comentario'],
             ]);
 
-            return response()->json(['message' => 'Calificación registrada con éxito']);
+            return Response::json([
+                'response' => true,
+                'message' => 'Calificación registrada con éxito'
+            ]);
 
         } catch (\Throwable $th) {
             \Log::error('Error al calificar viaje: ' . $th->getMessage());
+            return Response::json([
+                'response' => false,
+                'message' => 'Calificación no registrada con éxito'
+            ]);
         }
 
     }
