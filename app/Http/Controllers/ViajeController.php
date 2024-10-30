@@ -455,6 +455,7 @@ class ViajeController extends Controller
             ];
 
             $results = DB::select($query, $params);
+            \Log::info(json_encode($params));
 
             return $results;
 
