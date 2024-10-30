@@ -250,7 +250,7 @@ class ViajeController extends Controller
             }
 
             if (!empty($validatedData['estado_viaje'])) {
-                $estadoViaje = (array)$validatedData['estado_viaje']; // Convierte a array si no lo es
+                $estadoViaje = (array) $validatedData['estado_viaje']; // Convierte a array si no lo es
                 // Si estado_viaje es un array, verifica si alguno de sus elementos está en la lista
                 if (is_array($estadoViaje) && array_intersect($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
                     $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, $fechaAux);
@@ -418,7 +418,8 @@ class ViajeController extends Controller
         }
     }
 
-    private function calificationtrip($idEmpleado, $appUserId) {
+    private function calificationtrip($idEmpleado, $appUserId)
+    {
         try {
             $query = "SELECT
                 v.id,
@@ -466,7 +467,7 @@ class ViajeController extends Controller
 
             return $results;
 
-        }catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             \Log::error('Error al obtener la ultima calificacion pendiente por revisar: ' . $th->getMessage());
         }
     }
@@ -474,61 +475,90 @@ class ViajeController extends Controller
     // formulario de solicitud de viaje ejecutivo
     public function requesttrips(Request $request)
     {
-
         try {
-            $viajes = $request->viajes;
-            $fk_sede = 1;
-            $centro = 489; // Buscar por el id de user que manda para poner el id del centrodecosto_id
+            // Ejecutar la consulta para obtener el usuario
+            $query = DB::selectOne("
+            SELECT u.id, u.centrodecosto_id, u.subcentrodecosto_id, c.fk_sede as sede_user, c.ciudad as ciudad_user, ec.nombre, ec.telefono, ec.correo, u.master 
+            FROM users u
+            LEFT JOIN centrosdecosto c ON c.id = u.centrodecosto_id
+            LEFT JOIN empleados_clientes ec ON ec.codigo_empleado = u.codigo_empleado
+            WHERE u.id = ?
+        ", [$request->id_user]);
 
-            if (count($viajes) > 1) {
-                $tipo = 2;
-            } else {
-                $tipo = 1;
+            // Verificar que se encontró el usuario
+            if (!$query) {
+                return response()->json([
+                    'response' => false,
+                    'codigo' => 'USER_NOT_FOUND',
+                    'message' => 'No se encontró un usuario con el id proporcionado.'
+                ]);
             }
 
-            for ($a = 0; $a < count($viajes); $a++) {
+            // Asegurarse de que $viajes sea un array
+            $viajes = $request->viajes ?? [];
+
+            $fk_sede = $query->sede_user;
+            $centro = $query->centrodecosto_id;
+
+            // Determinar el tipo de solicitud según la cantidad de viajes
+            $tipo = count($viajes) > 1 ? 2 : 1;
+
+            // Crear registros de viaje
+            foreach ($viajes as $viajeData) {
                 $viaje = new ViajesU;
                 $viaje->fecha_solicitud = date('Y-m-d');
-                $viaje->fecha = $viajes[$a]['fecha'];
-                $viaje->hora = $viajes[$a]['hora'];
-                $viaje->desde = $viajes[$a]['desde'] ?? null;
-                $viaje->hasta = $viajes[$a]['hasta'] ?? null;
-                $viaje->detalles = $viajes[$a]['detalles'] ?? null;
-                $viaje->fk_sede = 1;
-                $viaje->fk_centrodecosto = 489;
+                $viaje->fecha = $viajeData['fecha'];
+                $viaje->hora = $viajeData['hora'];
+                $viaje->desde = $viajeData['desde'] ?? null;
+                $viaje->hasta = $viajeData['hasta'] ?? null;
+                $viaje->detalles = $viajeData['detalles'] ?? null;
+                $viaje->fk_sede = $fk_sede;
+                $viaje->fk_centrodecosto = $centro;
                 $viaje->fk_ciudad = 2;
-                $viaje->vuelo = $viajes[$a]['vuelo'] ?? null;
+                $viaje->vuelo = $viajeData['vuelo'] ?? null;
                 $viaje->tipo_solicitud = $tipo;
                 $viaje->created_at = date('Y-m-d H:i:s');
-                $viaje->creado_por = 2;
+                $viaje->creado_por = $request->id_user;
                 $viaje->info_adicional = null;
                 $viaje->app_user = $request->id_user;
+                $viaje->fk_estado = ($query->master == 1) ? 81 : 82;
                 $viaje->save();
 
-
-                $pax = DB::table('viajes_upnet_pasajeros')
-                    ->insert([
-                        'nombre' => 'Omar Mugno',
-                        'celular' => '3106560877',
-                        'correo' => 'Omar.mugno@gmail.com',
+                try {
+                    Log::info('Datos a insertar en viajes_upnet_pasajeros: ', [
+                        'nombre' => $query->nombre,
+                        'celular' => $query->telefono,
+                        'correo' => $query->correo,
                         'fk_viaje_upnet' => $viaje->id
                     ]);
+
+                    DB::table('viajes_upnet_pasajeros')->insert([
+                        'nombre' => $query->nombre,
+                        'celular' => $query->telefono,
+                        'correo' => $query->correo,
+                        'fk_viaje_upnet' => $viaje->id
+                    ]);
+                } catch (\Throwable $e) {
+                    Log::error('Error al insertar en viajes_upnet_pasajeros: ' . $e->getMessage());
+                }
             }
 
-            return Response::json([
+            Log::info('Solicitud de viaje ejecutivo: ' . json_encode($query));
+
+
+
+
+            return response()->json([
                 'response' => true,
                 'codigo' => 'NOPROMAN',
             ]);
 
         } catch (\Throwable $th) {
-            \Log::error('Error al solicitar viaje ejecutivo: ' . $th->getMessage());
-            return response(json_encode([
+            Log::error('Error al solicitar viaje ejecutivo: ' . $th->getMessage());
+            return response()->json([
                 'response' => false,
                 'codigo' => 'FAIL',
-            ]));
+            ]);
         }
-
-
-
     }
 }
