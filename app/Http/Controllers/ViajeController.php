@@ -237,14 +237,14 @@ class ViajeController extends Controller
                 $validatedData['codigo_viaje'] ?? null, // Este es para la comparación "OR NULL"
             ];
 
-          
+
             if (!empty($validatedData['fecha'])) {
                 Log::info('Fecha: '. $validatedData['fecha']);
                 $query .= " AND v.fecha_viaje = ?";
                 $params = array_merge($params, [$validatedData['fecha']]); // Wrap in array
             }
 
-            
+
 
             // Comprobar si hay múltiples estados de viaje
             if (!isset($validatedData['estado_viaje']) || !empty($validatedData['estado_viaje'])) {
@@ -455,7 +455,7 @@ class ViajeController extends Controller
                 LEFT JOIN destinos d ON d.fk_viaje = v.id
                 LEFT JOIN estados e ON e.id = v.fk_estado
                 WHERE
-                    v.fecha_viaje = '2024-10-30'
+                    v.fecha_viaje = '2024-10-31'
                     AND
                     v.estado_eliminacion IS NULL
                     AND
