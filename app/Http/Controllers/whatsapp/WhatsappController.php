@@ -20,14 +20,14 @@ class WhatsappController extends Controller
         try {
             // Decodificar el string JSON a un array
             $parametersArray = json_decode($validate['parameters'], true);
-            
+
             // Verificar si la decodificación fue exitosa
             if (json_last_error() !== JSON_ERROR_NONE) {
                 return response()->json(['error' => 'Invalid JSON format for parameters.'], 400);
             }
 
             $ch = curl_init();
-            curl_setopt($ch, CURLOPT_URL, "https://graph.facebook.com/v15.0/109529185312847/messages");
+            curl_setopt($ch, CURLOPT_URL, "https://graph.facebook.com/v21.0/489528307571128/messages");
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
             curl_setopt($ch, CURLOPT_HEADER, FALSE);
             curl_setopt($ch, CURLOPT_POST, TRUE);
