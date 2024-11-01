@@ -418,7 +418,7 @@ class ViajeController extends Controller
                 LEFT JOIN
                                     viajes_upnet_pasajeros vup ON
                     vup.fk_viaje_upnet = vu.id
-                        where vu.app_user = ?";
+                        where vu.app_user = ? and vu.fk_estado != 57";
 
             $params = [
                 $appUserId,
