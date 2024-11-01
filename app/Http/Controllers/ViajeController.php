@@ -165,7 +165,7 @@ class ViajeController extends Controller
         GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
        	LIMIT 1;";
 
-            $params = [$validateData['app_user_id'], $validateData['app_user_id'],$codigoEmpleado->codigo_empleado];
+            $params = [$validateData['app_user_id'],$codigoEmpleado->codigo_empleado];
 
             $results = DB::select($query, $params);
 
