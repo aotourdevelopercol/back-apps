@@ -111,7 +111,12 @@ class ViajeController extends Controller
 
         try {
 
-            $user = User::where('id', $validateData['app_user_id'])->first();
+            $codigoEmpleado = DB::table('users as u')
+            ->join('empleados_clientes as ec', 'ec.id', '=', 'u.id_empleado_cliente')
+            ->where('u.id', '=', $validatedData['app_user_id'])
+            ->select('ec.codigo_empleado')
+            ->first();
+
 
             $query = "SELECT
             v.id,
@@ -160,7 +165,7 @@ class ViajeController extends Controller
         GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
        	LIMIT 1;";
 
-            $params = [$validateData['app_user_id'], $validateData['app_user_id'],$user->codigo_empleado];
+            $params = [$validateData['app_user_id'], $validateData['app_user_id'],$codigoEmpleado];
 
             $results = DB::select($query, $params);
 
@@ -189,7 +194,11 @@ class ViajeController extends Controller
             'estado_viaje' => ['nullable', 'array'],
         ]);
 
-        $user = User::where('id', $validatedData['app_user_id'])->first();
+        $codigoEmpleado = DB::table('users as u')
+        ->join('empleados_clientes as ec', 'ec.id', '=', 'u.id_empleado_cliente')
+        ->where('u.id', '=', $validatedData['app_user_id'])
+        ->select('ec.codigo_empleado')
+        ->first();
 
         try {
             $query = "SELECT
@@ -231,7 +240,7 @@ class ViajeController extends Controller
                  AND (t.codigo = ? or ? is null)";
 
             $params = [
-                $user->codigo_empleado,
+                $codigoEmpleado,
                 $validatedData['app_user_id'],
                 $validatedData['codigo_viaje'] ?? null,
                 $validatedData['codigo_viaje'] ?? null, // Este es para la comparación "OR NULL"
@@ -268,7 +277,7 @@ class ViajeController extends Controller
                 $estadoViaje = (array) $validatedData['estado_viaje']; // Convierte a array si no lo es
                 // Si estado_viaje es un array, verifica si alguno de sus elementos está en la lista
                 if (is_array($estadoViaje) && array_intersect($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
-                    $listaVijesPendientes = $this->listarViajesPendientesRutas($user->codigo_empleado, $fechaAux);
+                    $listaVijesPendientes = $this->listarViajesPendientesRutas($codigoEmpleado, $fechaAux);
 
                     $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos($validatedData['app_user_id'], $fechaAux);
                     // Combina todos los resultados en un solo array si existen datos
