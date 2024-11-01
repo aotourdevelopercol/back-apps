@@ -113,7 +113,7 @@ class ViajeController extends Controller
 
             $codigoEmpleado = DB::table('users as u')
             ->join('empleados_clientes as ec', 'ec.id', '=', 'u.id_empleado_cliente')
-            ->where('u.id', '=', $validatedData['app_user_id'])
+            ->where('u.id', '=', $validateData['app_user_id'])
             ->select('ec.codigo_empleado')
             ->first();
 
