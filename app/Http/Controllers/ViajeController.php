@@ -169,7 +169,7 @@ class ViajeController extends Controller
 
             $results = DB::select($query, $params);
 
-            $calification = $this->calificationtrip(null, $validateData['app_user_id']);
+            $calification = $this->calificationtrip($codigoEmpleado->codigo_empleado, $validateData['app_user_id']);
 
             return Response::json([
                 'response' => true,
