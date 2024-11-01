@@ -169,6 +169,8 @@ class ViajeController extends Controller
 
             $results = DB::select($query, $params);
 
+            Log::info($codigoEmpleado->codigo_empleado . " - " . $validateData['app_user_id']);
+
             $calification = $this->calificationtrip($codigoEmpleado->codigo_empleado, $validateData['app_user_id']);
 
             return Response::json([
