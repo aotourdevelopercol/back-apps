@@ -137,6 +137,7 @@ class AuthController extends Controller
             // Buscar usuario por correo electrónico
             $usuario = DB::table('users')
                 ->where('username', $request->username)
+                ->where('fk_tipo_usuario', 4)
                 ->first();
 
             // Verificar si el usuario existe
@@ -148,7 +149,6 @@ class AuthController extends Controller
 
             // Validar credenciales
             $credentials = $request->validate([
-
                 'username' => 'required|string', // Asegurarse de que se proporcione un correo electrónico válido
                 'password' => 'required|string', // Asegurarse de que se proporcione una contraseña
             ]);
