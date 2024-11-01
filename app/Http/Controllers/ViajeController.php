@@ -165,7 +165,7 @@ class ViajeController extends Controller
         GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
        	LIMIT 1;";
 
-            $params = [$validateData['app_user_id'], $validateData['app_user_id'],$codigoEmpleado];
+            $params = [$validateData['app_user_id'], $validateData['app_user_id'],$codigoEmpleado->codigo_empleado];
 
             $results = DB::select($query, $params);
 
@@ -240,7 +240,7 @@ class ViajeController extends Controller
                  AND (t.codigo = ? or ? is null)";
 
             $params = [
-                $codigoEmpleado,
+                $codigoEmpleado->codigo_empleado,
                 $validatedData['app_user_id'],
                 $validatedData['codigo_viaje'] ?? null,
                 $validatedData['codigo_viaje'] ?? null, // Este es para la comparación "OR NULL"
@@ -277,7 +277,7 @@ class ViajeController extends Controller
                 $estadoViaje = (array) $validatedData['estado_viaje']; // Convierte a array si no lo es
                 // Si estado_viaje es un array, verifica si alguno de sus elementos está en la lista
                 if (is_array($estadoViaje) && array_intersect($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
-                    $listaVijesPendientes = $this->listarViajesPendientesRutas($codigoEmpleado, $fechaAux);
+                    $listaVijesPendientes = $this->listarViajesPendientesRutas($codigoEmpleado->codigo_empleado, $fechaAux);
 
                     $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos($validatedData['app_user_id'], $fechaAux);
                     // Combina todos los resultados en un solo array si existen datos
