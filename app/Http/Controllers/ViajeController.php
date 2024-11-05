@@ -466,7 +466,7 @@ class ViajeController extends Controller
                 LEFT JOIN destinos d ON d.fk_viaje = v.id
                 LEFT JOIN estados e ON e.id = v.fk_estado
                 WHERE
-                    v.fecha_viaje = '2024-11-01'
+                    v.fecha_viaje = '2024-11-05'
                     AND
                     v.estado_eliminacion IS NULL
                     AND
