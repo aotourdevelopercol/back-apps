@@ -238,7 +238,7 @@ class ViajeController extends Controller
                  AND (
                      prq.id_empleado = ?
                      OR
-                     v.app_user_id = ?)
+                     pe.app_user_id = ?)
                  AND (t.codigo = ? or ? is null)";
 
             $params = [
@@ -418,7 +418,7 @@ class ViajeController extends Controller
                 LEFT JOIN
                                     viajes_upnet_pasajeros vup ON
                     vup.fk_viaje_upnet = vu.id
-                        where vu.app_user = ? and vu.fk_estado != 57";
+                        where vup.app_user_id = ? and vu.fk_estado != 57";
 
             $params = [
                 $appUserId,
@@ -473,7 +473,7 @@ class ViajeController extends Controller
                     (
                         prq.id_empleado = ?
                         OR
-                        v.app_user_id = ?
+                        pe.app_user_id = ?
                     )
                     AND e.codigo IN (?)
                     AND cv.id is null
