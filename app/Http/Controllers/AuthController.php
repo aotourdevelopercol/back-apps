@@ -222,12 +222,12 @@ class AuthController extends Controller
 
             // Validar si el usuario existe
             if (!$user) {
-                return response()->json(['CODE' => 'USER_NOT_FOUND'], 404);
+                return response()->json(['code' => 'USER_NOT_FOUND'], 404);
             }
 
             // Verificar si la nueva contraseña es la misma que la actual
             if (Hash::check($validate['nueva-password'], $user->password)) {
-                return response()->json(['CODE' => 'SAME_PASSWORD_ERROR', 'message' => 'La nueva contraseña no puede ser igual a la anterior.'], 400);
+                return response()->json(['code' => 'SAME_PASSWORD_ERROR', 'message' => 'La nueva contraseña no puede ser igual a la anterior.'], 400);
             }
 
             // Si es diferente, encriptar la nueva contraseña
@@ -240,12 +240,12 @@ class AuthController extends Controller
                     'password' => $password
                 ]);
 
-            return response()->json(['CODE' => 'PASSWORD_CHANGED'], 200);
+            return response()->json(['code' => 'PASSWORD_CHANGED'], 200);
         } catch (\Exception $e) {
             \Log::error('Error: ', [
                 'error' => $e->getMessage(),
             ]);
-            return response()->json(['CODE' => 'ERROR', 'message' => 'Error al cambiar la contraseña.'], 500);
+            return response()->json(['code' => 'ERROR', 'message' => 'Error al cambiar la contraseña.'], 500);
         }
     }
 
