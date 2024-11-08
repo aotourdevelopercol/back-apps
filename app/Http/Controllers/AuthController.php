@@ -132,82 +132,83 @@ class AuthController extends Controller
         }
     }
     public function login(Request $request)
-    {
-        try {
-            // Buscar usuario por correo electrónico
-            $usuario = DB::table('users')
-                ->where('username', $request->username)
-                ->where('fk_tipo_usuario', 4)
-                ->first();
+{
+    try {
+        // Validar credenciales
+        $credentials = $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
 
-            // Verificar si el usuario existe
-            if ($usuario == null) {
-                return Response::json([
-                    'code' => 'NOT_FOUND_USER', // El usuario con el correo proporcionado no existe.
-                ]);
-            }
+        // Buscar usuario por nombre de usuario
+        $usuario = DB::table('users')
+            ->where('username', $credentials['username'])
+            ->where('fk_tipo_usuario', 4)
+            ->first();
 
-            // Validar credenciales
-            $credentials = $request->validate([
-                'username' => 'required|string', // Asegurarse de que se proporcione un correo electrónico válido
-                'password' => 'required|string', // Asegurarse de que se proporcione una contraseña
+        Log::info('Usuario: '. json_encode($usuario));
+
+        // Verificar si el usuario existe
+        if ($usuario == null) {
+            return Response::json([
+                'code' => 'NOT_FOUND_USER',
             ]);
+        }
+        
 
-            // Intentar autenticar al usuario
-            if (Auth::attempt($credentials)) {
-                $user = Auth::user();
+        // Verificar la contraseña
+        if (Hash::check($credentials['password'], $usuario->password)) {
+            Log::info('Contraseña válida');
+            // La contraseña es correcta, procedemos con la autenticación
+            Auth::loginUsingId($usuario->id);  // Loguear al usuario manualmente
 
-                // Verificar si el usuario está baneado
-                if ($user->baneado == 1) {
-                    return Response::json([
-                        'message' => 'DISABLED_USER', // El usuario está desactivado. Contacte al administrador del sistema o soporte.
-                    ]);
-                } else {
-                    // Eliminar tokens existentes
-                    $user->tokens()->delete();
-
-                    // Crear un nuevo token para el usuario
-                    $token = $user->createToken('auth_token')->plainTextToken;
-
-                    // Actualizar la fecha y hora del último inicio de sesión
-                    DB::table('users')
-                        ->where('id', $user->id)
-                        ->update([
-                            'last_login' => now(), // Usar now() para mayor claridad
-                        ]);
-
-                    // Recuperar el objeto usuario
-                    $usuario = User::find($user->id);
-
-                    // Retornar respuesta exitosa
-                    return Response::json([
-                        'code' => 'SUCCESFULLY',
-                        'token' => $token,
-                        'acceso' => true,
-                        'id_usuario' => $user->id,
-                        'usuario' => $usuario,
-                    ]);
-                }
+            // Verificar si el usuario está baneado
+            $user = Auth::user();
+            if ($user->baneado == 1) {
+                return Response::json([
+                    'message' => 'DISABLED_USER',
+                ]);
             } else {
-                // Fallo en la autenticación
+                // Eliminar tokens existentes
+                $user->tokens()->delete();
+
+                // Crear un nuevo token para el usuario
+                $token = $user->createToken('auth_token')->plainTextToken;
+
+                // Actualizar la fecha y hora del último inicio de sesión
+                DB::table('users')
+                    ->where('id', $user->id)
+                    ->update(['last_login' => now()]);
+
+                // Recuperar el objeto usuario
+                $usuario = User::find($user->id);
+
+                // Retornar respuesta exitosa
                 return Response::json([
-                    'response' => false,
-                    'code' => 'FAILS', // Las credenciales son incorrectas.
+                    'code' => 'SUCCESFULLY',
+                    'token' => $token,
+                    'acceso' => true,
+                    'id_usuario' => $user->id,
+                    'usuario' => $usuario,
                 ]);
             }
-        } catch (\Exception $e) {
-            // Manejar cualquier otra excepción no controlada
-            \Log::error('asdads:', [
-                'error' => $e->getMessage(),
-            ]);
+        } else {
+            Log::info('Contraseña invalida');
+            // Fallo en la autenticación (contraseña incorrecta)
             return Response::json([
                 'response' => false,
-                'code' => 'UNKNOWN_ERROR', // Error desconocido.
-                'message' => $e->getMessage(),
-                // Mensaje del error desconocido.
-            ], 500);
+                'code' => 'FAILS',
+            ]);
         }
+    } catch (\Exception $e) {
+        \Log::error('Error en login:', ['error' => $e->getMessage()]);
+        return Response::json([
+            'response' => false,
+            'code' => 'UNKNOWN_ERROR',
+            'message' => $e->getMessage(),
+        ], 500);
     }
+}
 
     public function cambiarContraseña(Request $request)
     {
