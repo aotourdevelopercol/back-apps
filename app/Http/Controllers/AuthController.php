@@ -94,7 +94,7 @@ class AuthController extends Controller
             $user->telefono = $request->telefono;
             $user->password = Hash::make($request->password);
             $user->id_perfil = 23; // ID de perfil por defecto
-            $user->fk_tipo_usuario = 1; // Tipo de usuario por defecto
+            $user->fk_tipo_usuario = 4; // Tipo de usuario por defecto
             $user->id_tipo_usuario = 0; // ID de tipo de usuario
             $user->master = 0; // Indicador de maestro
 
