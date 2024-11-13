@@ -229,7 +229,7 @@ class ViajeController extends Controller
         left join tipos t2 on t2.id = v2.fk_tipo_vehiculo
         left join tipos t3 on t3.id = v.tipo_ruta
         where v.id = ?
-        GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+        GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24
         LIMIT 1;";
 
             $params = [$validateData['viaje']];
