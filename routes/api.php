@@ -24,7 +24,7 @@ use App\Http\Controllers\AuthController;
 
 
 
-// Rutas para correos de proveedores 
+// Rutas para correos de proveedores
 Route::post('/aviso', [ProveedoresAvisoController :: class, 'enviarCorreo']);
 Route::post('/bienvenido', [ProveedoresBienvenidoController :: class, 'enviarCorreo']);
 Route::post('/capacitar', [ProveedoresCapacitarController :: class, 'enviarCorreo']);
@@ -42,7 +42,7 @@ Route::post('/recuperar-password', [TokenController::class, 'recuperarContraseñ
 Route::post('/validate-email', [TokenController::class, 'validateEmail']);
 Route::post('/validate-codigo', [VerificationController::class, 'verifyCode']);
 
-// Ruta autenticación 
+// Ruta autenticación
 Route::post('/createuser', [AuthController::class, 'createuser']);
 Route::post('/eliminar-cuenta', [AuthController::class, 'eliminarcuenta']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -50,7 +50,7 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/cambio-password', [AuthController::class, 'cambiarContraseña']);
 
 
-//Rutas de viajes controller 
+//Rutas de viajes controller
 
 Route::post('/actualizar-ubicacion', [Viajes::class, 'actualizarubicacion']);
 Route::post('/add-token', [Viajes::class, 'addtoken']);
@@ -85,6 +85,7 @@ Route::post('/consultar-cliente', [ViajeController::class, 'consultclient']);
 Route::post('/listar-estados-viaje', [ViajeController::class, 'listarEstadosPorMaestro']);
 Route::post('/listar-tipos-viaje', [ViajeController::class, 'listarTiposDeViaje']);
 Route::post('/listar-viajes-activos', [ViajeController::class, 'listarViajesActivos']);
+Route::post('/listar-viajes-link', [ViajeController::class, 'listarViajesLink']);
 Route::post('/listar-viajes-generales', [ViajeController::class, 'listarViajesGenerales']);
 Route::post('/crear-solicitud-viaje', [ViajeController::class, 'requesttrips']);
 
