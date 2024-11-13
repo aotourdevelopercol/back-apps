@@ -214,6 +214,7 @@ class ViajeController extends Controller
             v2.marca,
             v2.color,
             c2.foto as foto_conductor,
+            c2.celular as celular_conductor,
             t2.id as id_tipo_vehiculo,
             t2.codigo as codigo_tipo_vehiculo,
             t2.nombre as nombre_tipo_vehiculo,
