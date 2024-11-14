@@ -12,6 +12,7 @@ use App\Models\ViajesU;
 use App\Models\User;
 use Response;
 use Auth;
+use Carbon\Carbon;
 
 
 class ViajeController extends Controller
@@ -185,6 +186,80 @@ class ViajeController extends Controller
     }
 
 
+    // Listar Viajes activos
+    public function listarViajesLink(Request $request)
+    {
+        $validateData = $request->validate([
+            'viaje' => ['required', 'integer'],
+            'id_pasajero_ejecutivo' => ['nullable', 'integer'],
+            'id_pasajero_ruta' => ['nullable', 'integer']
+        ]);
+
+        try {
+
+            $query = "SELECT
+                    v.id,
+                    v.fecha_viaje,
+                    v.hora_viaje,
+                    v.recoger_pasajero,
+                    v.codigo_viaje,
+                    t.id as id_tipo,
+                    t.codigo as codigo_tipo,
+                    t.nombre as nombre_tipo,
+                    t3.id as id_tipo_ruta,
+                    t3.codigo as codigo_tipo_ruta,
+                    t3.nombre as nombre_tipo_ruta,
+                    e.id as id_estado,
+                    e.codigo as codigo_estado,
+                    e.nombre as nombre_estado,
+                    v2.placa,
+                    v2.modelo,
+                    v2.marca,
+                    v2.color,
+                    c2.foto as foto_conductor,
+                    c2.celular as celular_conductor,
+                    t2.id as id_tipo_vehiculo,
+                    t2.codigo as codigo_tipo_vehiculo,
+                    t2.nombre as nombre_tipo_vehiculo,
+                    (case when pe.id is null then prq.id_empleado else pe.id end) as id_pasajero,
+                    (case when pe.nombre is null then prq.nombre else pe.nombre end) as nombre_pasajero,
+                    t4.id as id_estado_pasajero_ruta,
+                    t4.codigo as codigo_estado_pasajero_ruta,
+                    t4.nombre as nombre_estado_pasajero_ruta,
+                    prq.recoger_a as recoger_ruta_pasajero,
+                    prq.codigo_viaje as codigo_ruta_pasajero,
+                    UPPER(CONCAT(c2.primer_nombre, ' ', c2.primer_apellido)) AS nombre_conductor,
+                    JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
+                from viajes v
+                left join vehiculos v2 on v2.id = v.fk_vehiculo
+                left join conductores c2 on c2.id = v.fk_conductor
+                left join pasajeros_ejecutivos pe on pe.fk_viaje = v.id
+                left join pasajeros_rutas_qr prq on prq.fk_viaje = v.id
+                left join estados e on e.id = v.fk_estado
+                left join destinos d on d.fk_viaje = v.id
+                left join tipos t on t.id = v.tipo_traslado
+                left join tipos t2 on t2.id = v2.fk_tipo_vehiculo
+                left join tipos t3 on t3.id = v.tipo_ruta
+                left join tipos t4 on t4.id = prq.estado_ruta
+                where v.id = ? and (pe.id = ? or prq.id = ?)
+                GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+                LIMIT 1;";
+
+            $params = [$validateData['viaje'], $validateData['id_pasajero_ejecutivo'], $validateData['id_pasajero_ruta']];
+
+            $results = DB::select($query, $params);
+
+            return Response::json([
+                'response' => true,
+                'listado' => !empty($results) ? $results[0] : null,
+            ]);
+
+        } catch (\Throwable $th) {
+            \Log::error('Error al listar viajes activos: ' . $th->getMessage());
+        }
+    }
+
+
     // Consulta de viajes
     function listarViajesGenerales(Request $request)
     {
@@ -248,15 +323,8 @@ class ViajeController extends Controller
                 $validatedData['codigo_viaje'] ?? null, // Este es para la comparación "OR NULL"
             ];
 
-
-            if (!empty($validatedData['fecha'])) {
-                Log::info('Fecha: '. $validatedData['fecha']);
-                $query .= " AND v.fecha_viaje = ?";
-                $params = array_merge($params, [$validatedData['fecha']]); // Wrap in array
-            }
-
-
-
+            $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
+            $query .= " AND v.fecha_viaje " . ($request->fecha ? ("= '" . $request->fecha . "'") : (">= '" . $fechaHoy . "'"));
             // Comprobar si hay múltiples estados de viaje
             if (!isset($validatedData['estado_viaje']) || !empty($validatedData['estado_viaje'])) {
                 $placeholders = implode(',', array_fill(0, count($validatedData['estado_viaje']), '?'));
@@ -270,18 +338,15 @@ class ViajeController extends Controller
             // En este caso, se retornan los resultados de la consulta.
             $results = DB::select($query, $params);
 
-            $fechaAux = "";
-            if (!empty($validatedData['fecha'])) {
-                $fechaAux = $validatedData['fecha'];
-            }
+            \Log::info(json_encode($query));
 
             if (!empty($validatedData['estado_viaje'])) {
                 $estadoViaje = (array) $validatedData['estado_viaje']; // Convierte a array si no lo es
                 // Si estado_viaje es un array, verifica si alguno de sus elementos está en la lista
                 if (is_array($estadoViaje) && array_intersect($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
-                    $listaVijesPendientes = $this->listarViajesPendientesRutas($codigoEmpleado->codigo_empleado, $fechaAux);
+                    $listaVijesPendientes = $this->listarViajesPendientesRutas($codigoEmpleado->codigo_empleado, $fechaHoy);
 
-                    $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos($validatedData['app_user_id'], $fechaAux);
+                    $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos($validatedData['app_user_id'], $fechaHoy);
                     // Combina todos los resultados en un solo array si existen datos
                     if (!empty($listaVijesPendientes)) {
                         $results = array_merge($results, $listaVijesPendientes);
@@ -351,14 +416,14 @@ class ViajeController extends Controller
                     centrosdecosto c ON c.id = rs.fk_centrodecosto
                 LEFT JOIN
                     rutas_solicitadas_pasajeros rsp ON rsp.fk_rutas_solicitadas = rs.id
-                        where rsp.empleado_id = ? and rs.montado is null";
+                        where rsp.empleado_id = ? and rs.montado is null and rs.visible is null";
 
             $params = [
                 $idEmpleado
             ];
 
             if (!empty($fecha)) {
-                $query .= " AND rs.fecha = ?";
+                $query .= " AND rs.fecha >= ?";
                 $params = array_merge($params, [$fecha]); // Wrap in array
             }
 
@@ -427,7 +492,7 @@ class ViajeController extends Controller
 
 
             if (!empty($fecha)) {
-                $query .= " AND vu.fecha = ?";
+                $query .= " AND vu.fecha >= ?";
                 $params = array_merge($params, [$fecha]); // Wrap in array
             }
             $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17;";
@@ -447,6 +512,9 @@ class ViajeController extends Controller
     private function calificationtrip($idEmpleado, $appUserId)
     {
         try {
+
+            $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
+
             $query = "SELECT
                 v.id,
                 v.fecha_viaje,
@@ -466,7 +534,7 @@ class ViajeController extends Controller
                 LEFT JOIN destinos d ON d.fk_viaje = v.id
                 LEFT JOIN estados e ON e.id = v.fk_estado
                 WHERE
-                    v.fecha_viaje = '2024-11-08'
+                    v.fecha_viaje = ?
                     AND
                     v.estado_eliminacion IS NULL
                     AND
@@ -482,6 +550,7 @@ class ViajeController extends Controller
                 LIMIT 1;";
 
             $params = [
+                $fechaHoy,
                 $idEmpleado ?? null,
                 $appUserId ?? null,
                 'FINALIZADO'
