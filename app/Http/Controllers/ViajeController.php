@@ -403,7 +403,7 @@ class ViajeController extends Controller
                     centrosdecosto c ON c.id = rs.fk_centrodecosto
                 LEFT JOIN
                     rutas_solicitadas_pasajeros rsp ON rsp.fk_rutas_solicitadas = rs.id
-                        where rsp.empleado_id = ? and rs.montado is null";
+                        where rsp.empleado_id = ? and rs.montado is null and rs.visible is null";
 
             $params = [
                 $idEmpleado
@@ -499,6 +499,9 @@ class ViajeController extends Controller
     private function calificationtrip($idEmpleado, $appUserId)
     {
         try {
+
+            $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
+
             $query = "SELECT
                 v.id,
                 v.fecha_viaje,
@@ -518,7 +521,7 @@ class ViajeController extends Controller
                 LEFT JOIN destinos d ON d.fk_viaje = v.id
                 LEFT JOIN estados e ON e.id = v.fk_estado
                 WHERE
-                    v.fecha_viaje = '2024-11-13'
+                    v.fecha_viaje = ?
                     AND
                     v.estado_eliminacion IS NULL
                     AND
@@ -534,6 +537,7 @@ class ViajeController extends Controller
                 LIMIT 1;";
 
             $params = [
+                $fechaHoy,
                 $idEmpleado ?? null,
                 $appUserId ?? null,
                 'FINALIZADO'
