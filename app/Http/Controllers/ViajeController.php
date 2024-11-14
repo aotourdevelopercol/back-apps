@@ -12,6 +12,7 @@ use App\Models\ViajesU;
 use App\Models\User;
 use Response;
 use Auth;
+use Carbon\Carbon;
 
 
 class ViajeController extends Controller
@@ -310,14 +311,9 @@ class ViajeController extends Controller
                 $validatedData['codigo_viaje'] ?? null, // Este es para la comparación "OR NULL"
             ];
 
-
-            if (!empty($validatedData['fecha'])) {
-                Log::info('Fecha: '. $validatedData['fecha']);
-                $query .= " AND v.fecha_viaje = ?";
-                $params = array_merge($params, [$validatedData['fecha']]); // Wrap in array
-            }
-
-
+            $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
+            $query .= " AND v.fecha_viaje >= " . $fechaHoy;
+            $params = array_merge($params, [$validatedData['fecha']]);
 
             // Comprobar si hay múltiples estados de viaje
             if (!isset($validatedData['estado_viaje']) || !empty($validatedData['estado_viaje'])) {
@@ -332,18 +328,14 @@ class ViajeController extends Controller
             // En este caso, se retornan los resultados de la consulta.
             $results = DB::select($query, $params);
 
-            $fechaAux = "";
-            if (!empty($validatedData['fecha'])) {
-                $fechaAux = $validatedData['fecha'];
-            }
 
             if (!empty($validatedData['estado_viaje'])) {
                 $estadoViaje = (array) $validatedData['estado_viaje']; // Convierte a array si no lo es
                 // Si estado_viaje es un array, verifica si alguno de sus elementos está en la lista
                 if (is_array($estadoViaje) && array_intersect($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
-                    $listaVijesPendientes = $this->listarViajesPendientesRutas($codigoEmpleado->codigo_empleado, $fechaAux);
+                    $listaVijesPendientes = $this->listarViajesPendientesRutas($codigoEmpleado->codigo_empleado, $fechaHoy);
 
-                    $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos($validatedData['app_user_id'], $fechaAux);
+                    $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos($validatedData['app_user_id'], $fechaHoy);
                     // Combina todos los resultados en un solo array si existen datos
                     if (!empty($listaVijesPendientes)) {
                         $results = array_merge($results, $listaVijesPendientes);
@@ -420,7 +412,7 @@ class ViajeController extends Controller
             ];
 
             if (!empty($fecha)) {
-                $query .= " AND rs.fecha = ?";
+                $query .= " AND rs.fecha >= ?";
                 $params = array_merge($params, [$fecha]); // Wrap in array
             }
 
@@ -489,7 +481,7 @@ class ViajeController extends Controller
 
 
             if (!empty($fecha)) {
-                $query .= " AND vu.fecha = ?";
+                $query .= " AND vu.fecha >= ?";
                 $params = array_merge($params, [$fecha]); // Wrap in array
             }
             $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17;";
