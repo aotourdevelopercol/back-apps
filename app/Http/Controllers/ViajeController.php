@@ -191,49 +191,61 @@ class ViajeController extends Controller
     {
         $validateData = $request->validate([
             'viaje' => ['required', 'integer'],
+            'id_pasajero_ejecutivo' => ['nullable', 'integer'],
+            'id_pasajero_ruta' => ['nullable', 'integer']
         ]);
 
         try {
 
             $query = "SELECT
-            v.id,
-            v.fecha_viaje,
-            v.hora_viaje,
-            v.recoger_pasajero,
-	        v.codigo_viaje,
-            t.id as id_tipo,
-            t.codigo as codigo_tipo,
-            t.nombre as nombre_tipo,
-            t3.id as id_tipo_ruta,
-            t3.codigo as codigo_tipo_ruta,
-            t3.nombre as nombre_tipo_ruta,
-            e.id as id_estado,
-            e.codigo as codigo_estado,
-            e.nombre as nombre_estado,
-            v2.placa,
-            v2.modelo,
-            v2.marca,
-            v2.color,
-            c2.foto as foto_conductor,
-            c2.celular as celular_conductor,
-            t2.id as id_tipo_vehiculo,
-            t2.codigo as codigo_tipo_vehiculo,
-            t2.nombre as nombre_tipo_vehiculo,
-            UPPER(CONCAT(c2.primer_nombre, ' ', c2.primer_apellido)) AS nombre_conductor,
-            JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
-        from viajes v
-        left join vehiculos v2 on v2.id = v.fk_vehiculo
-        left join conductores c2 on c2.id = v.fk_conductor
-        left join estados e on e.id = v.fk_estado
-        left join destinos d on d.fk_viaje = v.id
-        left join tipos t on t.id = v.tipo_traslado
-        left join tipos t2 on t2.id = v2.fk_tipo_vehiculo
-        left join tipos t3 on t3.id = v.tipo_ruta
-        where v.id = ?
-        GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24
-        LIMIT 1;";
+                    v.id,
+                    v.fecha_viaje,
+                    v.hora_viaje,
+                    v.recoger_pasajero,
+                    v.codigo_viaje,
+                    t.id as id_tipo,
+                    t.codigo as codigo_tipo,
+                    t.nombre as nombre_tipo,
+                    t3.id as id_tipo_ruta,
+                    t3.codigo as codigo_tipo_ruta,
+                    t3.nombre as nombre_tipo_ruta,
+                    e.id as id_estado,
+                    e.codigo as codigo_estado,
+                    e.nombre as nombre_estado,
+                    v2.placa,
+                    v2.modelo,
+                    v2.marca,
+                    v2.color,
+                    c2.foto as foto_conductor,
+                    c2.celular as celular_conductor,
+                    t2.id as id_tipo_vehiculo,
+                    t2.codigo as codigo_tipo_vehiculo,
+                    t2.nombre as nombre_tipo_vehiculo,
+                    (case when pe.id is null then prq.id_empleado else pe.id end) as id_pasajero,
+                    (case when pe.nombre is null then prq.nombre else pe.nombre end) as nombre_pasajero,
+                    t4.id as id_estado_pasajero_ruta,
+                    t4.codigo as codigo_estado_pasajero_ruta,
+                    t4.nombre as nombre_estado_pasajero_ruta,
+                    prq.recoger_a as recoger_ruta_pasajero,
+                    prq.codigo_viaje as codigo_ruta_pasajero,
+                    UPPER(CONCAT(c2.primer_nombre, ' ', c2.primer_apellido)) AS nombre_conductor,
+                    JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
+                from viajes v
+                left join vehiculos v2 on v2.id = v.fk_vehiculo
+                left join conductores c2 on c2.id = v.fk_conductor
+                left join pasajeros_ejecutivos pe on pe.fk_viaje = v.id
+                left join pasajeros_rutas_qr prq on prq.fk_viaje = v.id
+                left join estados e on e.id = v.fk_estado
+                left join destinos d on d.fk_viaje = v.id
+                left join tipos t on t.id = v.tipo_traslado
+                left join tipos t2 on t2.id = v2.fk_tipo_vehiculo
+                left join tipos t3 on t3.id = v.tipo_ruta
+                left join tipos t4 on t4.id = prq.estado_ruta
+                where v.id = ? and (pe.id = ? or prq.id = ?)
+                GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+                LIMIT 1;";
 
-            $params = [$validateData['viaje']];
+            $params = [$validateData['viaje'], $validateData['id_pasajero_ejecutivo'], $validateData['id_pasajero_ruta']];
 
             $results = DB::select($query, $params);
 
