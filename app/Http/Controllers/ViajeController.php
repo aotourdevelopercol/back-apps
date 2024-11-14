@@ -253,7 +253,6 @@ class ViajeController extends Controller
     {
 
         $validatedData = $request->validate([
-            'fecha' => ['nullable', 'string'],
             'app_user_id' => ['nullable', 'string'],
             'codigo_viaje' => ['nullable', 'string'],
             'estado_viaje' => ['nullable', 'array'],
@@ -313,7 +312,6 @@ class ViajeController extends Controller
 
             $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
             $query .= " AND v.fecha_viaje >= " . $fechaHoy;
-            $params = array_merge($params, [$validatedData['fecha']]);
 
             // Comprobar si hay múltiples estados de viaje
             if (!isset($validatedData['estado_viaje']) || !empty($validatedData['estado_viaje'])) {
