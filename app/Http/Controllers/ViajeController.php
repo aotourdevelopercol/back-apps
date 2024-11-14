@@ -312,8 +312,7 @@ class ViajeController extends Controller
             ];
 
             $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
-            $query .= " AND v.fecha_viaje >= " . ($request->fecha ? $request->fecha : $fechaHoy);
-            \Log::info(json_encode($query));
+            $query .= " AND v.fecha_viaje " . ($request->fecha ? ("= " . $request->fecha) : (">= " . $fechaHoy));
             // Comprobar si hay múltiples estados de viaje
             if (!isset($validatedData['estado_viaje']) || !empty($validatedData['estado_viaje'])) {
                 $placeholders = implode(',', array_fill(0, count($validatedData['estado_viaje']), '?'));
@@ -327,6 +326,7 @@ class ViajeController extends Controller
             // En este caso, se retornan los resultados de la consulta.
             $results = DB::select($query, $params);
 
+            \Log::info(json_encode($query));
 
             if (!empty($validatedData['estado_viaje'])) {
                 $estadoViaje = (array) $validatedData['estado_viaje']; // Convierte a array si no lo es
