@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EmailController;
 use App\Http\Controllers\ProveedoresMailController\ProveedorMailController;
 
 use App\Http\Controllers\ViajeController;
@@ -21,7 +22,8 @@ use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\AuthController;
 
 
-
+// Rutas correos electronicos
+Route::post('/enviar-correo', [EmailController :: class, 'sendEmail']);
 
 
 // Rutas para correos de proveedores
