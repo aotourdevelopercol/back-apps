@@ -229,10 +229,12 @@ class ViajeController extends Controller
                     prq.recoger_a as recoger_ruta_pasajero,
                     prq.codigo_viaje as codigo_ruta_pasajero,
                     UPPER(CONCAT(c2.primer_nombre, ' ', c2.primer_apellido)) AS nombre_conductor,
+                    cv.id as id_calificacion,
                     JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
                 from viajes v
                 left join vehiculos v2 on v2.id = v.fk_vehiculo
                 left join conductores c2 on c2.id = v.fk_conductor
+                left join calificacion_viajes cv on cv.fk_viaje = v.id
                 left join pasajeros_ejecutivos pe on pe.fk_viaje = v.id
                 left join pasajeros_rutas_qr prq on prq.fk_viaje = v.id
                 left join estados e on e.id = v.fk_estado
@@ -242,7 +244,7 @@ class ViajeController extends Controller
                 left join tipos t3 on t3.id = v.tipo_ruta
                 left join tipos t4 on t4.id = prq.estado_ruta
                 where v.id = ? and (pe.id = ? or prq.id = ?)
-                GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31
+                GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32
                 LIMIT 1;";
 
             $params = [$validateData['viaje'], $validateData['id_pasajero_ejecutivo'], $validateData['id_pasajero_ruta']];
