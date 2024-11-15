@@ -13,13 +13,37 @@ class WhatsappController extends Controller
         $validate = $request->validate([
             'number' => 'required|string',
             'parameters' => 'required|string',
+            'parametersButton' => 'nullable|string',
             'plantilla-nombre' => 'required|string',
-            'type' => 'required|string'
+            'type' => 'required|string',
+            'typeButton' => 'nullable|string'
         ]);
 
         try {
             // Decodificar el string JSON a un array
             $parametersArray = json_decode($validate['parameters'], true);
+
+            // Verificar si viene el parámetro "parametersButton" y decodificarlo
+            $parametersArrayButton = [];
+            if (!empty($validate['parametersButton'])) {
+                $parametersArrayButton = json_decode($validate['parametersButton'], true);
+            }
+
+            // Preparar el array base de "components"
+            $components = [
+                [
+                    "type" => $validate['type'],
+                    "parameters" => $parametersArray, // Usar el array decodificado aquí
+                ]
+            ];
+
+            // Añadir el componente del botón solo si está presente
+            if (!empty($parametersArrayButton)) {
+                $components[] = [
+                    "type" => $validate['typeButton'],
+                    "parameters" => $parametersArrayButton, // Usar el array decodificado aquí
+                ];
+            }
 
             // Verificar si la decodificación fue exitosa
             if (json_last_error() !== JSON_ERROR_NONE) {
@@ -38,12 +62,7 @@ class WhatsappController extends Controller
                 "template" => [
                     "name" => $validate['plantilla-nombre'],
                     "language" => ["code" => "es"],
-                    "components" => [
-                        [
-                            "type" => $validate['type'],
-                            "parameters" => $parametersArray, // Usar el array decodificado aquí
-                        ]
-                    ],
+                    "components" => $components
                 ],
             ]));
 
