@@ -33,7 +33,7 @@ class WhatsappController extends Controller
             $components = [
                 [
                     "type" => $validate['type'],
-                    "parameters" => $parametersArray, // Usar el array decodificado aquí
+                    "parameters" => $parametersArray, // Usar el array decodificado aquí,
                 ]
             ];
 
@@ -42,6 +42,8 @@ class WhatsappController extends Controller
                 $components[] = [
                     "type" => $validate['typeButton'],
                     "parameters" => $parametersArrayButton, // Usar el array decodificado aquí
+                    "sub_type" => "url",
+                    "index" => "0"
                 ];
             }
 
