@@ -25,7 +25,9 @@ class ViajeController extends Controller
             // Validar la solicitud
             $validatedData = $request->validate([
                 'fk_viaje' => 'required|integer',
-                'fk_user' => 'required|integer',
+                'fk_user' => 'nullable|integer',
+                'pasajero_ejecutivo_link' => 'nullable|integer',
+                'pasajero_ruta_link' => 'nullable|integer',
                 'calificacion' => 'required|numeric', // Asumiendo que la calificación es de 1 a 5
                 'comentario' => 'nullable|string',
             ]);
@@ -33,9 +35,11 @@ class ViajeController extends Controller
             // Insertar el registro
             Calificacion::create([
                 'fk_viaje' => $validatedData['fk_viaje'],
-                'fk_user' => $validatedData['fk_user'],
-                'calificacion' => $validatedData['calificacion'],
-                'comentario' => $validatedData['comentario'],
+                'fk_user' => $validatedData['fk_user'] ?? null,
+                'pasajero_ejecutivo_link' => $validatedData['pasajero_ejecutivo_link'] ?? null,
+                'pasajero_ruta_link' => $validatedData['pasajero_ruta_link'] ?? null,
+                'calificacion' => $validatedData['calificacion'] ?? 0.0,
+                'comentario' => $validatedData['comentario'] ?? null,
             ]);
 
             return Response::json([
