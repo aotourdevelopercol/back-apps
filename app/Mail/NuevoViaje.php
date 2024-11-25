@@ -14,18 +14,21 @@ class NuevoViaje extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public function __construct()
+    public $token;
+
+    public function __construct($token)
     {
-        //
+        $this->token = $token;
     }
 
     public function build()
     {
         try {
             return $this
-            ->from('no-reply@aotour.com.co', 'Nuevo viaje')
+            ->from('no-reply@aotour.com.co', 'Aotour')
             ->subject('Nuevo viaje')
-            ->view('emails_viajes.email_nuevo_viaje');
+            ->view('emails_viajes.email_nuevo_viaje')
+            >with(['token' => $this->token]);
             
         } catch (\Throwable $th) {
             Log::error('Error al enviar el email de nuevo viaje: '. $th);

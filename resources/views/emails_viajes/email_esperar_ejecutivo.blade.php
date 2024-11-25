@@ -12,12 +12,15 @@
             margin: 0;
             background-color: #cccccc;
         }
+
         table {
             border-spacing: 0;
         }
+
         td {
             padding: 0;
         }
+
         img {
             border: 0;
         }
@@ -29,7 +32,7 @@
             text-align: center;
             color: #E04403;
         }
-        
+
         .subtext {
             font-family: Sansation;
             font-size: 18px;
@@ -38,7 +41,7 @@
             color: #E04403;
             margin: 10px;
         }
-        
+
         .message {
             font-family: Sansation;
             font-size: 16px;
@@ -78,36 +81,44 @@
             <!-- LOGO SECTION -->
             <tr>
                 <td style="text-align: center; padding: 15px 20px; color: #ffffff">
-                    <a href=""><img src="{{asset('asset/img/logo-bienvenida.png')}}" alt="Aotour Logo" width="200" style="max-width: 100%;"></a>
+                    <a href=""><img src="{{asset('asset/img/logo-bienvenida.png')}}" width="200" style="max-width: 100%;"></a>
                 </td>
             </tr>
 
             <!-- GREETING MESSAGE -->
             <tr>
                 <td>
-                    <p class="header">🚗¡El viaje a finalizado!</p>
+                    <p class="header">¡El conductor ya está esperándote! 🚗</p>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <p class="subtext">Gracias por viajar con nosotros. ¡Esperamos volver a verte pronto!</p>
+                    <p class="subtext">Prepárate para partir y disfruta del viaje 🚙 🛣️</p>
+                </td>
+            </tr>
+
+            <!-- MAIN MESSAGE -->
+            <tr>
+                <td>
+                    <p class="message">Tu destino te espera y cada kilómetro será una experiencia única. 🌟 Disfruta del recorrido y que comience la diversión 🎉 🚐</p>
                 </td>
             </tr>
 
             <!-- CALL TO ACTION BUTTON -->
             <tr>
                 <td style="text-align: center;">
-                    <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="button">Calificar el viaje</a>
+                    <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="button">Detalles de tu viaje</a>
                 </td>
             </tr>
 
             <!-- FOOTER SECTION -->
             <tr>
                 <td>
-                    <p class="footer">Aotour Tech</p>
+                    <p class="footer">Aotour Tech </p>
                 </td>
             </tr>
         </table>
     </center>
 </body>
+
 </html>

@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuevo Viaje Aotour</title>
+    <title>Asignación de Viaje Aotour</title>
 
     <style type="text/css">
         body {
@@ -85,21 +85,53 @@
             <!-- GREETING MESSAGE -->
             <tr>
                 <td>
-                    <p class="header">🚗¡El viaje a finalizado!</p>
+                    <p class="header">Asignación de viaje</p>
                 </td>
             </tr>
+
+            <!-- MAIN MESSAGE -->
             <tr>
                 <td>
-                    <p class="subtext">Gracias por viajar con nosotros. ¡Esperamos volver a verte pronto!</p>
+                    <p class="message">
+                        Hola {{$nombre}}, AOTOUR te confirma que tu colaborador al volante asignado para tu traslado es:
+                    </p>
+                    <p class="message">
+                        <strong>Nombre:</strong> {{$conductor}}<br>
+                        <strong>Placa:</strong> {{$placa}}<br>
+                        <strong>Teléfono:</strong> 📲 {{$telefonoConductor}}
+                    </p>
+                </td>
+            </tr>
+
+            <!-- TRIP DETAILS -->
+            <tr>
+                <td>
+                    <p class="message">
+                        🔴 {{$puntoA}}<br>
+                        🟢 {{$puntoB}}<br><br>
+                        📅 <strong>Fecha:</strong> {{$fecha}} - {{$hora}}
+                    </p>
+                </td>
+            </tr>
+
+            <!-- FOOTER MESSAGE -->
+            <tr>
+                <td>
+                    <p class="message">
+                        Con AOTOUR, viaja tranquilo, viaja seguro.<br><br>
+                        Si tienes alguna duda o necesitas soporte, comunícate al <strong>3147806060</strong> o <strong>601 358 5555</strong>.
+                    </p>
+                    <p class="message">¡Descarga nuestra app y lleva tu experiencia a otro nivel!</p>
                 </td>
             </tr>
 
             <!-- CALL TO ACTION BUTTON -->
             <tr>
                 <td style="text-align: center;">
-                    <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="button">Calificar el viaje</a>
+                    <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="button">Detalles de tu viaje</a>
                 </td>
             </tr>
+
 
             <!-- FOOTER SECTION -->
             <tr>

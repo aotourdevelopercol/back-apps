@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuevo Viaje Aotour</title>
+    <title>Asignación de Proveedor Provisional</title>
 
     <style type="text/css">
         body {
@@ -29,7 +29,7 @@
             text-align: center;
             color: #E04403;
         }
-        
+
         .subtext {
             font-family: Sansation;
             font-size: 18px;
@@ -38,8 +38,17 @@
             color: #E04403;
             margin: 10px;
         }
-        
+
         .message {
+            font-family: Sansation;
+            font-size: 16px;
+            line-height: 22px;
+            text-align: left;
+            color: #171a1b;
+            padding: 0 20px;
+        }
+
+        motivo{
             font-family: Sansation;
             font-size: 16px;
             line-height: 22px;
@@ -78,33 +87,48 @@
             <!-- LOGO SECTION -->
             <tr>
                 <td style="text-align: center; padding: 15px 20px; color: #ffffff">
-                    <a href=""><img src="{{asset('asset/img/logo-bienvenida.png')}}" alt="Aotour Logo" width="200" style="max-width: 100%;"></a>
+                    <a href="#"><img src="{{asset('asset/img/logo.png')}}" alt="Logo" width="200" style="max-width: 100%;"></a>
                 </td>
             </tr>
 
-            <!-- GREETING MESSAGE -->
+            <!-- HEADER MESSAGE -->
             <tr>
                 <td>
-                    <p class="header">🚗¡El viaje a finalizado!</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <p class="subtext">Gracias por viajar con nosotros. ¡Esperamos volver a verte pronto!</p>
+                    <p class="header">🚗 Proveedor Provisional Asignado</p>
                 </td>
             </tr>
 
-            <!-- CALL TO ACTION BUTTON -->
+            <!-- MESSAGE BODY -->
             <tr>
-                <td style="text-align: center;">
-                    <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="button">Calificar el viaje</a>
+                <td>
+                    <p class="message">
+                        Estimado/a, <br><br>
+                        Se ha asignado un proveedor provisional a las siguientes rutas:
+                        <ul>
+                           
+                            @foreach ($ruta as $ruta1)
+                            <li>{{$ruta1}}</li>
+                            @endforeach
+                            
+                         
+                           
+                        </ul>
+                        <br>
+                        
+                        
+                     
+                    </p>
+
+                    <p class="motivo">
+                        Motivo: {{$motivo}}<br><br>
+                    </p>
                 </td>
             </tr>
 
             <!-- FOOTER SECTION -->
             <tr>
                 <td>
-                    <p class="footer">Aotour Tech</p>
+                    <p class="footer">Equipo de Aotour</p>
                 </td>
             </tr>
         </table>

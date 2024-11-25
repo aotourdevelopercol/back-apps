@@ -85,19 +85,26 @@
             <!-- GREETING MESSAGE -->
             <tr>
                 <td>
-                    <p class="header">🚗¡El viaje a finalizado!</p>
+                    <p class="header">¡El conductor va en camino hacia tu destino!</p>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <p class="subtext">Gracias por viajar con nosotros. ¡Esperamos volver a verte pronto!</p>
+                    <p class="subtext">Prepárate para una aventura increíble con Aotour</p>
+                </td>
+            </tr>
+
+            <!-- MAIN MESSAGE -->
+            <tr>
+                <td>
+                    <p class="message">Tu destino te espera y cada kilómetro será una experiencia única. 🌟 ¡Disfruta del recorrido y que comience la diversión! 🎉</p>
                 </td>
             </tr>
 
             <!-- CALL TO ACTION BUTTON -->
             <tr>
                 <td style="text-align: center;">
-                    <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="button">Calificar el viaje</a>
+                    <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="button">Detalles de tu viaje</a>
                 </td>
             </tr>
 
