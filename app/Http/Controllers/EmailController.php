@@ -53,10 +53,7 @@
                 'data.motivo2' =>'nullable|string',
             ]);
 
-            Log::info('Inicio - Solicitud recibida: ' . json_encode($request->all()));
-            
-      
-
+                
             
             // Seleccionar plantilla y asunto basados en el tipo de plantilla
             switch ($validated['templateType']) {
@@ -136,6 +133,7 @@
 
                 case 'proveedores_documentos_aprobados':
                     try {
+
                         Mail::to($validated['email'])->send(new ProveedoresDocumentosAprobados(
                             $validated['data']['titulo'],
                             $validated['data']['texto'],

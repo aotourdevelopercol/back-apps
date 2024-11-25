@@ -25,7 +25,7 @@ class ProveedoresDocumentosAprobados extends Mailable
     public function __construct($titulo, $texto, $link)
     {
         $this->titulo = $titulo;
-        $this->asunto = $texto;
+        $this->texto = $texto;
         $this->link = $link;
     }
 

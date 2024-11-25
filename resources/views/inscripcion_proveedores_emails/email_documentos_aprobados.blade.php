@@ -176,7 +176,8 @@
 						<br>
 						<tr>
 							<td>
-								<p class="asunto">{{$texto}}</p>
+								<p>{{$texto}}</p>
+								<p class="asunto"></p>
 							</td>
 						</tr>
 						<br>
