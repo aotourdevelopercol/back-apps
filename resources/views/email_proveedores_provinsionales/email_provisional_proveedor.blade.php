@@ -1,4 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -12,12 +13,15 @@
             margin: 0;
             background-color: #cccccc;
         }
+
         table {
             border-spacing: 0;
         }
+
         td {
             padding: 0;
         }
+
         img {
             border: 0;
         }
@@ -48,7 +52,7 @@
             padding: 0 20px;
         }
 
-        motivo{
+        motivo {
             font-family: Sansation;
             font-size: 16px;
             line-height: 22px;
@@ -87,7 +91,8 @@
             <!-- LOGO SECTION -->
             <tr>
                 <td style="text-align: center; padding: 15px 20px; color: #ffffff">
-                    <a href="#"><img src="{{asset('asset/img/logo.png')}}" alt="Logo" width="200" style="max-width: 100%;"></a>
+                    <a href="#"><img src="{{asset('asset/img/logo.png')}}" alt="Logo" width="200"
+                            style="max-width: 100%;"></a>
                 </td>
             </tr>
 
@@ -104,19 +109,11 @@
                     <p class="message">
                         Estimado/a, <br><br>
                         Se ha asignado un proveedor provisional a las siguientes rutas:
-                        <ul>
-                           
-                            @foreach ($ruta as $ruta1)
+                    <ul>
+                        @foreach ($ruta as $ruta1)
                             <li>{{$ruta1}}</li>
-                            @endforeach
-                            
-                         
-                           
-                        </ul>
-                        <br>
-                        
-                        
-                     
+                        @endforeach
+                    </ul>
                     </p>
 
                     <p class="motivo">
@@ -134,4 +131,5 @@
         </table>
     </center>
 </body>
+
 </html>

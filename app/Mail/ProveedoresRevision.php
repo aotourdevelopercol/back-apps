@@ -25,8 +25,7 @@ class ProveedoresRevision extends Mailable
    public function build(){
     try {
         return $this
-        //->from('no-reply@aotour.com.co', 'Inscripción de Proveedor')
-        //->Bcc('comercial@aotour.com.co')
+        ->from('no-reply@aotour.com.co', 'Aotour')
         ->subject('En revición documental')
         ->view('inscripcion_proveedores_emails.email_revision')
         ->with(
