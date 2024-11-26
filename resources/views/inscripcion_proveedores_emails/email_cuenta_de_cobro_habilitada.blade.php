@@ -225,7 +225,7 @@
 					<table width="100%">
 						<tr>
 							<td>
-								<p class="names">Cuenta de cobro por corregir</p>
+								<p class="names">Cuenta de cobro habilitada para el mes de: {{$fecha}}</p>
                              
 								<p class="asunto">Reciban un cordial saludo de parte del equipo de <b>AOTOUR SAS.</b> <br><br>Gracias por confiar en nuestro trabajo, nos encargaremos de que vivas una experiencia de transporte a otro nivel.</p>
 							</td>

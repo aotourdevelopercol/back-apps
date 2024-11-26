@@ -3,7 +3,14 @@
     namespace App\Http\Controllers;
 
     use App\Mail\AsignacionDeViaje;
+    use App\Mail\CancelarViaje;
+    use App\Mail\CuentaDeCobroCerrada;
+    use App\Mail\CuentaDeCobroCorregir;
+    use App\Mail\CuentaDeCobroHabilitada;
+    use App\Mail\CuentaDeCobroRadicada;
     use App\Mail\EsperarEjecutivo;
+    use App\Mail\FinalizarViaje;
+    use App\Mail\ModificacionViaje;
     use App\Mail\NuevoViaje;
     use App\Mail\ProveedoresDocumentosAprobadosC;
     use App\Mail\ProveedoresDocumentosAprobados;
@@ -216,6 +223,52 @@
 
                     break;
 
+                // Finalizar viaje
+
+                case 'finalizar_viaje':
+                    try {
+                        Mail::to($validated['email'])->send(new FinalizarViaje(
+                            $validated['token']
+
+                        ));
+                    }catch (\Throwable $th){
+                        Log::error('Error al enviar correo: '. $th);
+                    }
+
+                // Cancelar viaje
+
+                case 'cancelar_viaje':
+                    try {
+                        Mail::to($validated['email'])->send(new CancelarViaje (
+                            $validated['data']['nombre'],
+                        ));
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                    }
+
+                    break;
+
+                // Modificacion viaje
+                case 'modificacion_viaje':
+                    try {
+                        Mail::to($validated['email'])->send(new ModificacionViaje(
+                            $validated['data']['nombre' ],
+                            $validated['data']['conductor'],
+                            $validated['data']['placa'],
+                            $validated['data']['telefonoConductor'],   
+                            $validated['data']['origen'],
+                            $validated['data']['destino'],
+                            $validated['data']['fecha'],
+                            $validated['data']['hora'],
+                            
+                        ));
+                    } catch (\Throwable $th) {
+                        Log::error('Error al enviar correo: '. $th);
+                        
+                    }
+
+                
+                //correos para proveedores especificando rutas y el motivo de la solicitud de provisional
 
                 case 'provi_provee' : 
                     try {
@@ -228,6 +281,54 @@
                     }
 
                     break;
+
+
+
+                // Correos para cuentas de cobro
+
+                case 'cuenta_cobro_habilitada' :
+                    try {
+                        Mail::to($validated['email'])->send(new CuentaDeCobroHabilitada(
+                            $validated['data']['fecha']
+                        ));
+                    } catch (\Throwable $th) {
+                        Log::error('Error al enviar correo: '. $th);
+                    }
+
+                    break;
+
+                case 'cuenta_cobro_cerrada' :
+                    try {
+                        Mail::to($validated['email'])->send(new CuentaDeCobroCerrada(
+                            $validated['data']['fecha']
+                        ));
+                    } catch (\Throwable $th) {
+                        Log::error('Error al enviar correo: '. $th);
+                    }
+
+                    break;
+
+                case 'cuenta_cobro_corregir' :
+                    try {
+                        Mail::to($validated['email'])->send(new CuentaDeCobroCorregir(
+                        ));
+                    } catch (\Throwable $th) {
+                        Log::error('Error al enviar correo: '. $th);
+                    }
+
+                    break;
+
+
+                case 'cuenta_cobro_radicada' :
+                    try {
+                        Mail::to($validated['email'])->send(new CuentaDeCobroRadicada(
+                        ));
+                    } catch (\Throwable $th) {
+                        Log::error('Error al enviar correo: '. $th);
+                    }
+
+                    break;
+
 
                 default:
                     return response()->json(['error' => 'Tipo de plantilla no válido'], 400);

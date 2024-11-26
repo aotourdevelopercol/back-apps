@@ -12,7 +12,7 @@
     <style type="text/css">
     	body {
     		margin: 0;
-    		background-color: #cccccc;
+    		background-color: #DB4403;
     	}
     	table {
     		border-spacing: 0;
@@ -24,13 +24,21 @@
     		border: 0;
     	}
 
+        .center-img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: 15px; /* margen superior */
+            margin-bottom: 15px; /* margen inferior */
+        }
+
     	.tops {
 			height: 33px;
 			top: 53px;
 			gap: 0px;
 			border-radius: 6px 6px 6px 6px;
 			opacity: 0px;
-			background: #c03900;
+			background-color: #DB4403;
 		}
 
 		.respu {
@@ -39,7 +47,7 @@
 			font-weight: 700;
 			line-height: 31.48px;
 			text-align: center;
-			color: rgba(255, 255, 255, 1);
+			color: #ffffff;
 
 		}
 
@@ -61,7 +69,7 @@
     		font-weight: 700; 
     		line-height: 12.24px; 
     		text-align: right; 
-    		color: #E04403;
+    		color: #ffffff;
     	}
     	.solicita {
     		font-family: Sansation; 
@@ -69,13 +77,13 @@
     		font-weight: 700; 
     		line-height: 12.24px; 
     		text-align: right; 
-    		color: #E04403;
+    		color: #ffffff;
     	}
 
     	.lineas {
 			
 			left: calc(50% - 627px/2 + 10.5px);
-			color: #232323;
+			color: #ffffff;
 			font-family: 'Sansation';
 			font-style: italic;
 			font-weight: 700;
@@ -86,11 +94,11 @@
 		}
     	.names {
 			font-family: Sansation;
-			font-size: 45px;
+			font-size: 20px;
 			font-weight: 700;
 			line-height: 10.56px;
 			text-align: center;
-			color: #E04403;
+			color: #ffffff;
 
 		}
 
@@ -100,7 +108,7 @@
 			font-weight: 400;
 			line-height: 28.96px;
 			text-align: center;
-			color: #232323;
+			color: #ffffff;
 		}
 
 		.elegir {
@@ -109,23 +117,23 @@
 			font-weight: 400;
 			line-height: 11.22px;
 			text-align: center;
-			color: black;
+			color: #ffffff;
 		}
 
     	.wrapper {
     		width: 100%;
     		table-layout: fixed;
-    		background-color: #cccccc;
+    		background-color: #DB4403;
     		padding-bottom: 60px;
     	}
     	.main {
-    		background-color: #FFFFFF;
+    		background-color: #DB4403;
     		margin: 0 auto;
     		width: 100%;
     		max-width: 600px;
     		border-spacing: 0;
     		font-family: Sansation;
-    		color: #171a1b;
+    		color: #ffffff;
     	}
 
     	.two-columns {
@@ -174,7 +182,7 @@
 
 		.buttonr {
 			background-color: rgba(255, 255, 255, 1);
-			color: black;
+			color: #ffffff;
 			text-decoration: none;
 			padding: 8px 20px;
 			border-radius: 5px;
@@ -196,10 +204,11 @@
 			<!-- TOP BORDER -->
 			<tr>
 				<td>
-					<table>
+					<table width="100%">
 						<tr>
-							<td>
-								<img src="{{url("images/logo-header-white.png")}}>
+                        <td style="text-align: center;">
+								<img src="{{asset('asset/img/logo_blanco.png')}}"  alt="" width="250" class="center-img">
+                                
 							</td>
 						</tr>
 					</table>
@@ -216,7 +225,8 @@
 					<table width="100%">
 						<tr>
 							<td>
-								<p class="names">Cuenta de cobro por corregir</p>
+								<p class="names">Cuenta de cobro radicada</p>
+                             
 								<p class="asunto">Reciban un cordial saludo de parte del equipo de <b>AOTOUR SAS.</b> <br><br>Gracias por confiar en nuestro trabajo, nos encargaremos de que vivas una experiencia de transporte a otro nivel.</p>
 							</td>
 						</tr>
@@ -224,8 +234,8 @@
 						<br>
 						
 						<tr>
-							<td>
-								<img src="{{url('images/logo-bienvenida.png')}}" alt="" width="600" style="max-width: 100%;">
+                        <td style="text-align: center;">
+								<img src="{{asset('asset/img/imagen_fondo_rojo.png')}}"  alt="" width="200" class="center-img">
 							</td>
 						</tr>
 
@@ -240,7 +250,7 @@
 					<table width="100%">
 						<tr>
 							<td style="text-align: center; padding: 15px 20px; color: #ffffff">
-								<p class="lineas"><b style="color: #E04403">LÍNEAS DE ATENCIÓN:</b> Bogotá: (601) 358 5555 - Barranquilla: (605) 358 2555 - Nacional: 314 780 6060</p>
+								<p class="lineas"><b style="color: #ffffff">LÍNEAS DE ATENCIÓN:</b> Bogotá: (601) 358 5555 - Barranquilla: (605) 358 2555 - Nacional: 314 780 6060</p>
 							</td>
 						</tr>
 					</table>
