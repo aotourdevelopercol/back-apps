@@ -59,7 +59,7 @@
                 'data.ruta' =>'nullable|array',     
                 'data.motivo2' =>'nullable|string',
             ]);
-
+            
                 
             
             // Seleccionar plantilla y asunto basados en el tipo de plantilla
