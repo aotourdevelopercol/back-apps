@@ -30,7 +30,7 @@ class CuentaDeCobroCorregir extends Mailable
     {
         return new Envelope(
             from: new Address('no-reply@aotour.com.co', 'Aotour'),
-            subject: 'Cuenta de cobro cerrada',
+            subject: 'Cuenta de cobro por corregir',
         );
     }
 
