@@ -53,6 +53,15 @@
             color: #0275d8;
             text-decoration: none;
         }
+
+        .message {
+            font-family: Sansation;
+            font-size: 16px;
+            line-height: 22px;
+            text-align: center;
+            color: #171a1b;
+            padding: 0 20px;
+        }
     </style>
 </head>
 
@@ -66,13 +75,16 @@
             <p>Lamentamos informarte que has sido eliminado(a) de la programación.</p>
             <p>¡Mantente atento(a) a futuras actualizaciones! 📅</p>
         </div>
-        <div class="footer">
-            <p>Si tienes alguna duda o necesitas soporte, no dudes en comunicarte con nosotros:</p>
-            <ul>
-                <li><strong>Teléfono 1:</strong> 314 780 6060</li>
-                <li><strong>Teléfono 2:</strong> 601 358 5555</li>
-            </ul>
-        </div>
+        <!-- FOOTER MESSAGE -->
+        <tr>
+                <td>
+                    <p class="message">
+                        Con AOTOUR, viaja tranquilo, viaja seguro.<br><br>
+                        Si tienes alguna duda o necesitas soporte, comunícate al <strong>3147806060</strong> o <strong>601 358 5555</strong>.
+                    </p>
+                    <p class="message">¡Descarga nuestra app y lleva tu experiencia a otro nivel!</p>
+                </td>
+            </tr>
     </div>
 </body>
 
