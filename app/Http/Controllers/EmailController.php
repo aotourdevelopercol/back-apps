@@ -4,12 +4,14 @@
 
     use App\Mail\AsignacionDeViaje;
     use App\Mail\CancelarViaje;
+    use App\Mail\ConfirmarViaje;
     use App\Mail\CuentaDeCobroCerrada;
     use App\Mail\CuentaDeCobroCorregir;
     use App\Mail\CuentaDeCobroHabilitada;
     use App\Mail\CuentaDeCobroRadicada;
     use App\Mail\EsperarEjecutivo;
     use App\Mail\FinalizarViaje;
+    use App\Mail\InicioViaje;
     use App\Mail\ModificacionViaje;
     use App\Mail\NuevoViaje;
     use App\Mail\ProveedoresDocumentosAprobadosC;
@@ -180,7 +182,7 @@
                 //
                 // Correos para viajes para pasajeros - Asginación de viaje, Espera de ejecutivo (Esperar al pasajero), Nuevo viaje
                 //
-                case 'nuevo_viaje':
+                case 'viaje_entendido':
                     try {
                         Mail::to($validated['email'])->send(new NuevoViaje(
                           $validated['token'],
@@ -268,6 +270,31 @@
                     }
 
                     break;
+
+
+                // Confirmar viaje
+
+                case 'confirmar_viaje':
+                    try {
+                        Mail::to($validated['email'])->send(new ConfirmarViaje(
+                            $validated['nombre']
+
+                            ));
+                    } catch (\Throwable $th) {
+                        Log::error('Error al enviar correo: '. $th);
+                    }
+
+                    break;
+
+
+                // Inicio viaje
+
+                case 'inicio_viaje':
+                    try {
+                        Mail::to($validated['email'])->send(new InicioViaje());
+                    } catch (\Throwable $th) {
+                        Log::error('Error al enviar correo: '. $th);
+                    }
 
                 
                 //correos para proveedores especificando rutas y el motivo de la solicitud de provisional
