@@ -1,99 +1,107 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asignación de Viaje Aotour</title>
+    <title>Modificación de Viaje Aotour</title>
 
     <style type="text/css">
         body {
             margin: 0;
-            background-color: #cccccc;
-        }
-        table {
-            border-spacing: 0;
-        }
-        td {
             padding: 0;
+            background-color: #f9f9f9;
+            font-family: Arial, sans-serif;
+            border-radius: 10px;
+            color: #333;
         }
-        img {
-            border: 0;
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            border-radius: 10px;
+            overflow: scroll;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .header {
-            font-family: Sansation;
             font-size: 24px;
             font-weight: 700;
             text-align: center;
-            color: #E04403;
+            color: #ffffff;
+            padding: 20px;
+            width: 100%;
+            background-color: #db4403;
         }
-        
-        .subtext {
-            font-family: Sansation;
-            font-size: 18px;
-            font-weight: 700;
-            text-align: center;
-            color: #E04403;
-            margin: 10px;
-        }
-        
+
         .message {
-            font-family: Sansation;
-            font-size: 16px;
-            line-height: 22px;
+            font-size: 18px;
+            line-height: 1.6;
+            padding: 20px;
             text-align: center;
-            color: #171a1b;
-            padding: 0 20px;
         }
 
         .button {
-            background-color: rgba(224, 68, 3, 1);
+            display: inline-block;
+            background: #db4403;
             color: white;
             text-decoration: none;
-            padding: 8px 20px;
+            padding: 10px 20px;
+            font-size: 16px;
             border-radius: 5px;
-            border: 1px solid rgba(224, 68, 3, 1);
-            font-weight: bold;
-            font-size: 12px;
-            display: inline-block;
             margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .button:hover {
+            background: #c33d03;
         }
 
         .footer {
-            font-family: Sansation;
-            font-size: 12px;
-            font-style: italic;
+            background-color: #f1f1f1;
             text-align: center;
-            color: black;
-            padding-top: 20px;
+            padding: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .footer a {
+            color: #db4403;
+            text-decoration: none;
+        }
+        logo img {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
 
 <body>
-    <center class="wrapper">
-        <table class="main" width="100%">
+    <div class="container">
+        <div class="logo">
+            <div class="header" style="text-align: center;">
+                ¡Modificación del viaje! 🚗</div>
             <!-- LOGO SECTION -->
-            <tr>
-                <td style="text-align: center; padding: 15px 20px; color: #ffffff">
-                    <a href=""><img src="{{asset('asset/img/logo-bienvenida.png')}}" alt="Aotour Logo" width="200" style="max-width: 100%;"></a>
-                </td>
-            </tr>
+        </div>
 
-            <!-- GREETING MESSAGE -->
-            <tr>
-                <td>
-                    <p class="header">Modificación de viaje</p>
-                </td>
-            </tr>
+        <div style="text-align: center; padding: 15px 20px;">
+            <a href="">
+                <img src="{{asset('asset/img/logo-bienvenida.png')}}" alt="Aotour Logo" width="200"
+                    style="max-width: 100%;">
+            </a>
+        </div>
+
+        <table width="100%">
 
             <!-- MAIN MESSAGE -->
             <tr>
                 <td>
                     <p class="message">
-                        Hola {{$nombre}}, te comunico que la ruta en la que estabas programado(a) ha sido modificada:
+                        Hola {{$nombre}}, AOTOUR te confirma que tu colaborador al volante asignado para tu traslado
+                        es:
                     </p>
                     <p class="message">
                         <strong>Nombre:</strong> {{$conductor}}<br>
@@ -119,20 +127,24 @@
                 <td>
                     <p class="message">
                         Con AOTOUR, viaja tranquilo, viaja seguro.<br><br>
-                        Si tienes alguna duda o necesitas soporte, comunícate al <strong>3147806060</strong> o <strong>601 358 5555</strong>.
+                        Si tienes alguna duda o necesitas soporte, comunícate al <strong>3147806060</strong> o
+                        <strong>601 358 5555</strong>.
                     </p>
                     <p class="message">¡Descarga nuestra app y lleva tu experiencia a otro nivel!</p>
                 </td>
             </tr>
 
-
+            <br>
             <!-- FOOTER SECTION -->
             <tr>
-                <td>
-                    <p class="footer">Aotour Tech</p>
+                <td class="footer">
+                    <p>&copy; {{ date('Y') }} Aotour. Todos los derechos reservados.</p>
+                    <p><a href="https://aotour.com">Visita nuestro sitio web</a></p>
                 </td>
             </tr>
         </table>
-    </center>
+
+    </div>
 </body>
+
 </html>

@@ -10,7 +10,7 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
-            color: #333;
+            color: #db4403;
         }
         .container {
             width: 100%;
@@ -22,7 +22,7 @@
             overflow: hidden;
         }
         .header {
-            background-color: #4CAF50;
+            background-color: #db4403;
             color: #fff;
             text-align: center;
             padding: 20px 10px;
@@ -35,7 +35,7 @@
             padding: 20px;
         }
         .content h2 {
-            color: #4CAF50;
+            color: #db4403;
             margin-top: 0;
         }
         .footer {
@@ -46,7 +46,7 @@
             font-size: 12px;
         }
         .footer a {
-            color: #4CAF50;
+            color: #db4403;
             text-decoration: none;
         }
     </style>
@@ -57,7 +57,7 @@
             <h1>Confirmación de Ruta</h1>
         </div>
         <div class="content">
-            <h2>Hola {{Nombre}},</h2>
+            <h2>Hola {{$nombre}},</h2>
             <p>Tu compañía ha solicitado un servicio de ruta para ti. En breve, <strong>AOTOUR</strong> te compartirá los detalles del colaborador al volante asignado para tu traslado.</p>
             <p>Con <strong>AOTOUR</strong>, viaja tranquilo, viaja seguro.</p>
         </div>

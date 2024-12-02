@@ -21,7 +21,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .header {
-            background: #007BFF;
+            background: #db4403;
             color: #fff;
             text-align: center;
             padding: 20px;
@@ -42,7 +42,7 @@
         }
         .cta-button {
             display: inline-block;
-            background: #007BFF;
+            background: #db4403;
             color: #fff;
             text-decoration: none;
             padding: 10px 20px;
@@ -51,7 +51,7 @@
             margin-top: 20px;
         }
         .cta-button:hover {
-            background: #0056b3;
+            background: #db4403;
         }
         .footer {
             background-color: #f1f1f1;
@@ -61,7 +61,7 @@
             color: #666;
         }
         .footer a {
-            color: #007BFF;
+            color: #db4403;
             text-decoration: none;
         }
     </style>
@@ -69,7 +69,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Aotour 🚗✨</h1>
+            <h1>Inicio de viaje 🚗✨</h1>
         </div>
         <div class="content">
             <p>¡El conductor va en camino hacia tu destino! 🌟</p>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viaje Finalizado</title>
+    <title>Aotour - El conductor está en camino</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -21,8 +21,8 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .header {
-            background: #db4403;
-            color: #fff;
+            background: #db4502;
+            color: #ffffff;
             text-align: center;
             padding: 20px;
         }
@@ -42,7 +42,7 @@
         }
         .cta-button {
             display: inline-block;
-            background: #db4403;
+            background: #db4502;
             color: #fff;
             text-decoration: none;
             padding: 10px 20px;
@@ -51,7 +51,7 @@
             margin-top: 20px;
         }
         .cta-button:hover {
-            background: #db4403;
+            background: #0056b3;
         }
         .footer {
             background-color: #f1f1f1;
@@ -61,22 +61,35 @@
             color: #666;
         }
         .footer a {
-            color: #db4403;
+            color: #007BFF;
             text-decoration: none;
+        }
+        .cta-button {
+            display: inline-block;
+            background: #db4403;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>El viaje ha finalizado</h1>
+            <h1>Aotour 🚗✨</h1>
         </div>
         <div class="content">
-            <p>🚗Gracias por viajar con nosotros. ¡Esperamos verte pronto!😃</p>
-            <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="cta-button">Detalles de tu viaje</a>
+            <p>¡El conductor va en camino hacia tu destino! 🌟</p>
+            <p>Prepárate para una aventura increíble. Tu destino te espera y cada kilómetro será una experiencia única. </p>
+            <p>🎉 ¡Disfruta del recorrido y que comience la diversión! 🎉</p>
+            <a href="https://www.upnetweb.com/viaje?token=" class="cta-button">Detalles de tu viaje</a>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} Aotour. Todos los derechos reservados.</p>
+            <p>&copy; 2024 AOTOUR. Todos los derechos reservados.</p>
+            <p><a href="https://aotour.com">Visita nuestro sitio web</a></p>
         </div>
     </div>
 </body>

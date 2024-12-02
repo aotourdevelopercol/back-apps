@@ -25,7 +25,7 @@ class CancelarViaje extends Mailable
     {
         try {
             return $this
-                ->from('no-reply@aotour.com.co', 'Cancelación de viaje') // Cambia esto a tu dirección de correo
+                ->from('no-reply@aotour.com.co', 'Aotour') // Cambia esto a tu dirección de correo
                 ->subject('Cancelación de viaje')
                 ->view('emails_viajes.email_cancelacion_viaje')
                 ->with([

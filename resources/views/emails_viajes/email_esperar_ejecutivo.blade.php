@@ -1,4 +1,5 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
@@ -11,114 +12,110 @@
         body {
             margin: 0;
             background-color: #cccccc;
+            font-family: Sansation, Arial, sans-serif;
         }
 
-        table {
-            border-spacing: 0;
+        .wrapper {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
         }
 
-        td {
-            padding: 0;
+        .logo {
+            text-align: center;
+            padding: 20px;
+            background: #E04403;
         }
 
-        img {
-            border: 0;
+        .logo img {
+            max-width: 100%;
+            height: auto;
         }
 
         .header {
-            font-family: Sansation;
             font-size: 24px;
             font-weight: 700;
             text-align: center;
-            color: #E04403;
+            color: #ffffff;
+            margin: 20px 0;
+            width: 100%;
         }
 
         .subtext {
-            font-family: Sansation;
             font-size: 18px;
             font-weight: 700;
             text-align: center;
             color: #E04403;
-            margin: 10px;
+            margin: 10px 0;
         }
 
         .message {
-            font-family: Sansation;
             font-size: 16px;
             line-height: 22px;
             text-align: center;
             color: #171a1b;
             padding: 0 20px;
+            margin: 10px 0;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
         }
 
         .button {
-            background-color: rgba(224, 68, 3, 1);
+            background-color: #E04403;
             color: white;
             text-decoration: none;
-            padding: 8px 20px;
+            padding: 12px 20px;
             border-radius: 5px;
-            border: 1px solid rgba(224, 68, 3, 1);
+            border: none;
             font-weight: bold;
-            font-size: 12px;
+            font-size: 14px;
             display: inline-block;
-            margin-top: 20px;
         }
 
         .footer {
-            font-family: Sansation;
             font-size: 12px;
             font-style: italic;
             text-align: center;
             color: black;
-            padding-top: 20px;
+            padding: 20px 0;
         }
     </style>
 </head>
 
 <body>
-    <center class="wrapper">
-        <table class="main" width="100%">
-            <!-- LOGO SECTION -->
-            <tr>
-                <td style="text-align: center; padding: 15px 20px; color: #ffffff">
-                    <a href=""><img src="{{asset('asset/img/logo-bienvenida.png')}}" width="200" style="max-width: 100%;"></a>
-                </td>
-            </tr>
-
+    <div class="wrapper">
+        <!-- LOGO SECTION -->
+        <div class="logo">
             <!-- GREETING MESSAGE -->
-            <tr>
-                <td>
-                    <p class="header">¡El conductor ya está esperándote! 🚗</p>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                    <p class="subtext">Prepárate para partir y disfruta del viaje 🚙 🛣️</p>
-                </td>
-            </tr>
+            <div class="header" style="text-align: center;">¡El conductor ya está esperándote! 🚗</div>
 
-            <!-- MAIN MESSAGE -->
-            <tr>
-                <td>
-                    <p class="message">Tu destino te espera y cada kilómetro será una experiencia única. 🌟 Disfruta del recorrido y que comience la diversión 🎉 🚐</p>
-                </td>
-            </tr>
+        </div>
 
-            <!-- CALL TO ACTION BUTTON -->
-            <tr>
-                <td style="text-align: center;">
-                    <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="button">Detalles de tu viaje</a>
-                </td>
-            </tr>
+        <div style="text-align: center;">
+            <img src="{{asset('asset/img/logo-bienvenida.png')}}" alt="Aotour Logo" width="200"></a>
+        </div>
+        <div class="subtext">Prepárate para partir y disfruta del viaje 🚙 🛣️</div>
 
-            <!-- FOOTER SECTION -->
-            <tr>
-                <td>
-                    <p class="footer">Aotour Tech </p>
-                </td>
-            </tr>
-        </table>
-    </center>
+        <!-- MAIN MESSAGE -->
+        <div class="message">
+            Tu destino te espera y cada kilómetro será una experiencia única. 🌟 Disfruta del recorrido y que comience
+            la diversión 🎉 🚐
+        </div>
+
+        <!-- CALL TO ACTION BUTTON -->
+        <div class="button-container">
+            <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="button">Detalles de tu viaje</a>
+        </div>
+
+        <!-- FOOTER SECTION -->
+        <div class="footer">Aotour Tech</div>
+    </div>
 </body>
 
 </html>

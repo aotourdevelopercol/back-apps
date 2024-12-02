@@ -24,6 +24,7 @@
     use App\Mail\ProveedoresAviso;
     use App\Mail\ProveedoresDocumentosRechazados;
     use App\Mail\ProveedorProvisional;
+    use App\Mail\ViajeEntendido;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Mail;
     use Illuminate\Support\Facades\Log; 
@@ -182,10 +183,9 @@
                 //
                 // Correos para viajes para pasajeros - Asginación de viaje, Espera de ejecutivo (Esperar al pasajero), Nuevo viaje
                 //
-                case 'viaje_entendido':
+                case 'viaje_entendido': // Nueva plantilla
                     try {
-                        Mail::to($validated['email'])->send(new NuevoViaje(
-                          $validated['token'],
+                        Mail::to($validated['email'])->send(new ViajeEntendido(
                         ));
                     } catch (\Throwable $th) {
                         Log::error('Error al enviar correo: '. $th);
@@ -277,7 +277,7 @@
                 case 'confirmar_viaje':
                     try {
                         Mail::to($validated['email'])->send(new ConfirmarViaje(
-                            $validated['nombre']
+                            $validated['data']['nombre']
 
                             ));
                     } catch (\Throwable $th) {
@@ -295,6 +295,8 @@
                     } catch (\Throwable $th) {
                         Log::error('Error al enviar correo: '. $th);
                     }
+
+                    break;
 
                 
                 //correos para proveedores especificando rutas y el motivo de la solicitud de provisional
