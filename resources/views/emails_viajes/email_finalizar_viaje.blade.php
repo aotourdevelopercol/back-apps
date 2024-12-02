@@ -69,7 +69,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>El viaje ha finalizado</h1>
+            <h1>Usted ha llegado a tu destino</h1>
         </div>
         <div class="content">
             <p>🚗Gracias por viajar con nosotros. ¡Esperamos verte pronto!😃</p>

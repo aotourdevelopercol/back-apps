@@ -25,6 +25,7 @@
     use App\Mail\ProveedoresDocumentosRechazados;
     use App\Mail\ProveedorProvisional;
     use App\Mail\ViajeEntendido;
+    use App\Mail\ViajeFinalizado;
     use Illuminate\Http\Request;
     use Illuminate\Support\Facades\Mail;
     use Illuminate\Support\Facades\Log; 
@@ -225,7 +226,7 @@
 
                     break;
 
-                // Finalizar viaje
+                // Finalizar viaje - Pasajeros
 
                 case 'finalizar_viaje':
                     try {
@@ -236,7 +237,20 @@
                     }catch (\Throwable $th){
                         Log::error('Error al enviar correo: '. $th);
                     }
+                    break;
 
+                // Finalizar viaje 
+
+                case 'fin_viaje':
+                    try {
+                        Mail::to($validated['email'])->send(new ViajeFinalizado(
+                            $validated['token']
+                        ));
+                    } catch (\Throwable $th) {
+                        Log::error('Error al enviar correo: '. $th);
+                    }
+
+                    break;
                 // Cancelar viaje
 
                 case 'cancelar_viaje':
