@@ -32,7 +32,7 @@ class ViajeFinalizado extends Mailable
     {
         return new Envelope(
             subject: 'Viaje Finalizado',
-            from: new Address('no-reply@aotoru.com.co', 'Aotour')
+            from: new Address('no-reply@aotour.com.co', 'Aotour')
         );
     }
 
