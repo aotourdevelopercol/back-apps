@@ -75,11 +75,11 @@
             <p>¡El conductor va en camino hacia tu destino! 🌟</p>
             <p>Prepárate para una aventura increíble. Tu destino te espera y cada kilómetro será una experiencia única. </p>
             <p>🎉 ¡Disfruta del recorrido y que comience la diversión! 🎉</p>
-            <a href="https://aotour.com" class="cta-button">Más sobre Aotour</a>
+            <a href="https://www.upnetweb.com" class="cta-button">Más sobre Aotour</a>
         </div>
         <div class="footer">
             <p>&copy; 2024 AOTOUR. Todos los derechos reservados.</p>
-            <p><a href="https://aotour.com">Visita nuestro sitio web</a></p>
+            <p><a href="https://www.upnetweb.com/">Visita nuestro sitio web</a></p>
         </div>
     </div>
 </body>

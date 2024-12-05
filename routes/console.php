@@ -9,7 +9,8 @@ Artisan::command('inspire', function () {
 
 
 // comandos por minutos 
-Schedule::command('app:time-command')->everyMinute();
+//Schedule::command('app:time-command')->everyMinute();
+Schedule::command('app:consulta-documentos-vehiculos')->everyMinute();
 
 // comandos cada dos horas 
 // $schedule->command('app:')->everyTwoHours();

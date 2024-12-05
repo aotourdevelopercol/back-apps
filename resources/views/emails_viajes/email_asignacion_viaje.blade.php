@@ -139,7 +139,7 @@
             <tr>
                 <td class="footer">
                     <p>&copy; {{ date('Y') }} Aotour. Todos los derechos reservados.</p>
-                    <p><a href="https://aotour.com">Visita nuestro sitio web</a></p>
+                    <p><a href="https://www.upnetweb.com/">Visita nuestro sitio web</a></p>
                 </td>
             </tr>
         </table>
