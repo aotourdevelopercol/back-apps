@@ -59,7 +59,7 @@ class AsignacionDeViaje extends Mailable
     {
         try {
             return $this
-                ->from('no-reply@aotour.com.co', 'Aotour')
+                ->from(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS'))
                 ->subject('Asignacion de viaje')
                 ->view('emails_viajes.email_asignacion_viaje') // Ensure the view name is correct
                 ->with([

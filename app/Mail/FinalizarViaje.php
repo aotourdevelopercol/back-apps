@@ -32,7 +32,7 @@ class FinalizarViaje extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('no-reply@aotour.com.co', 'Aotour'), // Aquí usamos la clase Address
+            from: new Address(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS')), // Aquí usamos la clase Address
             subject: 'Finalización de Viaje'
         );
     }

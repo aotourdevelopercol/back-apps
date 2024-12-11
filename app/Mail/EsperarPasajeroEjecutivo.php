@@ -5,6 +5,7 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -27,6 +28,7 @@ class EsperarPasajeroEjecutivo extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS')),
             subject: 'Esperar Pasajero Ejecutivo',
         );
     }

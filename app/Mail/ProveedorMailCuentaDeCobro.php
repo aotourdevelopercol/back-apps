@@ -24,7 +24,7 @@ class ProveedorMailCuentaDeCobro extends Mailable
    public function build () {
     try {
         return $this
-        ->from('no-reply@aotour.com.co', 'cuenta de cobro por corregir') // Cambia esto a tu dirección de correo
+        ->from(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS')) // Cambia esto a tu dirección de correo
         //->Bcc($copia) // Volver global
         ->subject('Cuenta de cobro por corregir')
         ->view('inscripcion_proveedores_emails.email_cuenta_de_cobro_corregir');

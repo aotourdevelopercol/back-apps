@@ -28,7 +28,7 @@ class ProveedoresCapacitar extends Mailable
     {
         try {
             return $this
-                ->from('no-reply@aotour.com.co', 'Inscripción de Proveedor') // Cambia esto a tu dirección de correo
+                ->from(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS')) // Cambia esto a tu dirección de correo
                 //->Bcc('comercial@aotour.com.co') // Volver global
                 ->subject('Capacitación de Conductor')
                 ->view('inscripcion_proveedores_emails.email_capacitar') // Asegúrate de poner el nombre correcto de tu vista

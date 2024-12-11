@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nuevo Viaje Aotour</title>
+    <title>Nuevo Viaje 🚗</title>
 
     <style type="text/css">
         body {
@@ -114,7 +114,10 @@
         </div>
 
         <!-- FOOTER SECTION -->
-        <div class="footer">Aotour Tech</div>
+        <div class="footer">
+            <p>&copy; {{ date('Y') }} UP. Todos los derechos reservados.</p>
+            <p><a href="https://www.upnetweb.com/">Visita nuestro sitio web</a></p>
+        </div>
     </div>
 </body>
 

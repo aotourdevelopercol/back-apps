@@ -28,7 +28,7 @@ class ConfirmarViaje extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('no-reply@aotour.com.co', 'Aotour'),
+            from: new Address(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS')),
             subject: 'Confirmar Viaje',
         );
     }

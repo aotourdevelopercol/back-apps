@@ -92,7 +92,7 @@
 
         <!-- ADDITIONAL MESSAGE -->
         <div class="message">
-            Con AOTOUR, viaja tranquilo, viaja seguro.<br><br>
+            Me muevo con UP.<br><br>
             Si tienes alguna duda o necesitas soporte, comunícate al <strong>3147806060</strong> o <strong>601 358 5555</strong>.
             <br><br>
             ¡Descarga nuestra app y lleva tu experiencia a otro nivel!
@@ -100,7 +100,8 @@
 
         <!-- FOOTER -->
         <div class="footer">
-            Aotour Tech
+            <p>&copy; {{ date('Y') }} UP. Todos los derechos reservados.</p>
+            <p><a href="https://www.upnetweb.com/">Visita nuestro sitio web</a></p>
         </div>
     </div>
 </body>

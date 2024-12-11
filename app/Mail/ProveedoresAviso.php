@@ -31,7 +31,7 @@ class ProveedoresAviso extends Mailable
     public function build() {
         try {
             return $this
-            ->from('no-reply@aotour.com.co', 'Inscripción de Proveedor') // Cambia esto a tu dirección de correo
+            ->from(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS')) // Cambia esto a tu dirección de correo
             //->Bcc('comercial@aotour.com.co') // Volver global
             ->subject('Nuevo proveedor para ingreso')
             ->view('inscripcion_proveedores_emails.email_aviso') // Asegúrate de poner el nombre correcto de tu vista

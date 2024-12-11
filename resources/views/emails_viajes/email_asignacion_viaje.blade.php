@@ -6,7 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asignación de Viaje Aotour</title>
+    <title>Asignación de Viaje UP</title>
 
     <style type="text/css">
         body {
@@ -100,7 +100,7 @@
             <tr>
                 <td>
                     <p class="message">
-                        Hola {{$nombre}}, AOTOUR te confirma que tu colaborador al volante asignado para tu traslado
+                        Hola {{$nombre}}, UP te confirma que tu colaborador al volante asignado para tu traslado
                         es:
                     </p>
                     <p class="message">
@@ -126,7 +126,7 @@
             <tr>
                 <td>
                     <p class="message">
-                        Con AOTOUR, viaja tranquilo, viaja seguro.<br><br>
+                        Me muevo con UP.<br><br>
                         Si tienes alguna duda o necesitas soporte, comunícate al <strong>3147806060</strong> o
                         <strong>601 358 5555</strong>.
                     </p>
@@ -138,7 +138,7 @@
             <!-- FOOTER SECTION -->
             <tr>
                 <td class="footer">
-                    <p>&copy; {{ date('Y') }} Aotour. Todos los derechos reservados.</p>
+                    <p>&copy; {{ date('Y') }} Up. Todos los derechos reservados.</p>
                     <p><a href="https://www.upnetweb.com/">Visita nuestro sitio web</a></p>
                 </td>
             </tr>

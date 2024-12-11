@@ -76,7 +76,7 @@
             <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="cta-button">Detalles de tu viaje</a>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} Aotour. Todos los derechos reservados.</p>
+            <p>&copy; {{ date('Y') }} UP. Todos los derechos reservados.</p>
         </div>
     </div>
 </body>

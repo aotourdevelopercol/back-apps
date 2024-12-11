@@ -29,7 +29,7 @@ class ViajeEntendido extends Mailable
     {
         return new Envelope(
             subject: 'Viaje Entendido',
-            from: new Address('no-reply@aotour.com.co', 'Aotour')
+            from: new Address(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS'))
         );
     }
 

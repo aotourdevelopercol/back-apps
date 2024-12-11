@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aotour - El conductor está en camino</title>
+    <title>UP - El conductor está en camino</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -78,7 +78,7 @@
             <a href="https://www.upnetweb.com" class="cta-button">Más sobre Aotour</a>
         </div>
         <div class="footer">
-            <p>&copy; 2024 AOTOUR. Todos los derechos reservados.</p>
+            <p>&copy; {{ date('Y') }} UP. Todos los derechos reservados.</p>
             <p><a href="https://www.upnetweb.com/">Visita nuestro sitio web</a></p>
         </div>
     </div>
