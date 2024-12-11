@@ -617,6 +617,7 @@ class ViajeController extends Controller
                 $viaje->fk_centrodecosto = $centro;
                 $viaje->fk_ciudad = $query->ciudad_user;
                 $viaje->vuelo = $viajeData['vuelo'] ?? null;
+                $viaje->tipo_vehiculo = $viajeData['tipo_vehiculo'] ?? null;
                 $viaje->tipo_solicitud = $tipo;
                 $viaje->created_at = date('Y-m-d H:i:s');
                 $viaje->creado_por = $request->id_user;
