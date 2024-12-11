@@ -14,6 +14,7 @@ use App\Models\Conductor;
 use App\Models\ReferenciasPayu;
 use App\Models\ViajeAplicacion;
 use App\Models\TokenPayU;
+use Auth;
 use Illuminate\Support\Facades\Log;
 
 use Illuminate\Http\Request;
@@ -607,6 +608,27 @@ class Viajes extends Controller
         $tipos = Tipo::obtenerTiposPorCodigo('IDI');
 
         return response()->json($tipos);
+    }
+
+    public function listarNotificaciones(Request $request)
+    {
+        $pasajero = Auth::user();
+
+        // Realizar la consulta en ambas columnas
+        $notificaciones = DB::table('notificaciones_apps')
+            ->where('fk_pasajero_ruta', $pasajero->id)
+            ->orWhere('fk_pasajero_ejecutivos', $pasajero->id)
+            ->get();
+
+        // Devolver los resultados
+        if ($notificaciones->isNotEmpty()) {
+            return Response::json([
+                'notificaciones' => $notificaciones,
+                'state' => 'SUCCESS'
+            ]);
+        } else {
+            return Response::json(['mensaje' => 'No hay notificaciones.'], 200);
+        }
     }
 
     public function listarlugares(Request $request)
