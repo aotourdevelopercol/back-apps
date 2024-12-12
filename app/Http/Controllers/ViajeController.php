@@ -167,6 +167,11 @@ class ViajeController extends Controller
         left join tipos t3 on t3.id = v.tipo_ruta
         left join tipos t4 on t4.id = prq.estado_ruta
         where (pe.app_user_id = ? or prq.id_empleado = ?) and e.codigo = 'INICIADO'
+        AND
+        CASE
+	    WHEN v.tipo_traslado = 70
+	         AND prq.recoger_a != 2
+	    THEN true else false END
         GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
        	LIMIT 1;";
 
@@ -522,44 +527,67 @@ class ViajeController extends Controller
             $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
 
             $query = "SELECT
-                v.id,
-                v.fecha_viaje,
-                v.hora_viaje,
-                CONCAT(c.primer_nombre, ' ' ,c.primer_apellido) as conductor,
-                e2.nombre as tipo_de_vehiculo,
-                cv.id as id_calificacion,
-                JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
+                    v.id,
+                    v.fecha_viaje,
+                    v.hora_viaje,
+                    CONCAT(c.primer_nombre, ' ' , c.primer_apellido) as conductor,
+                    e2.nombre as tipo_de_vehiculo,
+                    cv.id as id_calificacion,
+                    JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
                 FROM
                     viajes v
-                LEFT JOIN pasajeros_rutas_qr prq ON prq.fk_viaje = v.id
-                LEFT JOIN pasajeros_ejecutivos pe ON pe.fk_viaje = v.id
-                LEFT JOIN calificacion_viajes cv ON cv.fk_viaje = v.id
-                LEFT JOIN vehiculos v2 on v2.id = v.fk_vehiculo
-                LEFT JOIN estados e2 on e2.id = v2.fk_tipo_vehiculo
-                LEFT JOIN conductores c on c.id = v.fk_conductor
-                LEFT JOIN destinos d ON d.fk_viaje = v.id
-                LEFT JOIN estados e ON e.id = v.fk_estado
+                LEFT JOIN pasajeros_rutas_qr prq ON
+                    prq.fk_viaje = v.id
+                LEFT JOIN pasajeros_ejecutivos pe ON
+                    pe.fk_viaje = v.id
+                LEFT JOIN calificacion_viajes cv ON
+                    cv.fk_viaje = v.id
+                LEFT JOIN vehiculos v2 on
+                    v2.id = v.fk_vehiculo
+                LEFT JOIN estados e2 on
+                    e2.id = v2.fk_tipo_vehiculo
+                LEFT JOIN conductores c on
+                    c.id = v.fk_conductor
+                LEFT JOIN destinos d ON
+                    d.fk_viaje = v.id
+                LEFT JOIN estados e ON
+                    e.id = v.fk_estado
                 WHERE
                     v.fecha_viaje = ?
                     AND
-                    v.estado_eliminacion IS NULL
+                                    v.estado_eliminacion IS NULL
                     AND
-                    (
-                        prq.id_empleado = ?
+                                    (
+                                        prq.id_empleado = ?
                         OR
-                        pe.app_user_id = ?
-                    )
-                    AND e.codigo IN (?)
+                                        pe.app_user_id = ?
+                                    )
+                    AND
+                    CASE
+                        WHEN v.tipo_traslado = 70
+                            AND prq.recoger_a = 2
+                            AND (v.fk_estado = 59 OR v.fk_estado = 60) THEN true
+                        WHEN v.tipo_traslado = 69
+                            AND v.recoger_pasajero = 1
+                            AND v.fk_estado = 60 THEN true
+                        ELSE false
+                    END
                     AND cv.id is null
-                GROUP BY 1,2,3,4,5,6
-                ORDER BY v.hora_viaje DESC
+                GROUP BY
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                    6
+                ORDER BY
+                    v.hora_viaje DESC
                 LIMIT 1;";
 
             $params = [
                 $fechaHoy,
                 $idEmpleado ?? null,
-                $appUserId ?? null,
-                'FINALIZADO'
+                $appUserId ?? null
             ];
 
             $results = DB::select($query, $params);
