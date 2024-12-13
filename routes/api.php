@@ -66,7 +66,7 @@ Route::post('/eliminar-cuenta', [AuthController::class, 'eliminarcuenta']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/cambio-password', [AuthController::class, 'cambiarContrasenia']);
-Route::post('/contrasena_olvidada', [AuthController::class, 'contrasenaOlvidada']);
+Route::post('/contrasena-olvidada', [AuthController::class, 'contrasenaOlvidada']);
 
 
 Route::post('/calificar-viaje', [ViajeController::class, 'calificarViaje']); // --
