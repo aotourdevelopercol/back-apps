@@ -59,7 +59,7 @@
             <p>Hola,</p>
             <p>Recibimos una solicitud para restablecer tu contraseña. Puedes hacerlo haciendo clic en el botón de abajo:</p>
             <div class="button">
-            <a href="{{ url('https://www.upnetweb.com/auth/restore-password=' . $token) }}" class="email-button">Restablecer Contraseña</a>
+            <a href="{{ url('https://www.upnetweb.com/auth/restore?token=' . $token) }}" class="email-button">Restablecer Contraseña</a>
             </div>
             
             <p>Si no solicitaste este cambio, puedes ignorar este correo. Tu contraseña no cambiará hasta que accedas al enlace y crees una nueva.</p>
