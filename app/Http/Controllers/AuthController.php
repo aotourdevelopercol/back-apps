@@ -230,7 +230,7 @@ class AuthController extends Controller
 
             // Validar si el usuario existe
             if (!$user) {
-                return response()->json(['code' => 'USER_NOT_FOUND'], 404);
+                return response()->json(['code' => 'USER_NOT_FOUND', 'message' => 'El usuario no existe.'], 200);
             } else {
                 // Comprobar si el correo ya existe en la tabla temp_tokens
                 $existingToken = TempToken::where('email', $validate['email'])->first();
