@@ -11,11 +11,6 @@ use App\Http\Controllers\TokenController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\AuthController;
 
-
-// Rutas correos electronicos
-Route::post('/enviar-correo', [EmailController :: class, 'sendEmail']);
-
-
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -25,7 +20,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     //Rutas de viajes controller
     Route::post('/actualizar-ubicacion', [Viajes::class, 'actualizarubicacion']);
     Route::post('/add-token', [Viajes::class, 'addtoken']);
-    Route::post('/calificacion-de-ruta', [Viajes::class, 'calificacionderuta']); 
+    Route::post('/calificacion-de-ruta', [Viajes::class, 'calificacionderuta']);
     Route::post('/confirmar-direccion', [Viajes::class, 'confirmardireccion']);
     Route::post('/consultar-codigo', [Viajes::class, 'consultarcodigo']);
     Route::post('/consultar-tarjetas', [Viajes::class, 'consultartarjetas']);
@@ -48,17 +43,15 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/servicio-activo', [Viajes::class, 'servicioactivo']);
     Route::post('/servicios-pedidos', [Viajes::class, 'serviciospedidos']);
     Route::post('/listar-notificaciones', [Viajes::class, 'listarNotificaciones']);
-    
-    // Rutas de viajes controller requesttrips 
+
+    // Rutas de viajes controller requesttrips
     Route::post('/consultar-cliente', [ViajeController::class, 'consultclient']);
     Route::post('/listar-estados-viaje', [ViajeController::class, 'listarEstadosPorMaestro']);
     Route::post('/listar-tipos-viaje', [ViajeController::class, 'listarTiposDeViaje']);
     Route::post('/listar-viajes-activos', [ViajeController::class, 'listarViajesActivos']);
     Route::post('/listar-viajes-generales', [ViajeController::class, 'listarViajesGenerales']);
     Route::post('/crear-solicitud-viaje', [ViajeController::class, 'requesttrips']);
-    
-    // Rutas de whatsapp
-    Route::post('/enviar-wapp', [WhatsappController::class, 'enviarWhatsApp']);
+
 });
 
 
@@ -79,5 +72,8 @@ Route::post('/contrasena_olvidada', [AuthController::class, 'contrasenaOlvidada'
 Route::post('/calificar-viaje', [ViajeController::class, 'calificarViaje']); // --
 Route::post('/listar-viajes-link', [ViajeController::class, 'listarViajesLink']); // --
 
+// Rutas de whatsapp
+Route::post('/enviar-wapp', [WhatsappController::class, 'enviarWhatsApp']);
 
-
+// Rutas correos electronicos
+Route::post('/enviar-correo', [EmailController :: class, 'sendEmail']);
