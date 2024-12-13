@@ -256,14 +256,14 @@ class AuthController extends Controller
                       $message->to($data['email'], 'Cambiar contraseña')->subject('Código de verificación');
                   });*/
 
-                return response()->json(['code' => 'EMAIL_SENT'], 200);
+                return response()->json(['code' => 'EMAIL_SENT', 'message' => 'Se ha enviado un email con el código de verificación.'], 200);
             }
 
         } catch (\Exception $e) {
             \Log::error('Error: ', [
                 'error' => $e->getMessage(),
             ]);
-            return response()->json(['code' => 'ERROR', 'message' => 'Error al enviar el email.'], 500);
+            return response()->json(['code' => 'ERROR', 'message' => 'Error al enviar el email.'], 200);
         }
     }
 
@@ -288,7 +288,7 @@ class AuthController extends Controller
 
             // Validar si el usuario existe
             if (!$user) {
-                return response()->json(['code' => 'USER_NOT_FOUND'], 404);
+                return response()->json(['code' => 'USER_NOT_FOUND', 'message' => 'El usuario no existe.'], 200);
             }
 
             // Verificar si el token existe
@@ -298,7 +298,7 @@ class AuthController extends Controller
 
             // Si el token no existe, retornar error
             if (!$token) {
-                return response()->json(['code' => 'TOKEN_NOT_FOUND'], 404);
+                return response()->json(['code' => 'TOKEN_NOT_FOUND', 'message' => 'El token no es válido.'], 200);
             }else {
                 try {
                     // Si el token existe, cambiar la contraseña del usuario
@@ -314,12 +314,12 @@ class AuthController extends Controller
                     // Eliminar el token
                     $token->delete();
         
-                    return response()->json(['code' => 'PASSWORD_CHANGED', 'contraseña: ' => $validate['nueva-password']], 200);
+                    return response()->json(['code' => 'PASSWORD_CHANGED', 'message: ' => 'La contraseña se ha cambiado correctamente.'], 200);
                 } catch (\Exception $e) {
                     \Log::error('Error: ', [
                         'error' => $e->getMessage(),
                     ]);
-                    return response()->json(['code' => 'ERROR', 'message' => 'Error al cambiar la contraseña.'], 500);
+                    return response()->json(['code' => 'ERROR', 'message' => 'Error al cambiar la contraseña.'], 200);
                 }
             }
 
@@ -327,7 +327,7 @@ class AuthController extends Controller
             \Log::error('Error: ', [
                 'error' => $e->getMessage(),
             ]);
-            return response()->json(['code' => 'ERROR', 'message' => 'Error al validar el token.'], 500);
+            return response()->json(['code' => 'ERROR', 'message' => 'Error al validar el token.'], 200);
         }
 
         
