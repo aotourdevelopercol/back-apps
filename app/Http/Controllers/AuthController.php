@@ -1,10 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Mail\ContraseñaOlvidada;
 use Response;
 use App\Models\User;
 use App\Models\Subcentro;
 use Illuminate\Support\Facades\Log;
+use App\Models\TempToken;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
 
 use DB;
 use Hash;
@@ -16,37 +20,37 @@ class AuthController extends Controller
 {
 
     public function logout(Request $request)
-{
-    // Verifica si hay un usuario autenticado
-    $user = Auth::user();
+    {
+        // Verifica si hay un usuario autenticado
+        $user = Auth::user();
 
-    if ($user) {
-        try {
-            // Elimina todos los tokens del usuario autenticado
-            $user->tokens()->delete();
+        if ($user) {
+            try {
+                // Elimina todos los tokens del usuario autenticado
+                $user->tokens()->delete();
 
-            // Retorna una respuesta JSON exitosa
-            return response()->json([
-                'response' => true
-            ], 200);
-        } catch (\Exception $e) {
-            // Captura cualquier excepción y retorna un mensaje de error
-            \Log::error('Error al cerrar sesión:', [
-                'error' => $e->getMessage(),
-            ]);
-            return response()->json([
-                'code' => 'EXCEPTION',
-                'message' => $e->getMessage()
-            ], 200);
+                // Retorna una respuesta JSON exitosa
+                return response()->json([
+                    'response' => true
+                ], 200);
+            } catch (\Exception $e) {
+                // Captura cualquier excepción y retorna un mensaje de error
+                \Log::error('Error al cerrar sesión:', [
+                    'error' => $e->getMessage(),
+                ]);
+                return response()->json([
+                    'code' => 'EXCEPTION',
+                    'message' => $e->getMessage()
+                ], 200);
+            }
         }
-    }
 
-    // Si no hay un usuario autenticado, retorna un error 401 (Unauthorized)
-    return response()->json([
-        'response' => true,
-        'message' => 'LOGOUT'
-    ], 200);
-}
+        // Si no hay un usuario autenticado, retorna un error 401 (Unauthorized)
+        return response()->json([
+            'response' => true,
+            'message' => 'LOGOUT'
+        ], 200);
+    }
 
     public function eliminarcuenta(Request $request)
     {
@@ -132,83 +136,202 @@ class AuthController extends Controller
         }
     }
     public function login(Request $request)
-{
-    try {
-        // Validar credenciales
-        $credentials = $request->validate([
-            'username' => 'required|string',
-            'password' => 'required|string',
-        ]);
-
-        // Buscar usuario por nombre de usuario
-        $usuario = DB::table('users')
-            ->where('username', $credentials['username'])
-            ->where('fk_tipo_usuario', 4)
-            ->first();
-
-        Log::info('Usuario: '. json_encode($usuario));
-
-        // Verificar si el usuario existe
-        if ($usuario == null) {
-            return Response::json([
-                'code' => 'NOT_FOUND_USER',
+    {
+        try {
+            // Validar credenciales
+            $credentials = $request->validate([
+                'username' => 'required|string',
+                'password' => 'required|string',
             ]);
-        }
-        
 
-        // Verificar la contraseña
-        if (Hash::check($credentials['password'], $usuario->password)) {
-            Log::info('Contraseña válida');
-            // La contraseña es correcta, procedemos con la autenticación
-            Auth::loginUsingId($usuario->id);  // Loguear al usuario manualmente
+            // Buscar usuario por nombre de usuario
+            $usuario = DB::table('users')
+                ->where('username', $credentials['username'])
+                ->where('fk_tipo_usuario', 4)
+                ->first();
 
-            // Verificar si el usuario está baneado
-            $user = Auth::user();
-            if ($user->baneado == 1) {
+            Log::info('Usuario: ' . json_encode($usuario));
+
+            // Verificar si el usuario existe
+            if ($usuario == null) {
                 return Response::json([
-                    'message' => 'DISABLED_USER',
-                ]);
-            } else {
-                // Eliminar tokens existentes
-                $user->tokens()->delete();
-
-                // Crear un nuevo token para el usuario
-                $token = $user->createToken('auth_token')->plainTextToken;
-
-                // Actualizar la fecha y hora del último inicio de sesión
-                DB::table('users')
-                    ->where('id', $user->id)
-                    ->update(['last_login' => now()]);
-
-                // Recuperar el objeto usuario
-                $usuario = User::find($user->id);
-
-                // Retornar respuesta exitosa
-                return Response::json([
-                    'code' => 'SUCCESFULLY',
-                    'token' => $token,
-                    'acceso' => true,
-                    'id_usuario' => $user->id,
-                    'usuario' => $usuario,
+                    'code' => 'NOT_FOUND_USER',
                 ]);
             }
-        } else {
-            Log::info('Contraseña invalida');
-            // Fallo en la autenticación (contraseña incorrecta)
+
+
+            // Verificar la contraseña
+            if (Hash::check($credentials['password'], $usuario->password)) {
+                Log::info('Contraseña válida');
+                // La contraseña es correcta, procedemos con la autenticación
+                Auth::loginUsingId($usuario->id);  // Loguear al usuario manualmente
+
+                // Verificar si el usuario está baneado
+                $user = Auth::user();
+                if ($user->baneado == 1) {
+                    return Response::json([
+                        'message' => 'DISABLED_USER',
+                    ]);
+                } else {
+                    // Eliminar tokens existentes
+                    $user->tokens()->delete();
+
+                    // Crear un nuevo token para el usuario
+                    $token = $user->createToken('auth_token')->plainTextToken;
+
+                    // Actualizar la fecha y hora del último inicio de sesión
+                    DB::table('users')
+                        ->where('id', $user->id)
+                        ->update(['last_login' => now()]);
+
+                    // Recuperar el objeto usuario
+                    $usuario = User::find($user->id);
+
+                    // Retornar respuesta exitosa
+                    return Response::json([
+                        'code' => 'SUCCESFULLY',
+                        'token' => $token,
+                        'acceso' => true,
+                        'id_usuario' => $user->id,
+                        'usuario' => $usuario,
+                    ]);
+                }
+            } else {
+                Log::info('Contraseña invalida');
+                // Fallo en la autenticación (contraseña incorrecta)
+                return Response::json([
+                    'response' => false,
+                    'code' => 'FAILS',
+                ]);
+            }
+        } catch (\Exception $e) {
+            \Log::error('Error en login:', ['error' => $e->getMessage()]);
             return Response::json([
                 'response' => false,
-                'code' => 'FAILS',
-            ]);
+                'code' => 'UNKNOWN_ERROR',
+                'message' => $e->getMessage(),
+            ], 500);
         }
-    } catch (\Exception $e) {
-        \Log::error('Error en login:', ['error' => $e->getMessage()]);
-        return Response::json([
-            'response' => false,
-            'code' => 'UNKNOWN_ERROR',
-            'message' => $e->getMessage(),
-        ], 500);
     }
-}
+
+    // funcion para cambiar la contraseña del usuario no logueado, se envia un email con un codigo de verificacion para cambiar la contraseña 
+    // Se valida si existe el email y luego se envia el email con el codigo de verificacion.
+    // Luego se hace otra funcion que toma ese codigo de verificacion y la nueva contraseña y actualiza la contraseña del usuario.
+    public function contrasenaOlvidada(Request $request)
+    {
+        $validate = $request->validate([
+            'email' => 'required|string',
+        ]);
+
+        try {
+            // Obtener el usuario por email
+            $user = User::where('email', $validate['email'])
+                ->first();
+
+            // Validar si el usuario existe
+            if (!$user) {
+                return response()->json(['code' => 'USER_NOT_FOUND'], 404);
+            } else {
+                // Comprobar si el correo ya existe en la tabla temp_tokens
+                $existingToken = TempToken::where('email', $validate['email'])->first();
+
+                // Si ya existe un token para ese correo, eliminar el registro
+                if ($existingToken) {
+                    $existingToken->delete(); // Eliminar el registro existente
+                }
+
+                // Generar un código aleatorio
+                $codigo = Str::random(6);
+
+                // Insertar el token en la tabla temp_tokens
+                $tempToken = new TempToken();
+                $tempToken->email = $validate['email'];
+                $tempToken->token = $codigo;
+                $tempToken->save();
+
+
+                Mail::to($user->email)->send(new ContraseñaOlvidada($codigo));
+
+                /*  \Mail::send('emails.cambiarContrasenia', $data, function ($message) use ($data) {
+                      $message->to($data['email'], 'Cambiar contraseña')->subject('Código de verificación');
+                  });*/
+
+                return response()->json(['code' => 'EMAIL_SENT'], 200);
+            }
+
+        } catch (\Exception $e) {
+            \Log::error('Error: ', [
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['code' => 'ERROR', 'message' => 'Error al enviar el email.'], 500);
+        }
+    }
+
+    // Validar el token de verificacion y cambiar la contraseña del usuario
+    public function cambiarContrasenia(Request $request)
+    {
+        $validate = $request->validate([
+            'codigo' => 'required|string',
+            'nueva-password' => 'required|string'
+        ]);
+
+        try {
+
+            // Verificar si el token existe
+            $token = TempToken::where('token', $validate['codigo'])
+                ->select('email')
+                ->first();
+
+            // Obtener el usuario por email
+            $user = User::where('email', $token->email)
+                ->first();
+
+            // Validar si el usuario existe
+            if (!$user) {
+                return response()->json(['code' => 'USER_NOT_FOUND'], 404);
+            }
+
+            // Verificar si el token existe
+            $token = TempToken::where('email', $token->email)
+                ->where('token', $validate['codigo'])
+                ->first();
+
+            // Si el token no existe, retornar error
+            if (!$token) {
+                return response()->json(['code' => 'TOKEN_NOT_FOUND'], 404);
+            }else {
+                try {
+                    // Si el token existe, cambiar la contraseña del usuario
+                    $password = bcrypt($validate['nueva-password']);
+        
+                    // Actualizar la contraseña
+                    DB::table('users')
+                        ->where('email', $token->email)  // puedes usar también username si prefieres
+                        ->update([
+                            'password' => $password
+                        ]);
+        
+                    // Eliminar el token
+                    $token->delete();
+        
+                    return response()->json(['code' => 'PASSWORD_CHANGED', 'contraseña: ' => $validate['nueva-password']], 200);
+                } catch (\Exception $e) {
+                    \Log::error('Error: ', [
+                        'error' => $e->getMessage(),
+                    ]);
+                    return response()->json(['code' => 'ERROR', 'message' => 'Error al cambiar la contraseña.'], 500);
+                }
+            }
+
+        }catch (\Exception $e) {
+            \Log::error('Error: ', [
+                'error' => $e->getMessage(),
+            ]);
+            return response()->json(['code' => 'ERROR', 'message' => 'Error al validar el token.'], 500);
+        }
+
+        
+    }
 
     public function cambiarContraseña(Request $request)
     {
@@ -219,7 +342,8 @@ class AuthController extends Controller
 
         try {
             // Obtener el usuario por email
-            $user = User::where('email', $validate['email'])->first();
+            $user = User::where('email', $validate['email'])
+                ->first();
 
             // Validar si el usuario existe
             if (!$user) {
