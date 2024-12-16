@@ -5,6 +5,7 @@
     use App\Mail\AsignacionDeViaje;
     use App\Mail\CancelarViaje;
     use App\Mail\ConfirmarViaje;
+    use App\Mail\ContraseñaOlvidada;
     use App\Mail\CuentaDeCobroCerrada;
     use App\Mail\CuentaDeCobroCorregir;
     use App\Mail\CuentaDeCobroHabilitada;
@@ -368,6 +369,16 @@
                     try {
                         Mail::to($validated['email'])->send(new CuentaDeCobroRadicada(
                         ));
+                    } catch (\Throwable $th) {
+                        Log::error('Error al enviar correo: '. $th);
+                    }
+
+                    break;
+
+                // Correo para olvido de contraseña
+                case 'forgot_password':
+                    try {
+                        Mail::to($validated['email'])->send(new ContraseñaOlvidada( $validated['token'] ));
                     } catch (\Throwable $th) {
                         Log::error('Error al enviar correo: '. $th);
                     }

@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\Subcentro;
 use Illuminate\Support\Facades\Log;
 use App\Models\TempToken;
-use Illuminate\Support\Str;
+
 use Illuminate\Support\Facades\Mail;
 
 use DB;
@@ -214,124 +214,7 @@ class AuthController extends Controller
         }
     }
 
-    // funcion para cambiar la contraseña del usuario no logueado, se envia un email con un codigo de verificacion para cambiar la contraseña 
-    // Se valida si existe el email y luego se envia el email con el codigo de verificacion.
-    // Luego se hace otra funcion que toma ese codigo de verificacion y la nueva contraseña y actualiza la contraseña del usuario.
-    public function contrasenaOlvidada(Request $request)
-    {
-        $validate = $request->validate([
-            'email' => 'required|string',
-        ]);
-
-        try {
-            // Obtener el usuario por email
-            $user = User::where('email', $validate['email'])
-                ->first();
-
-            // Validar si el usuario existe
-            if (!$user) {
-                return response()->json(['code' => 'USER_NOT_FOUND', 'message' => 'El usuario no existe.'], 200);
-            } else {
-                // Comprobar si el correo ya existe en la tabla temp_tokens
-                $existingToken = TempToken::where('email', $validate['email'])->first();
-
-                // Si ya existe un token para ese correo, eliminar el registro
-                if ($existingToken) {
-                    $existingToken->delete(); // Eliminar el registro existente
-                }
-
-                // Generar un código aleatorio
-                $codigo = Str::random(6);
-
-                // Insertar el token en la tabla temp_tokens
-                $tempToken = new TempToken();
-                $tempToken->email = $validate['email'];
-                $tempToken->token = $codigo;
-                $tempToken->save();
-
-
-                Mail::to($user->email)->send(new ContraseñaOlvidada($codigo));
-
-                /*  \Mail::send('emails.cambiarContrasenia', $data, function ($message) use ($data) {
-                      $message->to($data['email'], 'Cambiar contraseña')->subject('Código de verificación');
-                  });*/
-
-                return response()->json(['code' => 'EMAIL_SENT', 'message' => 'Se ha enviado un email con el código de verificación.'], 200);
-            }
-
-        } catch (\Exception $e) {
-            \Log::error('Error: ', [
-                'error' => $e->getMessage(),
-            ]);
-            return response()->json(['code' => 'ERROR', 'message' => 'Error al enviar el email.'], 200);
-        }
-    }
-
-    // Validar el token de verificacion y cambiar la contraseña del usuario
-    public function cambiarContrasenia(Request $request)
-    {
-        $validate = $request->validate([
-            'codigo' => 'required|string',
-            'nueva-password' => 'required|string'
-        ]);
-
-        try {
-
-            // Verificar si el token existe
-            $token = TempToken::where('token', $validate['codigo'])
-                ->select('email')
-                ->first();
-
-            // Obtener el usuario por email
-            $user = User::where('email', $token->email)
-                ->first();
-
-            // Validar si el usuario existe
-            if (!$user) {
-                return response()->json(['code' => 'USER_NOT_FOUND', 'message' => 'El usuario no existe.'], 200);
-            }
-
-            // Verificar si el token existe
-            $token = TempToken::where('email', $token->email)
-                ->where('token', $validate['codigo'])
-                ->first();
-
-            // Si el token no existe, retornar error
-            if (!$token) {
-                return response()->json(['code' => 'TOKEN_NOT_FOUND', 'message' => 'El token no es válido.'], 200);
-            }else {
-                try {
-                    // Si el token existe, cambiar la contraseña del usuario
-                    $password = bcrypt($validate['nueva-password']);
-        
-                    // Actualizar la contraseña
-                    DB::table('users')
-                        ->where('email', $token->email)  // puedes usar también username si prefieres
-                        ->update([
-                            'password' => $password
-                        ]);
-        
-                    // Eliminar el token
-                    $token->delete();
-        
-                    return response()->json(['code' => 'PASSWORD_CHANGED', 'message: ' => 'La contraseña se ha cambiado correctamente.'], 200);
-                } catch (\Exception $e) {
-                    \Log::error('Error: ', [
-                        'error' => $e->getMessage(),
-                    ]);
-                    return response()->json(['code' => 'ERROR', 'message' => 'Error al cambiar la contraseña.'], 200);
-                }
-            }
-
-        }catch (\Exception $e) {
-            \Log::error('Error: ', [
-                'error' => $e->getMessage(),
-            ]);
-            return response()->json(['code' => 'ERROR', 'message' => 'Error al validar el token.'], 200);
-        }
-
-        
-    }
+    
 
     public function cambiarContraseña(Request $request)
     {
