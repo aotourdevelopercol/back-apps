@@ -167,11 +167,6 @@ class ViajeController extends Controller
         left join tipos t3 on t3.id = v.tipo_ruta
         left join tipos t4 on t4.id = prq.estado_ruta
         where (pe.app_user_id = ? or prq.id_empleado = ?) and e.codigo = 'INICIADO'
-        AND
-        CASE
-	    WHEN v.tipo_traslado = 70
-	         AND prq.recoger_a != 2
-	    THEN true else false END
         GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
        	LIMIT 1;";
 
