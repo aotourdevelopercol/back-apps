@@ -58,11 +58,11 @@
         </div>
         <div class="content">
             <h2>Hola {{$nombre}},</h2>
-            <p>Tu compañía ha solicitado un servicio de ruta para ti. En breve, <strong>AOTOUR</strong> te compartirá los detalles del colaborador al volante asignado para tu traslado.</p>
-            <p>Con <strong>AOTOUR</strong>, viaja tranquilo, viaja seguro.</p>
+            <p>Tu compañía ha solicitado un servicio de ruta para ti. En breve, <strong>UP</strong> te compartirá los detalles del colaborador al volante asignado para tu traslado.</p>
+            <p>Me muevo con <strong>UP</strong></p>
         </div>
         <div class="footer">
-            <p>&copy; 2024 AOTOUR. Todos los derechos reservados.</p>
+            <p>&copy; 2024 UP translink. Todos los derechos reservados.</p>
             <p><a href="https://www.upnetweb.com/">Visita nuestro sitio web</a></p>
         </div>
     </div>

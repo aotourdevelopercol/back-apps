@@ -73,7 +73,7 @@
         </div>
         <div class="content">
             <p>🚗Gracias por viajar con nosotros. ¡Esperamos verte pronto!😃</p>
-            <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="cta-button">Detalles de tu viaje</a>
+            <a href="https://www.upnetweb.com/viaje?token={{ $token }}" class="cta-button">Calificar viaje</a>
         </div>
         <div class="footer">
             <p>&copy; {{ date('Y') }} UP. Todos los derechos reservados.</p>
