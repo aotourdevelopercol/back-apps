@@ -67,6 +67,9 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 
 
+//Rutas de viajes controller
+Route::post('/actualizar-ubicacion', [Viajes::class, 'actualizarubicacion']);
+
 Route::post('/calificar-viaje', [ViajeController::class, 'calificarViaje']); // --
 Route::post('/listar-viajes-link', [ViajeController::class, 'listarViajesLink']); // --
 
