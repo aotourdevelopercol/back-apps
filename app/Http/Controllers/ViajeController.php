@@ -222,9 +222,9 @@ class ViajeController extends Controller
                     v2.color,
                     c2.foto as foto_conductor,
                     c2.celular as celular_conductor,
-                    t2.id as id_tipo_vehiculo,
-                    t2.codigo as codigo_tipo_vehiculo,
-                    t2.nombre as nombre_tipo_vehiculo,
+                    e2.id as id_tipo_vehiculo,
+                    e2.codigo as codigo_tipo_vehiculo,
+                    e2.nombre as nombre_tipo_vehiculo,
                     (case when pe.id is null then prq.id_empleado else pe.id end) as id_pasajero,
                     (case when pe.nombre is null then prq.nombre else pe.nombre end) as nombre_pasajero,
                     t4.id as id_estado_pasajero_ruta,
@@ -244,7 +244,7 @@ class ViajeController extends Controller
                 left join estados e on e.id = v.fk_estado
                 left join destinos d on d.fk_viaje = v.id
                 left join tipos t on t.id = v.tipo_traslado
-                left join tipos t2 on t2.id = v2.fk_tipo_vehiculo
+                left join estados e2 on e2.id = v2.fk_tipo_vehiculo
                 left join tipos t3 on t3.id = v.tipo_ruta
                 left join tipos t4 on t4.id = prq.estado_ruta
                 where v.id = ? and (pe.id = ? or prq.id = ?)
