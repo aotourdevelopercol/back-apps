@@ -307,7 +307,9 @@
 
                 case 'inicio_viaje':
                     try {
-                        Mail::to($validated['email'])->send(new InicioViaje());
+                        Mail::to($validated['email'])->send(new InicioViaje(
+                            $validated['token']
+                        ));
                     } catch (\Throwable $th) {
                         Log::error('Error al enviar correo: '. $th);
                     }

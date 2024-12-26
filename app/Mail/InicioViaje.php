@@ -14,10 +14,11 @@ class InicioViaje extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $token;
    
-    public function __construct()
+    public function __construct($token)
     {
-        //
+        $this->token = $token;
     }
 
     public function envelope(): Envelope
@@ -33,6 +34,7 @@ class InicioViaje extends Mailable
     {
         return new Content(
             view: 'emails_viajes.email_inicio_viaje',
+            with: ['token' => $this->token],
         );
     }
 

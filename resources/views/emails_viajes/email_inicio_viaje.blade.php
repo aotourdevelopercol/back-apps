@@ -75,7 +75,7 @@
             <p>¡El conductor va en camino hacia tu destino! 🌟</p>
             <p>Prepárate para una aventura increíble. Tu destino te espera y cada kilómetro será una experiencia única. </p>
             <p>🎉 ¡Disfruta del recorrido y que comience la diversión! 🎉</p>
-            <a href="https://www.upnetweb.com" class="cta-button">Detalles de tu viaje.</a>
+            <a  href="https://www.upnetweb.com/viaje?token={{ $token }}" class="cta-button">Detalles de tu viaje.</a>
         </div>
         <div class="footer">
             <p>&copy; {{ date('Y') }} UP. Todos los derechos reservados.</p>
