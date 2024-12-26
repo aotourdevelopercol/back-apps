@@ -188,6 +188,7 @@
                 case 'viaje_entendido': // Nueva plantilla
                     try {
                         Mail::to($validated['email'])->send(new ViajeEntendido(
+                            $validated['token']
                         ));
                     } catch (\Throwable $th) {
                         Log::error('Error al enviar correo: '. $th);

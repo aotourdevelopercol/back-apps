@@ -17,9 +17,13 @@ class ViajeEntendido extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
+
+
+    public $token;
+
+    public function __construct($token)
     {
-        //
+        $this->token = $token;
     }
 
     /**
@@ -40,6 +44,7 @@ class ViajeEntendido extends Mailable
     {
         return new Content(
             view: 'emails_viajes.email_viaje_entendido',
+            with: ['token' => $this->token]
         );
     }
 

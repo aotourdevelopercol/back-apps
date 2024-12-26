@@ -85,7 +85,7 @@
             <p>¡El conductor ha confirmado tu viaje! 🌟</p>
             <p>Prepárate para una aventura increíble. Tu destino te espera y cada kilómetro será una experiencia única. </p>
             <p>🎉 ¡Disfruta del recorrido y que comience la diversión! 🎉</p>
-            <a href="https://www.upnetweb.com/viaje?token=" class="cta-button">Detalles de tu viaje</a>
+            <a href="https://www.upnetweb.com/viaje?token={{$token}}" class="cta-button">Detalles de tu viaje</a>
         </div>
         <div class="footer">
             <p>&copy; {{ date('Y') }} UP. Todos los derechos reservados.</p>

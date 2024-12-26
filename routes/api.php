@@ -43,6 +43,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/servicio-activo', [Viajes::class, 'servicioactivo']);
     Route::post('/servicios-pedidos', [Viajes::class, 'serviciospedidos']);
     Route::post('/listar-notificaciones', [Viajes::class, 'listarNotificaciones']);
+    Route::post('/marcarNotificacionLeida', [Viajes::class, 'marcarNotificacionLeida']);
+    
 
     // Rutas de viajes controller requesttrips
     Route::post('/consultar-cliente', [ViajeController::class, 'consultclient']);

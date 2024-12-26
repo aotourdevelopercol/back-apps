@@ -615,9 +615,11 @@ class Viajes extends Controller
         $pasajero = Auth::user();
 
         // Realizar la consulta en ambas columnas
-        $notificaciones = DB::table('notificaciones_apps')
-            ->where('fk_pasajero_ruta', $pasajero->id)
-            ->orWhere('fk_pasajero_ejecutivos', $pasajero->id)
+        $notificaciones = DB::table('notificaciones_apps as na')
+            ->join('estados as e', 'e.id', '=', 'na.estado_notificacion')
+            ->select('na.id', 'na.title', 'na.body', 'na.created_at', 'e.codigo as estado_notificacion')
+            ->where('na.fk_pasajero_ruta', $pasajero->id)
+            ->orWhere('na.fk_pasajero_ejecutivos', $pasajero->id)
             ->get();
 
         // Devolver los resultados
@@ -630,6 +632,25 @@ class Viajes extends Controller
             return Response::json(['mensaje' => 'No hay notificaciones.'], 200);
         }
     }
+
+    public function marcarNotificacionLeida(Request $request)
+    {
+        $id = $request->id;
+
+        $notificacion = DB::table('notificaciones_apps')
+            ->where('id', $id)
+            ->first();
+        $notificacion->estado_notificacion = 2;
+        $notificacion->save();
+
+        return Response::json([
+            'respuesta' => true
+        ]);
+    }
+
+
+
+
 
     public function listarlugares(Request $request)
     {
