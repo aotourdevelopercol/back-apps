@@ -640,7 +640,7 @@ class Viajes extends Controller
         $notificacion = DB::table('notificaciones_apps')
             ->where('id', $id)
             ->first();
-        $notificacion->estado_notificacion = 2;
+        $notificacion->estado_notificacion = 85;
         $notificacion->save();
 
         return Response::json([
