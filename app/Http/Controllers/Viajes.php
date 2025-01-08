@@ -637,7 +637,7 @@ class Viajes extends Controller
     {
         $id = $request->id;
 
-        Log::info(json_encode($request));
+        Log::info(json_encode($request->id));
 
         $notificacion = DB::table('notificaciones_apps')
             ->where('id', $id)
