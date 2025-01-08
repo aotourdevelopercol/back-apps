@@ -637,11 +637,13 @@ class Viajes extends Controller
     {
         $id = $request->id;
 
+        json_encode($request);
+
         $notificacion = DB::table('notificaciones_apps')
             ->where('id', $id)
             ->update(['estado_notificacion' => 85]);
 
-       
+        json_encode($notificacion);
 
         return Response::json([
             'respuesta' => $notificacion
