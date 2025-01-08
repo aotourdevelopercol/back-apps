@@ -528,6 +528,7 @@ class ViajeController extends Controller
                     CONCAT(c.primer_nombre, ' ' , c.primer_apellido) as conductor,
                     e2.nombre as tipo_de_vehiculo,
                     cv.id as id_calificacion,
+	                cv2.id as id_calificacion_rut,
                     JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
                 FROM
                     viajes v
@@ -536,7 +537,9 @@ class ViajeController extends Controller
                 LEFT JOIN pasajeros_ejecutivos pe ON
                     pe.fk_viaje = v.id
                 LEFT JOIN calificacion_viajes cv ON
-                    cv.fk_viaje = v.id
+                    cv.pasajero_ejecutivo_link = pe.id
+                LEFT JOIN calificacion_viajes cv2 ON
+                    cv2.pasajero_ruta_link = prq.id
                 LEFT JOIN vehiculos v2 on
                     v2.id = v.fk_vehiculo
                 LEFT JOIN estados e2 on
@@ -568,13 +571,15 @@ class ViajeController extends Controller
                         ELSE false
                     END
                     AND cv.id is null
+	                AND cv2.id is null
                 GROUP BY
                     1,
                     2,
                     3,
                     4,
                     5,
-                    6
+                    6,
+                    7
                 ORDER BY
                     v.hora_viaje DESC
                 LIMIT 1;";
