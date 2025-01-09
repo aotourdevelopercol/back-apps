@@ -563,14 +563,14 @@ class ViajeController extends Controller
                     OR pe.app_user_id = ?
                 )
                 AND
-                                    CASE
-                    WHEN v.tipo_traslado = 70
-                    AND prq.recoger_a = 2
-                    AND (v.fk_estado = 59
-                        OR v.fk_estado = 60) THEN true
-                    WHEN v.tipo_traslado = 69
-                    AND v.recoger_pasajero = 1
-                    AND v.fk_estado = 60 THEN true
+                    CASE
+                        WHEN v.tipo_traslado = 70
+                        AND prq.recoger_a = 2
+                        AND (v.fk_estado = 59
+                            OR v.fk_estado = 60) THEN true
+                        WHEN v.tipo_traslado = 69
+                        AND v.recoger_pasajero = 1
+                        AND v.fk_estado = 60 THEN true
                     ELSE false
                 END
             GROUP BY
@@ -593,7 +593,7 @@ class ViajeController extends Controller
 
             $results = DB::select($query, $params);
 
-            \Log::info(json_encode($params));
+            \Log::info(json_encode($query));
 
             return $results;
 
