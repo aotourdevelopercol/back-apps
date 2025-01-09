@@ -528,7 +528,6 @@ class ViajeController extends Controller
                     CONCAT(c.primer_nombre, ' ' , c.primer_apellido) as conductor,
                     e2.nombre as tipo_de_vehiculo,
                     cv.id as id_calificacion,
-	                cv2.id as id_calificacion_rut,
                     JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
                 FROM
                     viajes v
@@ -537,9 +536,11 @@ class ViajeController extends Controller
                 LEFT JOIN pasajeros_ejecutivos pe ON
                     pe.fk_viaje = v.id
                 LEFT JOIN calificacion_viajes cv ON
-                    cv.pasajero_ejecutivo_link = pe.id
+                    cv.fk_user = ?
                 LEFT JOIN calificacion_viajes cv2 ON
-                    cv2.pasajero_ruta_link = prq.id
+                    cv2.pasajero_ejecutivo_link = 7815
+                LEFT JOIN calificacion_viajes cv3 ON
+                    cv3.pasajero_ruta_link = 7815
                 LEFT JOIN vehiculos v2 on
                     v2.id = v.fk_vehiculo
                 LEFT JOIN estados e2 on
@@ -570,21 +571,22 @@ class ViajeController extends Controller
                             AND v.fk_estado = 60 THEN true
                         ELSE false
                     END
-                    AND cv.id is null
-	                AND cv2.id is null
+                    AND (cv.id is null and cv2.id is null and cv3.id is null)
                 GROUP BY
                     1,
                     2,
                     3,
                     4,
                     5,
-                    6,
-                    7
+                    6
                 ORDER BY
                     v.hora_viaje DESC
                 LIMIT 1;";
 
             $params = [
+                $appUserId ?? null,
+                $idEmpleado ?? null,
+                $idEmpleado ?? null,
                 $fechaHoy,
                 $idEmpleado ?? null,
                 $appUserId ?? null
