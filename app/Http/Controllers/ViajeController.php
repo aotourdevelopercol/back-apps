@@ -555,8 +555,8 @@ class ViajeController extends Controller
             LEFT JOIN pasajeros_ejecutivos pe ON
                 pe.fk_viaje = v.id
             WHERE
-                v.fecha_viaje = ?
-                v.estado_eliminacion is null AND
+                v.fecha_viaje = ? AND
+                v.estado_eliminacion is null
                 AND cv.id IS NULL
                 AND (
                     prq.id_empleado = ?
