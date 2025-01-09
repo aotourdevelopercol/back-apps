@@ -527,6 +527,7 @@ class ViajeController extends Controller
                     v.hora_viaje,
                     CONCAT(c.primer_nombre, ' ' , c.primer_apellido) as conductor,
                     e2.nombre as tipo_de_vehiculo,
+                    cv.id as id_calificacion,
                     JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
                     FROM
                     viajes v
@@ -575,7 +576,8 @@ class ViajeController extends Controller
                     4,
                     5
                     ORDER BY
-                    v.hora_viaje DESC";
+                    v.hora_viaje DESC
+                    LIMIT 1";
 
             $params = [
                 $fechaHoy,
