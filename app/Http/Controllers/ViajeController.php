@@ -191,7 +191,9 @@ class ViajeController extends Controller
                         OR pe.app_user_id = ?
                 );";
 
-            $viajes = DB::select($consulta);
+            $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
+            $paramsVia = [$fechaHoy, $codigoEmpleado->codigo_empleado, $validateData['app_user_id']];
+            $viajes = DB::select($consulta, $paramsVia);
 
             $calification = null;
 
