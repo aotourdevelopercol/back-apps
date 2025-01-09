@@ -524,7 +524,7 @@ class ViajeController extends Controller
             $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
 
             $query = "SELECT
-                v.id AS id_viaje,
+                v.id AS id,
                 v.fecha_viaje,
                 v.hora_viaje,
                 CONCAT(c.primer_nombre, ' ', c.primer_apellido) AS conductor,
