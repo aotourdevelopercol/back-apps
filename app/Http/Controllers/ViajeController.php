@@ -538,9 +538,9 @@ class ViajeController extends Controller
                 LEFT JOIN calificacion_viajes cv ON
                     cv.fk_user = ?
                 LEFT JOIN calificacion_viajes cv2 ON
-                    cv2.pasajero_ejecutivo_link = 7815
+                    cv2.pasajero_ejecutivo_link = ?
                 LEFT JOIN calificacion_viajes cv3 ON
-                    cv3.pasajero_ruta_link = 7815
+                    cv3.pasajero_ruta_link = ?
                 LEFT JOIN vehiculos v2 on
                     v2.id = v.fk_vehiculo
                 LEFT JOIN estados e2 on
