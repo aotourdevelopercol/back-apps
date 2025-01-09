@@ -227,6 +227,8 @@ class ViajeController extends Controller
                     e2.nombre as nombre_tipo_vehiculo,
                     (case when pe.id is null then prq.id_empleado else pe.id end) as id_pasajero,
                     (case when pe.nombre is null then prq.nombre else pe.nombre end) as nombre_pasajero,
+                    pe.id as id_pasajero_ejecutivo,
+                    pe.app_user_id,
                     t4.id as id_estado_pasajero_ruta,
                     t4.codigo as codigo_estado_pasajero_ruta,
                     t4.nombre as nombre_estado_pasajero_ruta,
@@ -248,7 +250,7 @@ class ViajeController extends Controller
                 left join tipos t3 on t3.id = v.tipo_ruta
                 left join tipos t4 on t4.id = prq.estado_ruta
                 where v.id = ? and (pe.id = ? or prq.id = ?)
-                GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32
+                GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34
                 LIMIT 1;";
 
             $params = [$validateData['viaje'], $validateData['id_pasajero_ejecutivo'], $validateData['id_pasajero_ruta']];
