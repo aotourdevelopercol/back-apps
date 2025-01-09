@@ -181,7 +181,7 @@ class ViajeController extends Controller
             return Response::json([
                 'response' => true,
                 'calificacion' => !empty($calification) ? $calification[0] : null,
-                'listado' => null,
+                'listado' => !empty($results) && empty($calification) ? $results[0] : null,
             ]);
 
         } catch (\Throwable $th) {
