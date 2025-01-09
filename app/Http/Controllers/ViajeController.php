@@ -177,12 +177,10 @@ class ViajeController extends Controller
             Log::info($codigoEmpleado->codigo_empleado . " - " . $validateData['app_user_id']);
 
             $calification = $this->calificationtrip($codigoEmpleado->codigo_empleado, $validateData['app_user_id']);
-            Log::info(json_encode(!empty($calification) ? $calification[0] : null));
-            Log::info(json_encode(!empty($results) && empty($calification) ? $results[0] : null));
 
             return Response::json([
                 'response' => true,
-                'calificacion' => !empty($calification) ? $calification[0] : null,
+                'calificacion' => !empty($calification) && !$calification[0]->id_calificacion ? $calification[0] : null,
                 'listado' => !empty($results) && empty($calification) ? $results[0] : null,
             ]);
 
@@ -559,7 +557,7 @@ class ViajeController extends Controller
             WHERE
                 v.fecha_viaje = ? AND
                 v.estado_eliminacion is null
-                AND cv.id IS NULL
+                -- AND cv.id IS NULL
                 AND (
                     prq.id_empleado = ?
                     OR pe.app_user_id = ?
