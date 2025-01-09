@@ -537,10 +537,6 @@ class ViajeController extends Controller
                     pe.fk_viaje = v.id
                 LEFT JOIN calificacion_viajes cv ON
                     cv.fk_user = ?
-                LEFT JOIN calificacion_viajes cv2 ON
-                    cv2.pasajero_ejecutivo_link = ?
-                LEFT JOIN calificacion_viajes cv3 ON
-                    cv3.pasajero_ruta_link = ?
                 LEFT JOIN vehiculos v2 on
                     v2.id = v.fk_vehiculo
                 LEFT JOIN estados e2 on
@@ -571,7 +567,7 @@ class ViajeController extends Controller
                             AND v.fk_estado = 60 THEN true
                         ELSE false
                     END
-                    AND (cv.id is null and cv2.id is null and cv3.id is null)
+                    AND cv.id is null
                 GROUP BY
                     1,
                     2,
@@ -585,8 +581,6 @@ class ViajeController extends Controller
 
             $params = [
                 $appUserId ?? null,
-                $idEmpleado ?? null,
-                $idEmpleado ?? null,
                 $fechaHoy,
                 $idEmpleado ?? null,
                 $appUserId ?? null
