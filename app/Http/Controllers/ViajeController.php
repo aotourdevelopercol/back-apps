@@ -522,70 +522,73 @@ class ViajeController extends Controller
             $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
 
             $query = "SELECT
-                    v.id,
-                    v.fecha_viaje,
-                    v.hora_viaje,
-                    CONCAT(c.primer_nombre, ' ' , c.primer_apellido) as conductor,
-                    e2.nombre as tipo_de_vehiculo,
-                    cv.id as id_calificacion,
-                    JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
-                    FROM
-                    viajes v
-                    INNER JOIN destinos d on
-                    d.fk_viaje = v.id
-                    INNER JOIN vehiculos v2 on
-                    v2.id = v.fk_vehiculo
-                    INNER JOIN estados e2 on
-                    e2.id = v2.fk_tipo_vehiculo
-                    INNER JOIN conductores c on
-                    c.id = v.fk_conductor
-                    LEFT JOIN calificacion_viajes cv ON
-                    v.id = cv.fk_viaje
-                    LEFT JOIN pasajeros_rutas_qr prq ON
-                    prq.fk_viaje = v.id
-                    LEFT JOIN pasajeros_ejecutivos pe ON
-                    pe.fk_viaje = v.id
-                    WHERE
-                    v.fecha_viaje = ?
-                    AND
-                        v.estado_eliminacion IS NULL
-                    AND
-                        (
-                            prq.id_empleado = ?
-                        OR
-                            pe.app_user_id = ?
-                        )
-                    AND
-                        CASE
-                        WHEN v.tipo_traslado = 70
-                        AND prq.recoger_a = 2
-                        AND (v.fk_estado = 59
-                            OR v.fk_estado = 60) THEN true
-                        WHEN v.tipo_traslado = 69
-                        AND v.recoger_pasajero = 1
-                        AND v.fk_estado = 60 THEN true
-                        ELSE false
-                    END
-                    AND (cv.fk_user IS NULL
-                        OR cv.fk_user != ?)
-                    AND v.estado_eliminacion IS NULL
-                    GROUP BY
-                    1,
-                    2,
-                    3,
-                    4,
-                    5,
-                    6
-                    ORDER BY
-                    v.hora_viaje DESC
-                    LIMIT 1";
+                v.id AS id_viaje,
+                v.fecha_viaje,
+                v.hora_viaje,
+                CONCAT(c.primer_nombre, ' ', c.primer_apellido) AS conductor,
+                e2.nombre AS tipo_de_vehiculo,
+                cv.id AS id_calificacion,
+                JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'direccion', d.direccion,
+                        'coordenadas', d.coordenadas,
+                        'orden', d.orden
+                    )
+                ) AS destinos
+            FROM
+                viajes v
+            INNER JOIN destinos d ON
+                d.fk_viaje = v.id
+            INNER JOIN vehiculos v2 ON
+                v2.id = v.fk_vehiculo
+            INNER JOIN estados e2 ON
+                e2.id = v2.fk_tipo_vehiculo
+            INNER JOIN conductores c ON
+                c.id = v.fk_conductor
+            LEFT JOIN calificacion_viajes cv ON
+                v.id = cv.fk_viaje
+                AND (
+                    cv.fk_user = ?
+                )
+            LEFT JOIN pasajeros_rutas_qr prq ON
+                prq.fk_viaje = v.id
+            LEFT JOIN pasajeros_ejecutivos pe ON
+                pe.fk_viaje = v.id
+            WHERE
+                v.fecha_viaje = ?
+                v.estado_eliminacion is null AND
+                AND cv.id IS NULL
+                AND (
+                    prq.id_empleado = ?
+                    OR pe.app_user_id = ?
+                )
+                AND
+                                    CASE
+                    WHEN v.tipo_traslado = 70
+                    AND prq.recoger_a = 2
+                    AND (v.fk_estado = 59
+                        OR v.fk_estado = 60) THEN true
+                    WHEN v.tipo_traslado = 69
+                    AND v.recoger_pasajero = 1
+                    AND v.fk_estado = 60 THEN true
+                    ELSE false
+                END
+            GROUP BY
+                v.id,
+                v.fecha_viaje,
+                v.hora_viaje,
+                conductor,
+                e2.nombre,
+                cv.id
+            ORDER BY
+                v.fecha_viaje DESC,
+                v.hora_viaje DESC;";
 
             $params = [
+                $appUserId ?? null,
                 $fechaHoy,
                 $idEmpleado ?? null,
-                $appUserId ?? null,
                 $appUserId ?? null
-
             ];
 
             $results = DB::select($query, $params);
