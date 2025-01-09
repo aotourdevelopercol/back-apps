@@ -580,6 +580,7 @@ class ViajeController extends Controller
             $params = [
                 $fechaHoy,
                 $idEmpleado ?? null,
+                $appUserId ?? null,
                 $appUserId ?? null
 
             ];
