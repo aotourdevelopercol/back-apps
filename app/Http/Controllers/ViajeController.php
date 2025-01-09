@@ -545,6 +545,8 @@ class ViajeController extends Controller
                     LEFT JOIN pasajeros_ejecutivos pe ON
                     pe.fk_viaje = v.id
                     WHERE
+                    v.fecha_viaje = ?
+                    AND
                         v.estado_eliminacion IS NULL
                     AND
                         (
@@ -576,10 +578,8 @@ class ViajeController extends Controller
                     v.hora_viaje DESC";
 
             $params = [
-                $appUserId ?? null,
                 $fechaHoy,
                 $idEmpleado ?? null,
-                $appUserId ?? null,
                 $appUserId ?? null
 
             ];
