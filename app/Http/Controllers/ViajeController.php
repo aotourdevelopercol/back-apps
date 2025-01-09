@@ -574,7 +574,8 @@ class ViajeController extends Controller
                     2,
                     3,
                     4,
-                    5
+                    5,
+                    6
                     ORDER BY
                     v.hora_viaje DESC
                     LIMIT 1";
