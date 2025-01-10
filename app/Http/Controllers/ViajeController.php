@@ -196,6 +196,7 @@ class ViajeController extends Controller
             $viajes = DB::select($consulta, $paramsVia);
 
             $calification = null;
+            $calificationResult = null;
 
             foreach ($viajes as $via) {
                 $calificationResult = $this->calificationtrip($codigoEmpleado->codigo_empleado, $validateData['app_user_id'], $via->id);
@@ -209,7 +210,7 @@ class ViajeController extends Controller
             return Response::json([
             'response' => true,
             'calificacion' => !empty($calification) && empty($calification->id_calificacion) ? $calification : null,
-            'listado' => !empty($results) && empty($calification) ? $results[0] : null,
+            'listado' => !empty($results) && empty($calification) && empty($calificationResult) ? $results[0] : null,
             ]);
 
         } catch (\Throwable $th) {
