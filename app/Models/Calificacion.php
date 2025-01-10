@@ -16,6 +16,8 @@ class Calificacion extends Model
     protected $fillable = [
         'fk_viaje',
         'fk_user',
+        'pasajero_ejecutivo_link',
+        'pasajero_ruta_link',
         'calificacion',
         'comentario',
     ];
