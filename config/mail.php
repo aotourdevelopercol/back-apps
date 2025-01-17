@@ -53,7 +53,7 @@ return [
             'transport' => 'ses',
         ],
 
-        
+
 
         'postmark' => [
             'transport' => 'postmark',
@@ -111,8 +111,8 @@ return [
     */
 
     'from' => [
-        'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
-        'name' => env('MAIL_FROM_NAME', 'Example'),
+        'address' => env('CORREO_NO_REPLY', 'default@example.com'),
+        'name' => env('NOMBRE_CORREOS', 'Default Name'),
     ],
 
 ];

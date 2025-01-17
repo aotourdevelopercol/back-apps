@@ -29,7 +29,7 @@ class ProveedorProvisional extends Mailable
 
     public function build()
     {
-        return $this->from(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS'))
+        return $this->from(config('mail.from.address'), config('mail.from.name'))
             ->subject('Proveedor provisional')
             ->view('email_proveedores_provinsionales.email_provisional_proveedor')
             ->with(['ruta' => $this->ruta]);

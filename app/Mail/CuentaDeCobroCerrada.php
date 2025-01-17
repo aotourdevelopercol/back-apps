@@ -31,7 +31,7 @@ class CuentaDeCobroCerrada extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS')),
+            from: new Address(config('mail.from.address'), config('mail.from.name')),
             subject: 'Cuenta de cobro cerrada',
         );
     }

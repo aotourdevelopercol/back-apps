@@ -33,7 +33,7 @@ class ViajeEntendido extends Mailable
     {
         return new Envelope(
             subject: 'Viaje Entendido',
-            from: new Address(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS'))
+            from: new Address(config('mail.from.address'), config('mail.from.name'))
         );
     }
 

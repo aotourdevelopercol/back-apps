@@ -24,7 +24,7 @@ class EsperarEjecutivo extends Mailable
     {
         try {
             return $this
-                ->from(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS'))
+            ->from(config('mail.from.address'), config('mail.from.name'))
                 ->subject('Conductor a la espera del pasajero')
                 ->view('emails_viajes.email_esperar_ejecutivo') // Ensure the view name is correct
                 ->with([

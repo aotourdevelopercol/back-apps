@@ -30,7 +30,7 @@ class ContraseñaOlvidada extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address('noreply@aotour.com.co', 'ME MUEVO CON UP'),
+            from: new Address(config('mail.from.address'), config('mail.from.name')),
             subject: 'Contraseña Olvidada',
         );
     }

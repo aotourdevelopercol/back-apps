@@ -26,7 +26,7 @@ class InscripcionProveedoresEmails extends Mailable
     {
         try {
             return $this
-                ->from(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS')) // Cambia esto a tu dirección de correo
+            ->from(config('mail.from.address'), config('mail.from.name')) // Cambia esto a tu dirección de correo
                 //->Bcc('comercial@aotour.com.co') // Volver global
                 ->subject('Nuevo proveedor para ingreso')
                 ->view('inscripcion_proveedores_emails.email_ingreso') // Asegúrate de poner el nombre correcto de tu vista

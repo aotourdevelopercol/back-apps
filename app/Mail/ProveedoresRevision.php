@@ -25,7 +25,7 @@ class ProveedoresRevision extends Mailable
    public function build(){
     try {
         return $this
-        ->from(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS'))
+        ->from(config('mail.from.address'), config('mail.from.name'))
         ->subject('En revición documental')
         ->view('inscripcion_proveedores_emails.email_revision')
         ->with(

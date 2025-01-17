@@ -56,7 +56,7 @@ class ModificacionViaje extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            from: new Address(env('CORREO_NO_REPLY'), env('NOMBRE_CORREOS')), // Aquí usamos la clase Address
+            from: new Address(config('mail.from.address'), config('mail.from.name')),
             subject: 'Modificación de Viaje'
         );
     }
