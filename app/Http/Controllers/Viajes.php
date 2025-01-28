@@ -646,10 +646,6 @@ class Viajes extends Controller
         ]);
     }
 
-
-
-
-
     public function listarlugares(Request $request)
     {
         try {

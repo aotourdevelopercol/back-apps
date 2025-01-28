@@ -117,10 +117,10 @@ class ViajeController extends Controller
         try {
 
             $codigoEmpleado = DB::table('users as u')
-            ->join('empleados_clientes as ec', 'ec.id', '=', 'u.id_empleado_cliente')
-            ->where('u.id', '=', $validateData['app_user_id'])
-            ->select('ec.codigo_empleado')
-            ->first();
+                ->join('empleados_clientes as ec', 'ec.id', '=', 'u.id_empleado_cliente')
+                ->where('u.id', '=', $validateData['app_user_id'])
+                ->select('ec.codigo_empleado')
+                ->first();
 
 
             $query = "SELECT
@@ -170,7 +170,7 @@ class ViajeController extends Controller
             GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
             LIMIT 1;";
 
-            $params = [$validateData['app_user_id'],$codigoEmpleado->codigo_empleado];
+            $params = [$validateData['app_user_id'], $codigoEmpleado->codigo_empleado];
 
             $results = DB::select($query, $params);
 
@@ -208,9 +208,9 @@ class ViajeController extends Controller
             }
 
             return Response::json([
-            'response' => true,
-            'calificacion' => !empty($calification) && empty($calification->id_calificacion) ? $calification : null,
-            'listado' => !empty($results) && empty($calification) && empty($calificationResult) ? $results[0] : null,
+                'response' => true,
+                'calificacion' => !empty($calification) && empty($calification->id_calificacion) ? $calification : null,
+                'listado' => !empty($results) && empty($calification) && empty($calificationResult) ? $results[0] : null,
             ]);
 
         } catch (\Throwable $th) {
@@ -310,10 +310,10 @@ class ViajeController extends Controller
         ]);
 
         $codigoEmpleado = DB::table('users as u')
-        ->join('empleados_clientes as ec', 'ec.id', '=', 'u.id_empleado_cliente')
-        ->where('u.id', '=', $validatedData['app_user_id'])
-        ->select('ec.codigo_empleado')
-        ->first();
+            ->join('empleados_clientes as ec', 'ec.id', '=', 'u.id_empleado_cliente')
+            ->where('u.id', '=', $validatedData['app_user_id'])
+            ->select('ec.codigo_empleado')
+            ->first();
 
         try {
             $query = "SELECT
@@ -724,6 +724,124 @@ class ViajeController extends Controller
                 'codigo' => 'FAIL',
             ]);
         }
+    }
+
+
+    // solicitud de ruta pasajeros
+    public function solicitudViajePasajeros(Request $request)
+    {
+
+        // tomar los datos del usuario logueado 
+        $user = Auth::user();
+
+        // Obtener el empleado del usuario logueado
+        $empleado = DB::table('empleados_clientes as ec')
+            ->where('ec.codigo_empleado', $user->codigo_empleado)
+            ->first();
+
+        // Buscar las rutas_solicitadas por la fecha, tipo de ruta , centro de costo y subcentro de costo, descripcion, sede, 
+        $rutas_solicitadas = DB::table('rutas_solicitadas as rs')
+            ->where('rs.fecha', $request->fecha)
+            ->where('rs.fk_tipo_ruta', $request->tipo_ruta)
+            ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
+            ->where('rs.fk_subcentrodecosto', $empleado->fk_centrodecosto)
+            ->where('rs.fk_sede', 2)
+            ->first();
+
+
+        try {
+            // Si no existe la ruta solicitada, debe ser creada
+            if (!$rutas_solicitadas) {
+                // Crear la ruta solicitada
+                $rutas_solicitadas = DB::table('rutas_solicitadas')->insertGetId([
+                    'fecha' => $request->fecha,
+                    'fecha_solicitud' => now(),
+                    'fk_solicitado_por' => Auth::user()->id,
+                    'fk_centrodecosto' => $empleado->fk_centrodecosto,
+                    'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
+                    'fk_sede' => 2,
+                    'fk_tipo_ruta' => $request->tipo_ruta,
+                    'hora' => $request->hora,
+                    'created_at' => now(),
+                ]);
+
+                // Actualizar la long y lat del empleado
+                DB::table('empleados_clientes as ec')
+                    ->where('ec.codigo_empleado', $user->codigo_empleado)
+                    ->update([
+                        'latitude' => $request->latitude,
+                        'longitude' => $request->longitude,
+                    ]);
+
+                // Insertar al pasajero en la tabla rutas_solicitadas_pasajeros con el id de la ruta solicitada
+                DB::table('rutas_solicitadas_pasajeros')->insert([
+                    'nombre' => $empleado->nombre,
+                    'fecha' => $request->fecha,
+                    'empleado_id' => $empleado->codigo_empleado,
+                    'fk_centrodecosto' => $empleado->fk_centrodecosto,
+                    'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
+                    'telefono' => $empleado->telefono,
+                    'direccion' => $empleado->direccion,
+                    'barrio' => $empleado->barrio,
+                    'localidad' => $empleado->localidad,
+                    'latitude' => $empleado->latitude ?? $request->latitude,
+                    'longitude' => $empleado->longitude ?? $request->longitude,
+                    'hora' => $request->fecha,
+                    'programa' => $empleado->programa,
+                    'correo' => $empleado->correo,
+                    'fk_rutas_solicitadas' => $rutas_solicitadas,
+                ]);
+
+                return Response::json([
+                    'response' => true,
+                    'message' => 'Pasajero agregado correctamente'
+                ], 200);
+
+            } else {
+                // En caso de que la ruta exista solo insertar al pasajero en la tabla rutas_solicitadas_pasajeros
+                // Insertar al pasajero en la tabla rutas_solicitadas_pasajeros con el id de la ruta solicitada
+                DB::table('rutas_solicitadas_pasajeros')->insert([
+                    'nombre' => $empleado->nombre,
+                    'fecha' => $request->fecha,
+                    'empleado_id' => $empleado->codigo_empleado,
+                    'fk_centrodecosto' => $empleado->fk_centrodecosto,
+                    'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
+                    'telefono' => $empleado->telefono,
+                    'direccion' => $empleado->direccion,
+                    'barrio' => $empleado->barrio,
+                    'localidad' => $empleado->localidad,
+                    'latitude' => $empleado->latitude ?? $request->latitude,
+                    'longitude' => $empleado->longitude ?? $request->longitude,
+                    'hora' => $request->fecha,
+                    'programa' => $empleado->programa,
+                    'correo' => $empleado->correo,
+                    'fk_rutas_solicitadas' => $rutas_solicitadas->id,
+                ]);
+
+                // Actualizar la long y lat del empleado
+                DB::table('empleados_clientes as ec')
+                    ->where('ec.codigo_empleado', $user->codigo_empleado)
+                    ->update([
+                        'latitude' => $request->latitude,
+                        'longitude' => $request->longitude,
+                    ]);
+
+
+                return Response::json([
+                    'response' => true,
+                    'message' => 'Pasajero agregado correctamente'
+                ], 200);
+            }
+        } catch (\Throwable $th) {
+            return Response::json([
+                'response' => false,
+                'message' => $th->getMessage()
+            ], 200);
+        }
+
+
+
+
     }
 }
 
