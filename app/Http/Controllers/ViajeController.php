@@ -739,22 +739,58 @@ class ViajeController extends Controller
             ->where('ec.codigo_empleado', $user->codigo_empleado)
             ->first();
 
+        Log::info('Solicitud de viaje pasajero: ' . json_encode($empleado));
+
         // Buscar las rutas_solicitadas por la fecha, tipo de ruta , centro de costo y subcentro de costo, descripcion, sede, 
         $rutas_solicitadas = DB::table('rutas_solicitadas as rs')
             ->where('rs.fecha', $request->fecha)
             ->where('rs.fk_tipo_ruta', $request->tipo_ruta)
             ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
-            ->where('rs.fk_subcentrodecosto', $empleado->fk_centrodecosto)
+            ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
+            ->where('rs.hora', $request->hora)
             ->where('rs.fk_sede', 2)
             ->first();
 
 
+        // Si existe el empleado vamos a actualizar su localizacion de lat y lon 
+        if($empleado){
+            DB::table('empleados_clientes as ec')
+            ->where('ec.codigo_empleado', $user->codigo_empleado)
+            ->update([
+                'latitude' => $request->latitude,
+                'longitude' => $request->longitude,
+            ]);
+        }
+
+
         try {
+
+            /*
+                -- descripcion 
+                -- 3845 = BR
+                -- 3846 = CO
+                 */
+            $descripcion = $empleado->fk_subcentrodecosto == 3845 ? 'BR' : 'CO';
+
+
             // Si no existe la ruta solicitada, debe ser creada
             if (!$rutas_solicitadas) {
+
+                // Crear el registro de la tabla autorizacion_de_rutas
+
+                $autorizacion_de_rutas = DB::table('autorizacion_de_rutas')->insertGetId([
+                  'estado_autorizacion' => 0, // Obligatorio ya que es NOT NULL
+                    'created_at' => now(),
+                ]);
+
+                if (!$autorizacion_de_rutas) {
+                    return response()->json(['error' => 'No se pudo crear la autorización'], 500);
+                }
+
                 // Crear la ruta solicitada
                 $rutas_solicitadas = DB::table('rutas_solicitadas')->insertGetId([
                     'fecha' => $request->fecha,
+                    'descripcion' => $descripcion,
                     'fecha_solicitud' => now(),
                     'fk_solicitado_por' => Auth::user()->id,
                     'fk_centrodecosto' => $empleado->fk_centrodecosto,
@@ -762,6 +798,7 @@ class ViajeController extends Controller
                     'fk_sede' => 2,
                     'fk_tipo_ruta' => $request->tipo_ruta,
                     'hora' => $request->hora,
+                    'autorizacion_id' => $autorizacion_de_rutas,
                     'created_at' => now(),
                 ]);
 
@@ -786,7 +823,7 @@ class ViajeController extends Controller
                     'localidad' => $empleado->localidad,
                     'latitude' => $empleado->latitude ?? $request->latitude,
                     'longitude' => $empleado->longitude ?? $request->longitude,
-                    'hora' => $request->fecha,
+                    'hora' => $request->hora,
                     'programa' => $empleado->programa,
                     'correo' => $empleado->correo,
                     'fk_rutas_solicitadas' => $rutas_solicitadas,
@@ -812,7 +849,7 @@ class ViajeController extends Controller
                     'localidad' => $empleado->localidad,
                     'latitude' => $empleado->latitude ?? $request->latitude,
                     'longitude' => $empleado->longitude ?? $request->longitude,
-                    'hora' => $request->fecha,
+                    'hora' => $request->hora,
                     'programa' => $empleado->programa,
                     'correo' => $empleado->correo,
                     'fk_rutas_solicitadas' => $rutas_solicitadas->id,
