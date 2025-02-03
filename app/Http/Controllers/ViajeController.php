@@ -730,159 +730,103 @@ class ViajeController extends Controller
     // solicitud de ruta pasajeros
     public function solicitudViajePasajeros(Request $request)
     {
-
-        // tomar los datos del usuario logueado 
+        // Obtener datos del usuario autenticado
         $user = Auth::user();
-
-        // Obtener el empleado del usuario logueado
+    
+        // Obtener el empleado asociado al usuario
         $empleado = DB::table('empleados_clientes as ec')
             ->where('ec.codigo_empleado', $user->codigo_empleado)
             ->first();
-
+    
         Log::info('Solicitud de viaje pasajero: ' . json_encode($empleado));
-
-
-
-        Log::info('Solicitud de viaje datos que estan llegando : ' . json_encode($request->all()));
-
-        // Buscar las rutas_solicitadas por la fecha, tipo de ruta , centro de costo y subcentro de costo, descripcion, sede, 
+        Log::info('Solicitud de viaje datos recibidos: ' . json_encode($request->all()));
+    
+        // Obtener el primer viaje del array "viajes"
+        $viaje = $request->input('viajes.0'); // Accede al primer elemento del array de viajes
+    
+        if (!$viaje) {
+            return response()->json(['error' => 'Datos de viaje no proporcionados'], 400);
+        }
+    
+        // Buscar la ruta solicitada con los datos del viaje
         $rutas_solicitadas = DB::table('rutas_solicitadas as rs')
-            ->where('rs.fecha', $request->fecha)
-            ->where('rs.fk_tipo_ruta', $request->tipo_ruta)
+            ->where('rs.fecha', $viaje['fecha'])
+            ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
             ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
             ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
-            ->where('rs.hora', $request->hora)
+            ->where('rs.hora', $viaje['hora'])
             ->where('rs.fk_sede', 2)
             ->first();
-
-
-        // Si existe el empleado vamos a actualizar su localizacion de lat y lon 
-        if($empleado){
+    
+        // Si existe el empleado, actualizar latitud y longitud
+        if ($empleado) {
             DB::table('empleados_clientes as ec')
-            ->where('ec.codigo_empleado', $user->codigo_empleado)
-            ->update([
-                'latitude' => $request->latitude,
-                'longitude' => $request->longitude,
-            ]);
+                ->where('ec.codigo_empleado', $user->codigo_empleado)
+                ->update([
+                    'latitude' => $viaje['latitude'],
+                    'longitude' => $viaje['longitude'],
+                ]);
         }
-
-
+    
         try {
-
-            /*
-                -- descripcion 
-                -- 3845 = BR
-                -- 3846 = CO
-                 */
             $descripcion = $empleado->fk_subcentrodecosto == 3845 ? 'BR' : 'CO';
-
-
-            // Si no existe la ruta solicitada, debe ser creada
+    
+            // Si no existe la ruta, crearla
             if (!$rutas_solicitadas) {
-
-                // Crear el registro de la tabla autorizacion_de_rutas
-
                 $autorizacion_de_rutas = DB::table('autorizacion_de_rutas')->insertGetId([
-                  'estado_autorizacion' => 0, // Obligatorio ya que es NOT NULL
+                    'estado_autorizacion' => 0,
                     'created_at' => now(),
                 ]);
-
+    
                 if (!$autorizacion_de_rutas) {
                     return response()->json(['error' => 'No se pudo crear la autorización'], 500);
                 }
-
-                // Crear la ruta solicitada
+    
                 $rutas_solicitadas = DB::table('rutas_solicitadas')->insertGetId([
-                    'fecha' => $request->fecha,
+                    'fecha' => $viaje['fecha'],
                     'descripcion' => $descripcion,
                     'fecha_solicitud' => now(),
                     'fk_solicitado_por' => Auth::user()->id,
                     'fk_centrodecosto' => $empleado->fk_centrodecosto,
                     'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
                     'fk_sede' => 2,
-                    'fk_tipo_ruta' => $request->tipo_ruta,
-                    'hora' => $request->hora,
+                    'fk_tipo_ruta' => $viaje['tipo_ruta'],
+                    'hora' => $viaje['hora'],
                     'autorizacion_id' => $autorizacion_de_rutas,
                     'created_at' => now(),
                 ]);
-
-                // Actualizar la long y lat del empleado
-                DB::table('empleados_clientes as ec')
-                    ->where('ec.codigo_empleado', $user->codigo_empleado)
-                    ->update([
-                        'latitude' => $request->latitude,
-                        'longitude' => $request->longitude,
-                    ]);
-
-                // Insertar al pasajero en la tabla rutas_solicitadas_pasajeros con el id de la ruta solicitada
-                DB::table('rutas_solicitadas_pasajeros')->insert([
-                    'nombre' => $empleado->nombre,
-                    'fecha' => $request->fecha,
-                    'empleado_id' => $empleado->codigo_empleado,
-                    'fk_centrodecosto' => $empleado->fk_centrodecosto,
-                    'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
-                    'telefono' => $empleado->telefono,
-                    'direccion' => $empleado->direccion,
-                    'barrio' => $empleado->barrio,
-                    'localidad' => $empleado->localidad,
-                    'latitude' => $empleado->latitude ?? $request->latitude,
-                    'longitude' => $empleado->longitude ?? $request->longitude,
-                    'hora' => $request->hora,
-                    'programa' => $empleado->programa,
-                    'correo' => $empleado->correo,
-                    'fk_rutas_solicitadas' => $rutas_solicitadas,
-                ]);
-
-                return Response::json([
-                    'response' => true,
-                    'message' => 'Pasajero agregado correctamente'
-                ], 200);
-
-            } else {
-                // En caso de que la ruta exista solo insertar al pasajero en la tabla rutas_solicitadas_pasajeros
-                // Insertar al pasajero en la tabla rutas_solicitadas_pasajeros con el id de la ruta solicitada
-                DB::table('rutas_solicitadas_pasajeros')->insert([
-                    'nombre' => $empleado->nombre,
-                    'fecha' => $request->fecha,
-                    'empleado_id' => $empleado->codigo_empleado,
-                    'fk_centrodecosto' => $empleado->fk_centrodecosto,
-                    'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
-                    'telefono' => $empleado->telefono,
-                    'direccion' => $empleado->direccion,
-                    'barrio' => $empleado->barrio,
-                    'localidad' => $empleado->localidad,
-                    'latitude' => $empleado->latitude ?? $request->latitude,
-                    'longitude' => $empleado->longitude ?? $request->longitude,
-                    'hora' => $request->hora,
-                    'programa' => $empleado->programa,
-                    'correo' => $empleado->correo,
-                    'fk_rutas_solicitadas' => $rutas_solicitadas->id,
-                ]);
-
-                // Actualizar la long y lat del empleado
-                DB::table('empleados_clientes as ec')
-                    ->where('ec.codigo_empleado', $user->codigo_empleado)
-                    ->update([
-                        'latitude' => $request->latitude,
-                        'longitude' => $request->longitude,
-                    ]);
-
-
-                return Response::json([
-                    'response' => true,
-                    'message' => 'Pasajero agregado correctamente'
-                ], 200);
             }
+    
+            // Insertar pasajero en la ruta solicitada
+            DB::table('rutas_solicitadas_pasajeros')->insert([
+                'nombre' => $empleado->nombre,
+                'fecha' => $viaje['fecha'],
+                'empleado_id' => $empleado->codigo_empleado,
+                'fk_centrodecosto' => $empleado->fk_centrodecosto,
+                'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
+                'telefono' => $empleado->telefono,
+                'direccion' => $empleado->direccion,
+                'barrio' => $empleado->barrio,
+                'localidad' => $empleado->localidad,
+                'latitude' => $empleado->latitude ?? $viaje['latitude'],
+                'longitude' => $empleado->longitude ?? $viaje['longitude'],
+                'hora' => $viaje['hora'],
+                'programa' => $empleado->programa,
+                'correo' => $empleado->correo,
+                'fk_rutas_solicitadas' => $rutas_solicitadas,
+            ]);
+    
+            return response()->json([
+                'response' => true,
+                'message' => 'Pasajero agregado correctamente'
+            ], 200);
+    
         } catch (\Throwable $th) {
-            return Response::json([
+            return response()->json([
                 'response' => false,
                 'message' => $th->getMessage()
-            ], 200);
+            ], 500);
         }
-
-
-
-
     }
 }
 
