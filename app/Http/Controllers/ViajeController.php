@@ -741,6 +741,8 @@ class ViajeController extends Controller
 
         Log::info('Solicitud de viaje pasajero: ' . json_encode($empleado));
 
+        Log::info('Solicitud de viaje pasajero: ' . json_encode($request->all()));
+
         // Buscar las rutas_solicitadas por la fecha, tipo de ruta , centro de costo y subcentro de costo, descripcion, sede, 
         $rutas_solicitadas = DB::table('rutas_solicitadas as rs')
             ->where('rs.fecha', $request->fecha)
