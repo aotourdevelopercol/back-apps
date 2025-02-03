@@ -799,7 +799,7 @@ class ViajeController extends Controller
                 'fk_centrodecosto' => $empleado->fk_centrodecosto,
                 'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
                 'telefono' => $empleado->telefono,
-                'direccion' => $viaje['desde'],
+                'direccion' => $viaje['desde'] ?? $viaje['hasta'],
                 'barrio' => $empleado->barrio,
                 'localidad' => $empleado->localidad,
                 'latitude' => $empleado->latitude ?? $viaje['latitude'],
