@@ -754,6 +754,25 @@ class ViajeController extends Controller
             ->where('rs.hora', $viaje['hora'])
             ->where('rs.fk_sede', 2)
             ->first();
+
+            // Buscar si el usuario que esta solicitando la ruta de entrada o salida ya tiene una de esas solicitudes para el dia de hoy $viaje['tipo_ruta']
+
+        $rutas_solicitadas_dia = DB::table('rutas_solicitadas as rs')
+            ->where('rs.fecha', $viaje['fecha'])
+            ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
+            ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
+            ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
+            ->where('rs.fk_sede', 2)
+            ->get();
+
+            // Si existe no puede generar el viaje, hacer un return de que no se puede hacer la solicitud de viaje 
+
+            if(count($rutas_solicitadas_dia) > 0){
+                return Response::json([
+                    'response' => true,
+                    'message' => 'No se puede generar la solicitud de viaje, ya existe una solicitud de viaje para este dia'
+                ], 200); 
+            }
     
         // Si existe el empleado, actualizar latitud y longitud
         if ($empleado) {
