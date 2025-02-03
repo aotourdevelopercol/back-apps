@@ -807,7 +807,7 @@ class ViajeController extends Controller
                 'hora' => $viaje['hora'],
                 'programa' => $empleado->programa,
                 'correo' => $empleado->correo,
-                'fk_rutas_solicitadas' => $rutas_solicitadas,
+                'fk_rutas_solicitadas' => $rutas_solicitadas ?? $rutas_solicitadas->id,
             ]);
     
             return Response::json([
