@@ -744,9 +744,6 @@ class ViajeController extends Controller
         // Obtener el primer viaje del array "viajes"
         $viaje = $request->input('viajes.0'); // Accede al primer elemento del array de viajes
     
-        if (!$viaje) {
-            return response()->json(['error' => 'Datos de viaje no proporcionados'], 400);
-        }
     
         // Buscar la ruta solicitada con los datos del viaje
         $rutas_solicitadas = DB::table('rutas_solicitadas as rs')
@@ -778,10 +775,7 @@ class ViajeController extends Controller
                     'created_at' => now(),
                 ]);
     
-                if (!$autorizacion_de_rutas) {
-                    return response()->json(['error' => 'No se pudo crear la autorización'], 500);
-                }
-    
+             
                 $rutas_solicitadas = DB::table('rutas_solicitadas')->insertGetId([
                     'fecha' => $viaje['fecha'],
                     'descripcion' => $descripcion,
@@ -816,13 +810,13 @@ class ViajeController extends Controller
                 'fk_rutas_solicitadas' => $rutas_solicitadas,
             ]);
     
-            return response()->json([
+            return Response::json([
                 'response' => true,
                 'message' => 'Pasajero agregado correctamente'
             ], 200);
     
         } catch (\Throwable $th) {
-            return response()->json([
+            return  Response::json([
                 'response' => false,
                 'message' => $th->getMessage()
             ], 500);
