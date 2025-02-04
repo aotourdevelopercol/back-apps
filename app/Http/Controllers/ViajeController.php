@@ -738,6 +738,9 @@ class ViajeController extends Controller
             ->where('ec.codigo_empleado', $user->codigo_empleado)
             ->first();
 
+        // Log request all
+        Log::info('Solicitud de viaje pasajeros: ' . json_encode($request->all()));
+
         // Obtener el primer viaje del array "viajes"
         $viaje = $request->input('viajes.0'); // Accede al primer elemento del array de viajes
 
