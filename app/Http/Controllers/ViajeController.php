@@ -845,8 +845,8 @@ class ViajeController extends Controller
             ]);
 
             return Response::json([
-                'response' => false,
-                'message' => "PASS_ADDED",
+                'response' => true,
+                'message' => 'Pasajero agregado correctamente'
             ], 200);
 
         } catch (\Throwable $th) {
