@@ -842,14 +842,14 @@ class ViajeController extends Controller
             ]);
 
             return Response::json([
-                'response' => "PASS_ADDED",
-                'message' => 'Pasajero agregado correctamente'
+                'response' => false,
+                'message' => "PASS_ADDED",
             ], 200);
 
         } catch (\Throwable $th) {
             return Response::json([
-                'response' => "FAIL_ADDED_ERROR_OCURRED",
-                'message' => $th->getMessage()
+                'response' => false,
+                'message' => "FAIL_ADDED_ERROR_OCURRED"
             ], 500);
         }
     }
