@@ -732,50 +732,62 @@ class ViajeController extends Controller
     {
         // Obtener datos del usuario autenticado
         $user = Auth::user();
-    
+
         // Obtener el empleado asociado al usuario
         $empleado = DB::table('empleados_clientes as ec')
             ->where('ec.codigo_empleado', $user->codigo_empleado)
             ->first();
-    
-        Log::info('Solicitud de viaje pasajero: ' . json_encode($empleado));
-        Log::info('Solicitud de viaje datos recibidos: ' . json_encode($request->all()));
-    
+
         // Obtener el primer viaje del array "viajes"
         $viaje = $request->input('viajes.0'); // Accede al primer elemento del array de viajes
-    
-    
+
+
+        // Buscar si el usuario que esta solicitando la ruta de entrada o salida ya tiene una de esas solicitudes para el dia de hoy $viaje['tipo_ruta']
+
+        $rutas_solicitadas_dia = DB::table('rutas_solicitadas_pasajeros as rsp')
+            ->join('rutas_solicitadas as rs', 'rs.id', '=', 'rsp.fk_rutas_solicitadas')
+            ->join('users as u', 'u.codigo_empleado', '=', 'rsp.empleado_id')
+            ->where('u.id', $user->id)
+            ->where('rs.fecha', $viaje['fecha'])
+            ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
+            ->select('rs.fecha', 'rs.fk_tipo_ruta')
+            ->get();
+
+        // Si existe no puede generar el viaje, hacer un return de que no se puede hacer la solicitud de viaje 
+        if (count($rutas_solicitadas_dia) > 0) {
+            return Response::json([
+                'response' => 'RUOTE_EXIST',
+                'message' => 'No se puede generar la solicitud de viaje, ya existe una solicitud de viaje para este dia'
+            ], 200);
+        }
+
+
+        // Convertir la hora ingresada a formato de tiempo
+        $horaIngresada = $viaje['hora']; // Asumimos que viene en formato "HH:mm"
+        $horaMenos15Min = date("H:i", strtotime($horaIngresada . " -15 minutes"));
+
+        // condicional ternario para redondear la hora por el tipo de ruta envio un parametro a la funcion si es 67 o 68 
+        $rango = $viaje['tipo_ruta'] == 67 ? 15 : 30;
+
+        Log::info('Rango: ' . $rango);
+
+        $horaFormateada = $this->redondearHora( $viaje['hora'], $rango);
+
+
         // Buscar la ruta solicitada con los datos del viaje
         $rutas_solicitadas = DB::table('rutas_solicitadas as rs')
             ->where('rs.fecha', $viaje['fecha'])
             ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
             ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
             ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
-            ->where('rs.hora', $viaje['hora'])
+            ->where('rs.hora', $horaFormateada )
+           // ->whereRaw("STR_TO_DATE(rs.hora, '%H:%i') = STR_TO_DATE(?, '%H:%i')", [$horaMenos15Min])
             ->where('rs.fk_sede', 2)
             ->first();
 
-            // Buscar si el usuario que esta solicitando la ruta de entrada o salida ya tiene una de esas solicitudes para el dia de hoy $viaje['tipo_ruta']
 
-        $rutas_solicitadas_dia = DB::table('rutas_solicitadas as rs')
-            ->where('rs.fecha', $viaje['fecha'])
-            ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
-            ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
-            ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
-            ->where('rs.fk_sede', 2)
-            ->get();
-
-            // Si existe no puede generar el viaje, hacer un return de que no se puede hacer la solicitud de viaje 
-
-            if(count($rutas_solicitadas_dia) > 0){
-                return Response::json([
-                    'response' => true,
-                    'message' => 'No se puede generar la solicitud de viaje, ya existe una solicitud de viaje para este dia'
-                ], 200); 
-            }
-    
         // Si existe el empleado, actualizar latitud y longitud
-        if ($empleado) {
+        if ($empleado && ($empleado->longitude == null || $empleado->latitude == null)) {
             DB::table('empleados_clientes as ec')
                 ->where('ec.codigo_empleado', $user->codigo_empleado)
                 ->update([
@@ -783,18 +795,18 @@ class ViajeController extends Controller
                     'longitude' => $viaje['longitude'],
                 ]);
         }
-    
+
         try {
             $descripcion = $empleado->fk_subcentrodecosto == 3845 ? 'BR' : 'CO';
-    
+
             // Si no existe la ruta, crearla
             if (!$rutas_solicitadas) {
                 $autorizacion_de_rutas = DB::table('autorizacion_de_rutas')->insertGetId([
                     'estado_autorizacion' => 0,
                     'created_at' => now(),
                 ]);
-    
-             
+
+
                 $rutas_solicitadas = DB::table('rutas_solicitadas')->insertGetId([
                     'fecha' => $viaje['fecha'],
                     'descripcion' => $descripcion,
@@ -804,12 +816,12 @@ class ViajeController extends Controller
                     'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
                     'fk_sede' => 2,
                     'fk_tipo_ruta' => $viaje['tipo_ruta'],
-                    'hora' => $viaje['hora'],
+                    'hora' => $horaFormateada ,
                     'autorizacion_id' => $autorizacion_de_rutas,
                     'created_at' => now(),
                 ]);
             }
-    
+
             // Insertar pasajero en la ruta solicitada
             DB::table('rutas_solicitadas_pasajeros')->insert([
                 'nombre' => $empleado->nombre,
@@ -821,25 +833,54 @@ class ViajeController extends Controller
                 'direccion' => $viaje['desde'] ?? $viaje['hasta'],
                 'barrio' => $empleado->barrio,
                 'localidad' => $empleado->localidad,
-                'latitude' =>  $viaje['latitude'],
-                'longitude' =>  $viaje['longitude'],
-                'hora' => $viaje['hora'],
+                'latitude' => $viaje['latitude'],
+                'longitude' => $viaje['longitude'],
+                'hora' => $horaFormateada ,
                 'programa' => $empleado->programa,
                 'correo' => $empleado->correo,
                 'fk_rutas_solicitadas' => is_object($rutas_solicitadas) ? $rutas_solicitadas->id : $rutas_solicitadas,
             ]);
-    
+
             return Response::json([
-                'response' => true,
+                'response' => "PASS_ADDED",
                 'message' => 'Pasajero agregado correctamente'
             ], 200);
-    
+
         } catch (\Throwable $th) {
-            return  Response::json([
-                'response' => false,
+            return Response::json([
+                'response' => "FAIL_ADDED_ERROR_OCURRED",
                 'message' => $th->getMessage()
             ], 500);
         }
     }
+
+    private function redondearHora($hora, $rango) {
+        // Convertir la hora en un objeto Carbon
+        $carbonHora = Carbon::createFromFormat('H:i', $hora);
+    
+        // Obtener los minutos actuales
+        $minutos = $carbonHora->minute;
+    
+        if ($rango == 15) {
+            // Redondear SIEMPRE hacia atrás
+            $minutosRedondeados = floor($minutos / $rango) * $rango;
+        } else {
+            // Redondear SIEMPRE hacia adelante cuando el rango es 30
+            $minutosRedondeados = ceil($minutos / $rango) * $rango;
+    
+            // Si se pasa de 60, ajustar la hora
+            if ($minutosRedondeados >= 60) {
+                $carbonHora->addHour();
+                $minutosRedondeados = 0;
+            }
+        }
+    
+        // Ajustar la hora con los minutos redondeados
+        $carbonHora->setMinute($minutosRedondeados);
+    
+        // Retornar la hora formateada
+        return $carbonHora->format('H:i');
+    }
+    
 }
 
