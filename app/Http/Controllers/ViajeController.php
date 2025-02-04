@@ -756,8 +756,8 @@ class ViajeController extends Controller
         // Si existe no puede generar el viaje, hacer un return de que no se puede hacer la solicitud de viaje 
         if (count($rutas_solicitadas_dia) > 0) {
             return Response::json([
-                'response' => 'RUOTE_EXIST',
-                'message' => 'No se puede generar la solicitud de viaje, ya existe una solicitud de viaje para este dia'
+                'response' => 'false',
+                'message' => 'RUOTE_EXIST',
             ], 200);
         }
 
