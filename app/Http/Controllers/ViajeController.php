@@ -760,7 +760,7 @@ class ViajeController extends Controller
         if (count($rutas_solicitadas_dia) > 0) {
             Log::info('El usuario ya tiene una ruta solicitada para el dia de hoy');
             return Response::json([
-                'response' => 'false',
+                'response' => false,
                 'message' => 'RUOTE_EXIST',
             ], 200);
         }

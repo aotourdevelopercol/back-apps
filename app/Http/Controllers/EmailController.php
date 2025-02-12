@@ -14,6 +14,7 @@
     use App\Mail\FinalizarViaje;
     use App\Mail\InicioViaje;
     use App\Mail\ModificacionViaje;
+    use App\Mail\NuevosUsuariosEmail;
     use App\Mail\NuevoViaje;
     use App\Mail\ProveedoresDocumentosAprobadosC;
     use App\Mail\ProveedoresDocumentosAprobados;
@@ -46,6 +47,8 @@
                 // Los datos almacenados en data corresponden a los datos que se enviarán en el correo para diferentes plantillas
                 'data' =>'nullable|array',
                 'data.nombre' =>'nullable|string',
+                'data.user' =>'nullable|string',
+                'data.password' =>'nullable|string',
                 'data.totalConductores' =>'nullable|integer',
                 'data.totalVehiculos' =>'nullable|integer',
                 'data.asunto' =>'nullable|string',
@@ -386,6 +389,15 @@
                         Log::error('Error al enviar correo: '. $th);
                     }
 
+                    break;
+
+                // Correo para creacion del usuario
+                case 'nuevo_usuario':
+                    try {
+                        Mail::to($validated['email'])->send(new NuevosUsuariosEmail($validated['data']['user'], $validated['data']['password'], $validated['data']['nombre'] ));
+                    } catch (\Throwable $th) {
+                        Log::error('Error al enviar correo: '. $th);
+                    }
                     break;
 
 
