@@ -772,6 +772,7 @@ class ViajeController extends Controller
             ->where('rsp.fk_centrodecosto', $user->centrodecosto_id)
             ->where('rs.fecha', $viaje['fecha'])
             ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
+            ->whereNot('rsp.visible', 1)
             ->select('rs.fecha', 'rs.fk_tipo_ruta')
             ->get();
 
