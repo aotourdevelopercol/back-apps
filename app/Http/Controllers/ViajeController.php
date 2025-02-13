@@ -793,6 +793,7 @@ class ViajeController extends Controller
             ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
             ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
             ->where('rs.hora', $horaFormateada )
+            ->whereNot('rs.visible', 1)
            // ->whereRaw("STR_TO_DATE(rs.hora, '%H:%i') = STR_TO_DATE(?, '%H:%i')", [$horaMenos15Min])
             ->where('rs.fk_sede', 2)
             ->first();
