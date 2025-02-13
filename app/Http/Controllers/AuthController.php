@@ -24,6 +24,8 @@ class AuthController extends Controller
         // Verifica si hay un usuario autenticado
         $user = Auth::user();
 
+        
+
         if ($user) {
             try {
                 // Elimina todos los tokens del usuario autenticado
@@ -138,6 +140,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
+            Log::info('Me estoy intentando loguear ' );
             // Validar credenciales
             $credentials = $request->validate([
                 'username' => 'required|string',
