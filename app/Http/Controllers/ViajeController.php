@@ -746,7 +746,7 @@ class ViajeController extends Controller
         // Obtener el primer viaje del array "viajes"
         $viaje = $request->input('viajes.0'); // Accede al primer elemento del array de viajes
 
-                // Convertir la hora ingresada a formato de tiempo
+        // Convertir la hora ingresada a formato de tiempo
         $horaIngresada = $viaje['hora']; // Asumimos que viene en formato "HH:mm"
         $horaMenos15Min = date("H:i", strtotime($horaIngresada . " -15 minutes"));
 
@@ -755,10 +755,10 @@ class ViajeController extends Controller
 
         Log::info('Rango: ' . $rango);
 
-        $horaFormateada = $this->redondearHora( $viaje['hora'], $rango);
+        $horaFormateada = $this->redondearHora($viaje['hora'], $rango);
 
         // si la $horaFormateada es igual a 00:00 debe tomar a $viaje['fecha'] y sumarle un dia
-        if (($horaFormateada == '00:00' && $viaje['tipo_ruta'] == 68) && $viaje['fecha'] != '00:00' ) {
+        if (($horaFormateada == '00:00' && $viaje['tipo_ruta'] == 68) && $viaje['fecha'] != '00:00') {
             $viaje['fecha'] = date('Y-m-d', strtotime($viaje['fecha'] . ' +1 day'));
         }
 
@@ -772,7 +772,6 @@ class ViajeController extends Controller
             ->where('rsp.fk_centrodecosto', $user->centrodecosto_id)
             ->where('rs.fecha', $viaje['fecha'])
             ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
-            ->whereNot('rs.visible', 1)
             ->select('rs.fecha', 'rs.fk_tipo_ruta')
             ->get();
 
@@ -792,11 +791,18 @@ class ViajeController extends Controller
             ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
             ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
             ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
-            ->where('rs.hora', $horaFormateada )
-            ->whereNot('rs.visible', 1)
-           // ->whereRaw("STR_TO_DATE(rs.hora, '%H:%i') = STR_TO_DATE(?, '%H:%i')", [$horaMenos15Min])
+            ->where('rs.hora', $horaFormateada)
+            // ->whereRaw("STR_TO_DATE(rs.hora, '%H:%i') = STR_TO_DATE(?, '%H:%i')", [$horaMenos15Min])
             ->where('rs.fk_sede', 2)
+            ->where(function ($query) {
+                $query->whereNull('rs.visible')->orWhere('rs.visible', '!=', 1);
+            })
+            ->where(function ($query) {
+                $query->whereNull('rs.montado')->orWhere('rs.montado', '!=', 1);
+            })
             ->first();
+
+
 
 
         // Si existe el empleado, actualizar latitud y longitud
@@ -829,7 +835,7 @@ class ViajeController extends Controller
                     'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
                     'fk_sede' => 2,
                     'fk_tipo_ruta' => $viaje['tipo_ruta'],
-                    'hora' => $horaFormateada ,
+                    'hora' => $horaFormateada,
                     'autorizacion_id' => $autorizacion_de_rutas,
                     'created_at' => now(),
                 ]);
@@ -848,7 +854,7 @@ class ViajeController extends Controller
                 'localidad' => $empleado->localidad,
                 'latitude' => $viaje['latitude'],
                 'longitude' => $viaje['longitude'],
-                'hora' => $horaFormateada ,
+                'hora' => $horaFormateada,
                 'programa' => $empleado->programa,
                 'correo' => $empleado->correo,
                 'fk_rutas_solicitadas' => is_object($rutas_solicitadas) ? $rutas_solicitadas->id : $rutas_solicitadas,
@@ -868,33 +874,34 @@ class ViajeController extends Controller
         }
     }
 
-    private function redondearHora($hora, $rango) {
+    private function redondearHora($hora, $rango)
+    {
         // Convertir la hora en un objeto Carbon
         $carbonHora = Carbon::createFromFormat('H:i', $hora);
-    
+
         // Obtener los minutos actuales
         $minutos = $carbonHora->minute;
-    
+
         if ($rango == 15) {
             // Redondear SIEMPRE hacia atrás
             $minutosRedondeados = floor($minutos / $rango) * $rango;
         } else {
             // Redondear SIEMPRE hacia adelante cuando el rango es 30
             $minutosRedondeados = ceil($minutos / $rango) * $rango;
-    
+
             // Si se pasa de 60, ajustar la hora
             if ($minutosRedondeados >= 60) {
                 $carbonHora->addHour();
                 $minutosRedondeados = 0;
             }
         }
-    
+
         // Ajustar la hora con los minutos redondeados
         $carbonHora->setMinute($minutosRedondeados);
-    
+
         // Retornar la hora formateada
         return $carbonHora->format('H:i');
     }
-    
+
 }
 
