@@ -746,6 +746,22 @@ class ViajeController extends Controller
         // Obtener el primer viaje del array "viajes"
         $viaje = $request->input('viajes.0'); // Accede al primer elemento del array de viajes
 
+                // Convertir la hora ingresada a formato de tiempo
+        $horaIngresada = $viaje['hora']; // Asumimos que viene en formato "HH:mm"
+        $horaMenos15Min = date("H:i", strtotime($horaIngresada . " -15 minutes"));
+
+        // condicional ternario para redondear la hora por el tipo de ruta envio un parametro a la funcion si es 67 o 68 
+        $rango = $viaje['tipo_ruta'] == 67 ? 15 : 30;
+
+        Log::info('Rango: ' . $rango);
+
+        $horaFormateada = $this->redondearHora( $viaje['hora'], $rango);
+
+        // si la $horaFormateada es igual a 00:00 debe tomar a $viaje['fecha'] y sumarle un dia
+        if ($horaFormateada == '00:00' && $viaje['tipo_ruta'] == 68) {
+            $viaje['fecha'] = date('Y-m-d', strtotime($viaje['fecha'] . ' +1 day'));
+        }
+
 
         // Buscar si el usuario que esta solicitando la ruta de entrada o salida ya tiene una de esas solicitudes para el dia de hoy $viaje['tipo_ruta']
 
@@ -767,18 +783,6 @@ class ViajeController extends Controller
                 'message' => 'RUOTE_EXIST',
             ], 200);
         }
-
-
-        // Convertir la hora ingresada a formato de tiempo
-        $horaIngresada = $viaje['hora']; // Asumimos que viene en formato "HH:mm"
-        $horaMenos15Min = date("H:i", strtotime($horaIngresada . " -15 minutes"));
-
-        // condicional ternario para redondear la hora por el tipo de ruta envio un parametro a la funcion si es 67 o 68 
-        $rango = $viaje['tipo_ruta'] == 67 ? 15 : 30;
-
-        Log::info('Rango: ' . $rango);
-
-        $horaFormateada = $this->redondearHora( $viaje['hora'], $rango);
 
 
         // Buscar la ruta solicitada con los datos del viaje
