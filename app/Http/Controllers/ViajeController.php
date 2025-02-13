@@ -736,6 +736,7 @@ class ViajeController extends Controller
         // Obtener el empleado asociado al usuario
         $empleado = DB::table('empleados_clientes as ec')
             ->where('ec.codigo_empleado', $user->codigo_empleado)
+            ->orderBy('id', 'desc')
             ->first();
 
         // Log request all
