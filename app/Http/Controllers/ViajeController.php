@@ -758,7 +758,7 @@ class ViajeController extends Controller
         $horaFormateada = $this->redondearHora( $viaje['hora'], $rango);
 
         // si la $horaFormateada es igual a 00:00 debe tomar a $viaje['fecha'] y sumarle un dia
-        if ($horaFormateada == '00:00' && $viaje['tipo_ruta'] == 68) {
+        if (($horaFormateada == '00:00' && $viaje['tipo_ruta'] == 68) && $viaje['fecha'] != '00:00' ) {
             $viaje['fecha'] = date('Y-m-d', strtotime($viaje['fecha'] . ' +1 day'));
         }
 
