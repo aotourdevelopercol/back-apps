@@ -735,9 +735,10 @@ class ViajeController extends Controller
 
         // Obtener el empleado asociado al usuario
         $empleado = DB::table('empleados_clientes as ec')
-            ->where('ec.codigo_empleado', $user->codigo_empleado)
+            ->where('ec.id', $user->id_empleado_cliente)
             ->orderBy('id', 'desc')
             ->first();
+
 
         // Log request all
         Log::info('Solicitud de viaje pasajeros: ' . json_encode($request->all()));
@@ -752,6 +753,7 @@ class ViajeController extends Controller
             ->join('rutas_solicitadas as rs', 'rs.id', '=', 'rsp.fk_rutas_solicitadas')
             ->join('users as u', 'u.codigo_empleado', '=', 'rsp.empleado_id')
             ->where('u.id', $user->id)
+            ->where('rsp.fk_centrodecosto', $user->centrodecosto_id)
             ->where('rs.fecha', $viaje['fecha'])
             ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
             ->select('rs.fecha', 'rs.fk_tipo_ruta')
