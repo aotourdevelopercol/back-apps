@@ -773,6 +773,12 @@ class ViajeController extends Controller
             ->where('rs.fecha', $viaje['fecha'])
             ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
             ->select('rs.fecha', 'rs.fk_tipo_ruta')
+            ->where(function ($query) {
+                $query->whereNotNull('rs.visible');
+            })
+            ->where(function ($query) {
+                $query->whereNotNull('rs.montado');
+            })
             ->get();
 
         // Si existe no puede generar el viaje, hacer un return de que no se puede hacer la solicitud de viaje 
