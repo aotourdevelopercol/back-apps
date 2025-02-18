@@ -771,8 +771,8 @@ class ViajeController extends Controller
                 'rs.montado',
                 DB::raw('NULL as usuario_eliminacion'),
                 DB::raw("CASE 
-        WHEN rs.visible IS NULL AND rs.montado IS NULL THEN '3 no crear'
-        WHEN rs.visible = 1 AND rs.montado IS NULL THEN '1 crear'
+        WHEN rs.visible IS NULL AND rs.montado IS NULL THEN 3
+        WHEN rs.visible = 1 AND rs.montado IS NULL THEN 1
         ELSE 'definir'
     END AS accion")
             )
@@ -804,9 +804,9 @@ class ViajeController extends Controller
                 'rs.montado',
                 'v.usuario_eliminacion',
                 DB::raw("CASE 
-        WHEN rs.visible IS NULL AND rs.montado IS NULL AND v.usuario_eliminacion IS NULL THEN '1 crear'
-        WHEN rs.visible IS NULL AND rs.montado = 1 AND v.usuario_eliminacion IS NULL THEN '3 no crear'
-        WHEN rs.visible IS NULL AND rs.montado = 1 AND v.usuario_eliminacion IS NOT NULL THEN '1 crear'
+        WHEN rs.visible IS NULL AND rs.montado IS NULL AND v.usuario_eliminacion IS NULL THEN 1
+        WHEN rs.visible IS NULL AND rs.montado = 1 AND v.usuario_eliminacion IS NULL THEN 3
+        WHEN rs.visible IS NULL AND rs.montado = 1 AND v.usuario_eliminacion IS NOT NULL THEN 1
         ELSE 'definir'
     END AS accion")
             )
