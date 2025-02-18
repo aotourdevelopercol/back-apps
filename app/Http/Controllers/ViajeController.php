@@ -842,7 +842,7 @@ class ViajeController extends Controller
         // inicializar la variable para guardar la consutla de $rutas_solicitadas que esta dentro del if
         $rutas_solicitadas = null;
 
-        if (count($accion) == 0) {
+        if (!$accion) {
             // Buscar la ruta solicitada con los datos del viaje
             $rutas_solicitadas = DB::table('rutas_solicitadas as rs')
                 ->where('rs.fecha', $viaje['fecha'])
