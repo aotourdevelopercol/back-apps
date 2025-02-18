@@ -824,36 +824,14 @@ class ViajeController extends Controller
         // Unir ambas consultas con UNION
         $resultado = $consulta1->union($consulta2)->get();
 
+        $accion = $resultado->first()->accion ?? null;
+
 
         // Buscar si el usuario que esta solicitando la ruta de entrada o salida ya tiene una de esas solicitudes para el dia de hoy $viaje['tipo_ruta']
 
-        /*   $rutas_solicitadas_dia = DB::table('rutas_solicitadas_pasajeros as rsp')
-               ->join('rutas_solicitadas as rs', 'rs.id', '=', 'rsp.fk_rutas_solicitadas')
-               ->join('users as u', 'u.codigo_empleado', '=', 'rsp.empleado_id')
-               ->where('u.id', $user->id)
-               ->where('rsp.fk_centrodecosto', $user->centrodecosto_id)
-               ->where('rs.fecha', $viaje['fecha'])
-               ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
-               ->select('rs.fecha', 'rs.fk_tipo_ruta')
-               ->where(function ($query) {
-                   $query->whereNotNull('rs.visible');
-               })
-               ->where(function ($query) {
-                   $query->whereNotNull('rs.montado');
-               })
-               ->get();
-
-           // Si existe no puede generar el viaje, hacer un return de que no se puede hacer la solicitud de viaje 
-           if (count($rutas_solicitadas_dia) > 0) {
-               Log::info('El usuario ya tiene una ruta solicitada para el dia de hoy');
-               return Response::json([
-                   'response' => false,
-                   'message' => 'RUOTE_EXIST',
-               ], 200);
-           } */
-
+       
         // ACCION 1 Crear , 2(no trae nada) Montar, 3 No permitir nada
-        if ($resultado->accion == 3) {
+        if ($accion == 3) {
             Log::info('El usuario ya tiene una ruta solicitada para el dia de hoy');
             return Response::json([
                 'response' => false,
@@ -861,7 +839,10 @@ class ViajeController extends Controller
             ], 200);
         }
 
-        if (count($resultado->accion) == 0) {
+        // inicializar la variable para guardar la consutla de $rutas_solicitadas que esta dentro del if
+        $rutas_solicitadas = null;
+
+        if (count($accion) == 0) {
             // Buscar la ruta solicitada con los datos del viaje
             $rutas_solicitadas = DB::table('rutas_solicitadas as rs')
                 ->where('rs.fecha', $viaje['fecha'])
@@ -894,7 +875,7 @@ class ViajeController extends Controller
             $descripcion = $empleado->fk_subcentrodecosto == 3845 ? 'BR' : 'CO';
 
             // Si no existe la ruta, crearla
-            if (!$rutas_solicitadas || $resultado->accion == 1) {
+            if (!$rutas_solicitadas || $accion == 1) {
                 $autorizacion_de_rutas = DB::table('autorizacion_de_rutas')->insertGetId([
                     'estado_autorizacion' => 0,
                     'created_at' => now(),
