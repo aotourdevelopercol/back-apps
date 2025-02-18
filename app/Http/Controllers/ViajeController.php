@@ -776,12 +776,12 @@ class ViajeController extends Controller
         ELSE 'definir'
     END AS accion")
             )
-            ->where('u.id', 7775)
-            ->where('rs.fecha', '2025-02-13')
-            ->where('rs.fk_tipo_ruta', 68)
-            ->where('rs.fk_centrodecosto', 97)
-            ->where('rs.fk_subcentrodecosto', 341)
-            ->where('rs.hora', '20:00')
+            ->where('u.id', $user->id)
+            ->where('rs.fecha', $viaje['fecha'])
+            ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
+            ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
+            ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
+            ->where('rs.hora', $horaFormateada)
             ->where('rs.fk_sede', 2)
             ->whereNull('rs.visible')
             ->whereNull('rs.montado')
@@ -810,12 +810,12 @@ class ViajeController extends Controller
         ELSE 'definir'
     END AS accion")
             )
-            ->where('u.id', 7775)
-            ->where('rs.fecha', '2025-02-13')
-            ->where('rs.fk_tipo_ruta', 68)
-            ->where('rs.fk_centrodecosto', 97)
-            ->where('rs.fk_subcentrodecosto', 341)
-            ->where('rs.hora', '20:00')
+            ->where('u.id', $user->id)
+            ->where('rs.fecha', $viaje['fecha'])
+            ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
+            ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
+            ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
+            ->where('rs.hora', $horaFormateada)
             ->where('rs.fk_sede', 2)
             ->whereNull('rs.visible')
             ->where('rs.montado', 1)
@@ -829,7 +829,7 @@ class ViajeController extends Controller
 
         // Buscar si el usuario que esta solicitando la ruta de entrada o salida ya tiene una de esas solicitudes para el dia de hoy $viaje['tipo_ruta']
 
-       
+
         // ACCION 1 Crear , 2(no trae nada) Montar, 3 No permitir nada
         if ($accion == 3) {
             Log::info('El usuario ya tiene una ruta solicitada para el dia de hoy');
