@@ -826,6 +826,8 @@ class ViajeController extends Controller
 
         $accion = $resultado->first()->accion ?? null;
 
+        Log::info('accion: ' . $accion);
+
 
         // Buscar si el usuario que esta solicitando la ruta de entrada o salida ya tiene una de esas solicitudes para el dia de hoy $viaje['tipo_ruta']
 
