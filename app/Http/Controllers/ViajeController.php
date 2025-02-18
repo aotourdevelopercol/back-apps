@@ -753,36 +753,107 @@ class ViajeController extends Controller
         // condicional ternario para redondear la hora por el tipo de ruta envio un parametro a la funcion si es 67 o 68 
         $rango = $viaje['tipo_ruta'] == 67 ? 15 : 30;
 
-        Log::info('Rango: ' . $rango);
-
         $horaFormateada = $this->redondearHora($viaje['hora'], $rango);
 
-        // si la $horaFormateada es igual a 00:00 debe tomar a $viaje['fecha'] y sumarle un dia
+        // si la $horaFormateada es igual a 00:00 debe tomar a $viaje['fecha'] y sumarle un dia (REVISAR)
         if (($horaFormateada == '00:00' && $viaje['tipo_ruta'] == 68) && $viaje['fecha'] != '00:00') {
             $viaje['fecha'] = date('Y-m-d', strtotime($viaje['fecha'] . ' +1 day'));
         }
 
 
-        // Buscar si el usuario que esta solicitando la ruta de entrada o salida ya tiene una de esas solicitudes para el dia de hoy $viaje['tipo_ruta']
-
-        $rutas_solicitadas_dia = DB::table('rutas_solicitadas_pasajeros as rsp')
+        // Primera consulta
+        $consulta1 = DB::table('rutas_solicitadas_pasajeros as rsp')
             ->join('rutas_solicitadas as rs', 'rs.id', '=', 'rsp.fk_rutas_solicitadas')
             ->join('users as u', 'u.codigo_empleado', '=', 'rsp.empleado_id')
-            ->where('u.id', $user->id)
-            ->where('rsp.fk_centrodecosto', $user->centrodecosto_id)
-            ->where('rs.fecha', $viaje['fecha'])
-            ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
-            ->select('rs.fecha', 'rs.fk_tipo_ruta')
-            ->where(function ($query) {
-                $query->whereNotNull('rs.visible');
-            })
-            ->where(function ($query) {
-                $query->whereNotNull('rs.montado');
-            })
-            ->get();
+            ->select(
+                'rs.id',
+                'rs.visible',
+                'rs.montado',
+                DB::raw('NULL as usuario_eliminacion'),
+                DB::raw("CASE 
+        WHEN rs.visible IS NULL AND rs.montado IS NULL THEN '3 no crear'
+        WHEN rs.visible = 1 AND rs.montado IS NULL THEN '1 crear'
+        ELSE 'definir'
+    END AS accion")
+            )
+            ->where('u.id', 7775)
+            ->where('rs.fecha', '2025-02-13')
+            ->where('rs.fk_tipo_ruta', 68)
+            ->where('rs.fk_centrodecosto', 97)
+            ->where('rs.fk_subcentrodecosto', 341)
+            ->where('rs.hora', '20:00')
+            ->where('rs.fk_sede', 2)
+            ->whereNull('rs.visible')
+            ->whereNull('rs.montado')
+            ->whereNull('rsp.user_eliminacion');
 
-        // Si existe no puede generar el viaje, hacer un return de que no se puede hacer la solicitud de viaje 
-        if (count($rutas_solicitadas_dia) > 0) {
+        // Segunda consulta
+        $consulta2 = DB::table('rutas_solicitadas_pasajeros as rsp')
+            ->join('rutas_solicitadas as rs', 'rs.id', '=', 'rsp.fk_rutas_solicitadas')
+            ->join('users as u', 'u.codigo_empleado', '=', 'rsp.empleado_id')
+            ->join('pasajeros_rutas_qr as prq', 'prq.id_empleado', '=', 'rsp.empleado_id')
+            ->join('viajes as v', function ($join) {
+                $join->on('v.id', '=', 'prq.fk_viaje')
+                    ->on('v.fecha_viaje', '=', 'rs.fecha')
+                    ->on('v.hora_viaje', '=', 'rs.hora')
+                    ->whereNull('v.usuario_eliminacion');
+            })
+            ->select(
+                'rs.id',
+                'rs.visible',
+                'rs.montado',
+                'v.usuario_eliminacion',
+                DB::raw("CASE 
+        WHEN rs.visible IS NULL AND rs.montado IS NULL AND v.usuario_eliminacion IS NULL THEN '1 crear'
+        WHEN rs.visible IS NULL AND rs.montado = 1 AND v.usuario_eliminacion IS NULL THEN '3 no crear'
+        WHEN rs.visible IS NULL AND rs.montado = 1 AND v.usuario_eliminacion IS NOT NULL THEN '1 crear'
+        ELSE 'definir'
+    END AS accion")
+            )
+            ->where('u.id', 7775)
+            ->where('rs.fecha', '2025-02-13')
+            ->where('rs.fk_tipo_ruta', 68)
+            ->where('rs.fk_centrodecosto', 97)
+            ->where('rs.fk_subcentrodecosto', 341)
+            ->where('rs.hora', '20:00')
+            ->where('rs.fk_sede', 2)
+            ->whereNull('rs.visible')
+            ->where('rs.montado', 1)
+            ->whereNull('rsp.user_eliminacion');
+
+        // Unir ambas consultas con UNION
+        $resultado = $consulta1->union($consulta2)->get();
+
+
+        // Buscar si el usuario que esta solicitando la ruta de entrada o salida ya tiene una de esas solicitudes para el dia de hoy $viaje['tipo_ruta']
+
+        /*   $rutas_solicitadas_dia = DB::table('rutas_solicitadas_pasajeros as rsp')
+               ->join('rutas_solicitadas as rs', 'rs.id', '=', 'rsp.fk_rutas_solicitadas')
+               ->join('users as u', 'u.codigo_empleado', '=', 'rsp.empleado_id')
+               ->where('u.id', $user->id)
+               ->where('rsp.fk_centrodecosto', $user->centrodecosto_id)
+               ->where('rs.fecha', $viaje['fecha'])
+               ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
+               ->select('rs.fecha', 'rs.fk_tipo_ruta')
+               ->where(function ($query) {
+                   $query->whereNotNull('rs.visible');
+               })
+               ->where(function ($query) {
+                   $query->whereNotNull('rs.montado');
+               })
+               ->get();
+
+           // Si existe no puede generar el viaje, hacer un return de que no se puede hacer la solicitud de viaje 
+           if (count($rutas_solicitadas_dia) > 0) {
+               Log::info('El usuario ya tiene una ruta solicitada para el dia de hoy');
+               return Response::json([
+                   'response' => false,
+                   'message' => 'RUOTE_EXIST',
+               ], 200);
+           } */
+
+        // ACCION 1 Crear , 2(no trae nada) Montar, 3 No permitir nada
+        if ($resultado->accion == 3) {
             Log::info('El usuario ya tiene una ruta solicitada para el dia de hoy');
             return Response::json([
                 'response' => false,
@@ -790,25 +861,23 @@ class ViajeController extends Controller
             ], 200);
         }
 
-
-        // Buscar la ruta solicitada con los datos del viaje
-        $rutas_solicitadas = DB::table('rutas_solicitadas as rs')
-            ->where('rs.fecha', $viaje['fecha'])
-            ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
-            ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
-            ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
-            ->where('rs.hora', $horaFormateada)
-            // ->whereRaw("STR_TO_DATE(rs.hora, '%H:%i') = STR_TO_DATE(?, '%H:%i')", [$horaMenos15Min])
-            ->where('rs.fk_sede', 2)
-            ->where(function ($query) {
-                $query->whereNull('rs.visible')->orWhere('rs.visible', '!=', 1);
-            })
-            ->where(function ($query) {
-                $query->whereNull('rs.montado')->orWhere('rs.montado', '!=', 1);
-            })
-            ->first();
-
-
+        if (count($resultado->accion) == 0) {
+            // Buscar la ruta solicitada con los datos del viaje
+            $rutas_solicitadas = DB::table('rutas_solicitadas as rs')
+                ->where('rs.fecha', $viaje['fecha'])
+                ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
+                ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
+                ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
+                ->where('rs.hora', $horaFormateada)
+                ->where('rs.fk_sede', 2)  // Cambiar por la sede del subcentro de costo 
+                ->where(function ($query) {
+                    $query->whereNull('rs.visible')->orWhere('rs.visible', '!=', 1);
+                })
+                ->where(function ($query) {
+                    $query->whereNull('rs.montado')->orWhere('rs.montado', '!=', 1);
+                })
+                ->first();
+        }
 
 
         // Si existe el empleado, actualizar latitud y longitud
@@ -825,7 +894,7 @@ class ViajeController extends Controller
             $descripcion = $empleado->fk_subcentrodecosto == 3845 ? 'BR' : 'CO';
 
             // Si no existe la ruta, crearla
-            if (!$rutas_solicitadas) {
+            if (!$rutas_solicitadas || $resultado->accion == 1) {
                 $autorizacion_de_rutas = DB::table('autorizacion_de_rutas')->insertGetId([
                     'estado_autorizacion' => 0,
                     'created_at' => now(),
@@ -839,7 +908,7 @@ class ViajeController extends Controller
                     'fk_solicitado_por' => Auth::user()->id,
                     'fk_centrodecosto' => $empleado->fk_centrodecosto,
                     'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
-                    'fk_sede' => 2,
+                    'fk_sede' => 2,  // Cambiar por la sede del subcentro de costo 
                     'fk_tipo_ruta' => $viaje['tipo_ruta'],
                     'hora' => $horaFormateada,
                     'autorizacion_id' => $autorizacion_de_rutas,
