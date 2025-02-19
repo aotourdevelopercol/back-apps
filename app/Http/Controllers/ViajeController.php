@@ -781,7 +781,7 @@ class ViajeController extends Controller
         WHEN rs.visible IS NULL AND rs.montado IS NULL THEN 3
         WHEN rs.visible = 1 AND rs.montado IS NULL THEN 1
         ELSE 'definir'
-    END AS accion")
+        END AS accion")
             )
             ->where('u.id', $user->id)
             ->where('rs.fecha', $viaje['fecha'])
@@ -814,7 +814,7 @@ class ViajeController extends Controller
         WHEN rs.visible IS NULL AND rs.montado = 1 AND v.usuario_eliminacion IS NULL THEN 3
         WHEN rs.visible IS NULL AND rs.montado = 1 AND v.usuario_eliminacion IS NOT NULL THEN 1
         ELSE 'definir'
-    END AS accion")
+        END AS accion")
             )
             ->where('u.id', $user->id)
             ->where('rs.fecha', $viaje['fecha'])
