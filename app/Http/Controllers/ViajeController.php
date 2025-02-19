@@ -788,7 +788,7 @@ class ViajeController extends Controller
             ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
             ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
             ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
-            ->where('rs.fk_sede', $ciudad_centro_de_costo)
+            ->where('rs.fk_sede', $ciudad_centro_de_costo->ciudad)
             ->whereNull('rs.visible')
             ->whereNull('rs.montado')
             ->whereNull('rsp.user_eliminacion');
@@ -821,7 +821,7 @@ class ViajeController extends Controller
             ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
             ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
             ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
-            ->where('rs.fk_sede', $ciudad_centro_de_costo)
+            ->where('rs.fk_sede', $ciudad_centro_de_costo->ciudad)
             ->whereNull('rs.visible')
             ->where('rs.montado', 1)
             ->whereNull('rsp.user_eliminacion');
@@ -857,7 +857,7 @@ class ViajeController extends Controller
                 ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
                 ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
                 ->where('rs.hora', $horaFormateada)
-                ->where('rs.fk_sede', $ciudad_centro_de_costo)  // Cambiar por la sede del subcentro de costo 
+                ->where('rs.fk_sede', $ciudad_centro_de_costo->ciudad)  // Cambiar por la sede del subcentro de costo 
                 ->where(function ($query) {
                     $query->whereNull('rs.visible')->orWhere('rs.visible', '!=', 1);
                 })
@@ -896,7 +896,7 @@ class ViajeController extends Controller
                     'fk_solicitado_por' => Auth::user()->id,
                     'fk_centrodecosto' => $empleado->fk_centrodecosto,
                     'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
-                    'fk_sede' => $ciudad_centro_de_costo,  // Cambiar por la sede del subcentro de costo 
+                    'fk_sede' => $ciudad_centro_de_costo->ciudad,  // Cambiar por la sede del subcentro de costo 
                     'fk_tipo_ruta' => $viaje['tipo_ruta'],
                     'hora' => $horaFormateada,
                     'autorizacion_id' => $autorizacion_de_rutas,
