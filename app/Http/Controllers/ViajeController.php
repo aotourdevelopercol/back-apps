@@ -767,7 +767,7 @@ class ViajeController extends Controller
             $viaje['fecha'] = date('Y-m-d', strtotime($viaje['fecha'] . ' +1 day'));
         }
 
-        Log::info('data de la fecha: ' . $viaje['fecha'] )
+        Log::info('data de la fecha: ' . $viaje['fecha'] );
 
         // Primera consulta
         $consulta1 = DB::table('rutas_solicitadas_pasajeros as rsp')
