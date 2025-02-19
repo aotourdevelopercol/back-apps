@@ -740,7 +740,7 @@ class ViajeController extends Controller
             ->first();
 
         // obtener el id de la ciudad del centro de costo del empleado 
-        $ciudad_centro_de_costo = DB::table('centrosdecostos as cc')
+        $ciudad_centro_de_costo = DB::table('centrosdecosto as cc')
         ->join('users as u', 'u.centrodecosto_id', '=', 'cc.id')
         ->select('cc.ciudad ')
         ->where('u.id', $user->id)
