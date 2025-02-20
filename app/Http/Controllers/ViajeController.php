@@ -742,7 +742,7 @@ class ViajeController extends Controller
         // obtener el id de la ciudad del centro de costo del empleado 
         $ciudad_centro_de_costo = DB::table('centrosdecosto as cc')
         ->join('users as u', 'u.centrodecosto_id', '=', 'cc.id')
-        ->select('cc.ciudad')
+        ->select('cc.fk_sede')
         ->where('u.id', $user->id)
         ->first();
 
@@ -789,7 +789,7 @@ class ViajeController extends Controller
             ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
             ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
             ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
-            ->where('rs.fk_sede', $ciudad_centro_de_costo->ciudad)
+            ->where('rs.fk_sede', $ciudad_centro_de_costo->fk_sede)
             ->whereNull('rs.visible')
             ->whereNull('rs.montado')
             ->whereNull('rsp.user_eliminacion');
@@ -822,7 +822,7 @@ class ViajeController extends Controller
             ->where('rs.fk_tipo_ruta', $viaje['tipo_ruta'])
             ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
             ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
-            ->where('rs.fk_sede', $ciudad_centro_de_costo->ciudad)
+            ->where('rs.fk_sede', $ciudad_centro_de_costo->fk_sede)
             ->whereNull('rs.visible')
             ->where('rs.montado', 1)
             ->whereNull('rsp.user_eliminacion');
@@ -858,7 +858,7 @@ class ViajeController extends Controller
                 ->where('rs.fk_centrodecosto', $empleado->fk_centrodecosto)
                 ->where('rs.fk_subcentrodecosto', $empleado->fk_subcentrodecosto)
                 ->where('rs.hora', $horaFormateada)
-                ->where('rs.fk_sede', $ciudad_centro_de_costo->ciudad)  // Cambiar por la sede del subcentro de costo 
+                ->where('rs.fk_sede', $ciudad_centro_de_costo->fk_sede)  // Cambiar por la sede del subcentro de costo 
                 ->where(function ($query) {
                     $query->whereNull('rs.visible')->orWhere('rs.visible', '!=', 1);
                 })
@@ -897,7 +897,7 @@ class ViajeController extends Controller
                     'fk_solicitado_por' => Auth::user()->id,
                     'fk_centrodecosto' => $empleado->fk_centrodecosto,
                     'fk_subcentrodecosto' => $empleado->fk_subcentrodecosto,
-                    'fk_sede' => $ciudad_centro_de_costo->ciudad,  // Cambiar por la sede del subcentro de costo 
+                    'fk_sede' => $ciudad_centro_de_costo->fk_sede,  // Cambiar por la sede del subcentro de costo 
                     'fk_tipo_ruta' => $viaje['tipo_ruta'],
                     'hora' => $horaFormateada,
                     'autorizacion_id' => $autorizacion_de_rutas,
