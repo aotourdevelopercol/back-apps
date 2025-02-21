@@ -755,7 +755,7 @@ class ViajeController extends Controller
 
         // Convertir la hora ingresada a formato de tiempo
         $horaIngresada = $viaje['hora']; // Asumimos que viene en formato "HH:mm"
-        $horaMenos15Min = date("H:i", strtotime($horaIngresada . " -15 minutes"));
+    //  $horaMenos15Min = date("H:i", strtotime($horaIngresada . " -15 minutes"));
 
         // condicional ternario para redondear la hora por el tipo de ruta envio un parametro a la funcion si es 67 o 68 
         $rango = $viaje['tipo_ruta'] == 67 ? 15 : 30;
