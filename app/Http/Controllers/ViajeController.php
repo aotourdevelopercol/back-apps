@@ -755,7 +755,7 @@ class ViajeController extends Controller
 
         // Convertir la hora ingresada a formato de tiempo
         $horaIngresada = $viaje['hora']; // Asumimos que viene en formato "HH:mm"
-    //  $horaMenos15Min = date("H:i", strtotime($horaIngresada . " -15 minutes"));
+        //  $horaMenos15Min = date("H:i", strtotime($horaIngresada . " -15 minutes"));
 
         // condicional ternario para redondear la hora por el tipo de ruta envio un parametro a la funcion si es 67 o 68 
         $rango = $viaje['tipo_ruta'] == 67 ? 15 : 30;
@@ -768,6 +768,14 @@ class ViajeController extends Controller
         }
 
         Log::info('data de la fecha: ' . $viaje['fecha'] );
+
+        $fecha = '2025-02-26';
+        $hora = '12:00';
+
+        $respuesta = $this->validarSolicitudDeRuta($fecha, $hora);
+
+        // mostrar lo que esta en $respuesta en el log
+        Log::info('respuesta: ' . json_encode($respuesta));
 
         // Primera consulta
         $consulta1 = DB::table('rutas_solicitadas_pasajeros as rsp')
@@ -936,6 +944,21 @@ class ViajeController extends Controller
                 'message' => "FAIL_ADDED_ERROR_OCURRED"
             ], 500);
         }
+    }
+
+
+    // Validacion de solicitud de viaje
+
+    public function validarSolicitudDeRuta($fecha, $hora)
+    {
+        // Ejecutamos el procedimiento almacenado
+        DB::statement("CALL validar_solicitud_de_ruta(?, ?, @Respta)", [$fecha, $hora]);
+
+        // Obtenemos el valor de la variable de salida
+        $resultado = DB::select("SELECT @Respta as respuesta");
+
+        // Retornar el resultado
+        return $resultado[0]->respuesta ?? null;
     }
 
     private function redondearHora($hora, $rango)
