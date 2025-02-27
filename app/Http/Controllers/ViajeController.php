@@ -778,7 +778,14 @@ class ViajeController extends Controller
         // mostrar lo que esta en $respuesta en el log
         Log::info('respuesta: ' . json_encode($respuesta));
 
-        
+        if ($respuesta->codigo != 200) {
+            return Response::json([
+                'response' => false,
+                'message' => "FAIL_ADDED_ERROR_OCURRED"
+            ]);
+        }
+
+
 
         // Primera consulta
         $consulta1 = DB::table('rutas_solicitadas_pasajeros as rsp')
@@ -955,14 +962,14 @@ class ViajeController extends Controller
     public function validarSolicitudDeRuta($fecha, $hora)
     {
         // Ejecutamos el procedimiento almacenado
-        DB::statement("CALL validar_solicitud_de_ruta(?, ?, @Respta)", [$fecha, $hora]);
-
-        // Obtenemos el valor de la variable de salida
-        $resultado = DB::select("SELECT @Respta as respuesta");
-
-        // Retornar el resultado
-        return $resultado[0]->respuesta ?? null;
+        DB::statement("CALL validar_solicitud_de_ruta(?, ?, @CodErr, @MsjErr)", [$fecha, $hora]);
+    
+        // Obtenemos los valores de salida
+        $resultado = DB::select("SELECT @CodErr AS codigo, @MsjErr AS mensaje");
+    
+        return $resultado[0] ?? null;
     }
+    
 
     private function redondearHora($hora, $rango)
     {
