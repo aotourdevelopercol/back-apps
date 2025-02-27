@@ -728,6 +728,7 @@ class ViajeController extends Controller
 
 
     // solicitud de ruta pasajeros
+    
     public function solicitudViajePasajeros(Request $request)
     {
         // Obtener datos del usuario autenticado
@@ -769,13 +770,15 @@ class ViajeController extends Controller
 
         Log::info('data de la fecha: ' . $viaje['fecha'] );
 
-        $fecha = '2025-02-26';
-        $hora = '12:00';
+        $fecha = $viaje['fecha'];
+        $hora = $viaje['hora'];
 
         $respuesta = $this->validarSolicitudDeRuta($fecha, $hora);
 
         // mostrar lo que esta en $respuesta en el log
         Log::info('respuesta: ' . json_encode($respuesta));
+
+        
 
         // Primera consulta
         $consulta1 = DB::table('rutas_solicitadas_pasajeros as rsp')
