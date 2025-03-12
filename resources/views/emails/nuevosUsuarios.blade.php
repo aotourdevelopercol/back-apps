@@ -74,14 +74,6 @@
                     <strong>Contraseña:</strong> {{ $password }}
                 </div>
 
-                <!-- Botón de detalles del viaje con icono -->
-                <div>
-                    <a href="" class="cta-button">
-                        <img src="https://cdn-icons-png.flaticon.com/512/732/732228.png" alt="icono-viaje">
-                        Detalles de tu viaje
-                    </a>
-                </div>
-
                 <!-- Sección de descarga de la app -->
                 <div class="download-buttons">
                     <h3>📲 Descarga nuestra app</h3>
@@ -90,7 +82,7 @@
                         Google Play
                     </a>
                     <a href="https://apps.apple.com/co/app/up/id1496087652" class="ios-button">
-                        <img src="https://cdn-icons-png.flaticon.com/512/732/732217.png" alt="App Store">
+                        <img src="https://cdn-icons-png.flaticon.com/512/831/831276.png" alt="App Store">
                         App Store
                     </a>
                 </div>
