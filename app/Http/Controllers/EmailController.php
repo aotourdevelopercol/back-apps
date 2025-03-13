@@ -398,6 +398,16 @@
                     } catch (\Throwable $th) {
                         Log::error('Error al enviar correo: '. $th);
                     }
+
+                    // Verificar si hubo fallos en el envío
+                    if (count(Mail::failures()) > 0) {
+                        Log::error('Error al enviar correo a: ' . implode(", ", Mail::failures()));
+                        return response()->json([
+                            'status' => 'failed',
+                            'message' => 'No se pudo enviar el correo',
+                            'failed_emails' => Mail::failures()
+                        ], 500);
+                    }
                     break;
 
 
