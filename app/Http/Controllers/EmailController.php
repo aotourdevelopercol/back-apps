@@ -399,13 +399,14 @@
                         Log::error('Error al enviar correo: '. $th);
                     }
 
-                    // Verificar si hubo fallos en el envío
-                    if (count(Mail::failures()) > 0) {
-                        Log::error('Error al enviar correo a: ' . implode(", ", Mail::failures()));
+                    $status = optional($response)->status(); // Obtiene el código de respuesta HTTP
+
+                    if ($status && $status >= 400) {
+                        Log::error('Error en Mailgun: ' . json_encode($response->body()));
                         return response()->json([
                             'status' => 'failed',
-                            'message' => 'No se pudo enviar el correo',
-                            'failed_emails' => Mail::failures()
+                            'message' => 'Error en el envío del correo',
+                            'mailgun_response' => $response->body()
                         ], 500);
                     }
                     break;
