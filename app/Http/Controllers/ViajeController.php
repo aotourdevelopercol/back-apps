@@ -433,7 +433,7 @@ class ViajeController extends Controller
                     JSON_ARRAY(
                         JSON_OBJECT(
                             'direccion', CASE
-                                            WHEN rs.fk_tipo_ruta = 67 THEN c.razonsocial
+                                            WHEN rs.fk_tipo_ruta = 67 THEN rsp.direccion
                                             ELSE rsp.direccion
                                         END,
                             'coordenadas', null,
@@ -441,7 +441,7 @@ class ViajeController extends Controller
                         ),
                         JSON_OBJECT(
                             'direccion', CASE
-                                            WHEN rs.fk_tipo_ruta = 67 THEN rsp.direccion
+                                            WHEN rs.fk_tipo_ruta = 67 THEN c.razonsocial
                                             ELSE c.razonsocial
                                         END,
                             'coordenadas', null,
