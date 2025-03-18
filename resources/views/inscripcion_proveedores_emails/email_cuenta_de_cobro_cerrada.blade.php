@@ -207,7 +207,7 @@
 					<table width="100%">
 						<tr>
                         <td style="text-align: center;">
-								<img src="{{asset('asset/img/logo-fondo.jpg')}}"  alt="" width="250" class="center-img">
+								<img src="{{asset('asset/img/logo-fondo.png')}}"  alt="" width="250" class="center-img">
                                 
 							</td>
 						</tr>
