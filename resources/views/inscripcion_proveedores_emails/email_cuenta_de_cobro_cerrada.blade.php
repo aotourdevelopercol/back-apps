@@ -207,7 +207,7 @@
 					<table width="100%">
 						<tr>
                         <td style="text-align: center;">
-								<img src="{{asset('asset/img/logo_blanco_me_muevo.png')}}"  alt="" width="250" class="center-img">
+								<img src="{{asset('asset/img/logo-fondo.jpg')}}"  alt="" width="250" class="center-img">
                                 
 							</td>
 						</tr>
@@ -250,7 +250,7 @@
 					<table width="100%">
 						<tr>
 							<td style="text-align: center; padding: 15px 20px; color: #ffffff">
-								<p class="lineas"><b style="color: #ffffff">LÍNEAS DE ATENCIÓN:</b> Bogotá: (601) 358 5555 - Barranquilla: (605) 358 2555 - Nacional: 314 780 6060</p>
+								<p class="lineas"><b style="color: #ffffff">LÍNEAS DE ATENCIÓN:</b> Bogotá: (601) 358 5555 - Nacional: 314 780 6060</p>
 							</td>
 						</tr>
 					</table>
