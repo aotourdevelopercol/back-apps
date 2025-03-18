@@ -218,7 +218,7 @@
 					<table width="100%">
 						<tr>
 							<td style="text-align: center; padding: 15px 20px; color: #ffffff">
-								<p class="lineas">Aotour Tech</p>
+								<p class="lineas">UP translink</p>
 							</td>
 						</tr>
 					</table>

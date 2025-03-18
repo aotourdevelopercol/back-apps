@@ -227,7 +227,7 @@
 							<td>
 								<p class="names">Cuenta de cobro cerrada para el mes de: {{$fecha}}</p>
                              
-								<p class="asunto">Reciban un cordial saludo de parte del equipo de <b>AOTOUR SAS.</b> <br><br>Gracias por confiar en nuestro trabajo, nos encargaremos de que vivas una experiencia de transporte a otro nivel.</p>
+								<p class="asunto">Reciban un cordial saludo de parte del equipo de <b>UP translink SAS.</b> <br><br>Gracias por confiar en nuestro trabajo, nos encargaremos de que vivas una experiencia de transporte a otro nivel.</p>
 							</td>
 						</tr>
 						

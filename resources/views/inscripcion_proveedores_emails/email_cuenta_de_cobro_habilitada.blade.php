@@ -207,7 +207,7 @@
 					<table width="100%">
 						<tr>
                         <td style="text-align: center;">
-								<img src="{{asset('asset/img/logo.png')}}"  alt="" width="250" class="center-img">
+								<img src="{{asset('asset/img/logo_blanco.png')}}"  alt="" width="250" class="center-img">
                                 
 							</td>
 						</tr>
@@ -227,7 +227,7 @@
 							<td>
 								<p class="names">Cuenta de cobro habilitada para el mes de: {{$fecha}}</p>
                              
-								<p class="asunto">Reciban un cordial saludo de parte del equipo de <b>AOTOUR SAS.</b> <br><br>Gracias por confiar en nuestro trabajo, nos encargaremos de que vivas una experiencia de transporte a otro nivel.</p>
+								<p class="asunto">Reciban un cordial saludo de parte del equipo de <b>UP translink SAS.</b> <br><br>Gracias por confiar en nuestro trabajo, nos encargaremos de que vivas una experiencia de transporte a otro nivel.</p>
 							</td>
 						</tr>
 						
