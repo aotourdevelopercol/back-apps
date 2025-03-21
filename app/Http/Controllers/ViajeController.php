@@ -773,7 +773,7 @@ class ViajeController extends Controller
         $fecha = $viaje['fecha'];
         $hora = $viaje['hora'];
 
-        $respuesta = $this->validarSolicitudDeRuta($fecha, $hora);
+        $respuesta = $this->validarSolicitudDeRuta($fecha, $hora,  $empleado->fk_centrodecosto);
 
         // mostrar lo que esta en $respuesta en el log
         Log::info('respuesta: ' . json_encode($respuesta));
@@ -959,10 +959,10 @@ class ViajeController extends Controller
 
     // Validacion de solicitud de viaje
 
-    public function validarSolicitudDeRuta($fecha, $hora)
+    public function validarSolicitudDeRuta($fecha, $hora, $centroDeCosto)
     {
         // Ejecutamos el procedimiento almacenado
-        DB::statement("CALL validar_solicitud_de_ruta(?, ?, @CodErr, @MsjErr)", [$fecha, $hora]);
+        DB::statement("CALL validar_solicitud_de_ruta(?, ?,?, @CodErr, @MsjErr)", [$fecha, $hora, $centroDeCosto]);
     
         // Obtenemos los valores de salida
         $resultado = DB::select("SELECT @CodErr AS codigo, @MsjErr AS mensaje");
