@@ -59,9 +59,9 @@ class EmailController extends Controller
             
             if (is_array($emails) && count($emails) > 1) {
                 // 
-
                 Log::info("Estoy llegando aqui ");
                 foreach ($emails as $email) {
+                    Log::info("Estoy enviando muchos");
                     Mail::to($email)->later(
                         now()->addSeconds(10),
                         new $emailClass(...array_values($validated['data'] ?? []))
@@ -69,6 +69,7 @@ class EmailController extends Controller
                 }
             } else {
                 $email = is_array($emails) ? $emails[0] : $emails;
+                Log::info("Estoy enviando uno solo  ");
                 Mail::to($email)->later(
                     now()->addSeconds(10),
                     new $emailClass(...array_values($validated['data'] ?? []))
