@@ -399,17 +399,7 @@
                         Log::error('Error al enviar correo: '. $th);
                     }
 
-                    $status = optional($response)->status(); // Obtiene el código de respuesta HTTP
-
-                    if ($status && $status >= 400) {
-                        Log::error('Error en Mailgun: ' . json_encode($response->body()));
-                        return response()->json([
-                            'status' => 'failed',
-                            'message' => 'Error en el envío del correo',
-                            'mailgun_response' => $response->body()
-                        ], 500);
-                    }
-                    break;
+                
 
 
                 default:
