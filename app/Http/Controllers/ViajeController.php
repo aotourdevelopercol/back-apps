@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\ViajesU;
 use App\Models\User;
 use Response;
-use Auth;
+use Auth;   
 use Carbon\Carbon;
 
 
@@ -46,7 +46,6 @@ class ViajeController extends Controller
                 'response' => true,
                 'message' => 'Calificación registrada con éxito'
             ]);
-
         } catch (\Throwable $th) {
             \Log::error('Error al calificar viaje: ' . $th->getMessage());
             return Response::json([
@@ -54,7 +53,6 @@ class ViajeController extends Controller
                 'message' => 'Calificación no registrada con éxito'
             ]);
         }
-
     }
 
     // Consulta de clientes
@@ -85,11 +83,9 @@ class ViajeController extends Controller
                 'response' => true,
                 'estados' => $estados
             ]);
-
         } catch (\Throwable $th) {
             \Log::error('Error al listar estados por maestro: ' . $th->getMessage());
         }
-
     }
 
     // Listar tipos de viaje por codigo maestro
@@ -212,7 +208,6 @@ class ViajeController extends Controller
                 'calificacion' => !empty($calification) && empty($calification->id_calificacion) ? $calification : null,
                 'listado' => !empty($results) && empty($calification) && empty($calificationResult) ? $results[0] : null,
             ]);
-
         } catch (\Throwable $th) {
             \Log::error('Error al listar viajes activos: ' . $th->getMessage());
         }
@@ -291,7 +286,6 @@ class ViajeController extends Controller
                 'response' => true,
                 'listado' => !empty($results) ? $results[0] : null,
             ]);
-
         } catch (\Throwable $th) {
             \Log::error('Error al listar viajes activos: ' . $th->getMessage());
         }
@@ -402,7 +396,6 @@ class ViajeController extends Controller
         } catch (\Throwable $th) {
             \Log::error('Error al listar viajes generales: ' . $th->getMessage());
         }
-
     }
 
 
@@ -470,11 +463,9 @@ class ViajeController extends Controller
             $results = DB::select($query, $params);
 
             return $results;
-
         } catch (\Throwable $th) {
             \Log::error('Error al listar viajes pendientes: ' . $th->getMessage());
         }
-
     }
 
 
@@ -541,7 +532,6 @@ class ViajeController extends Controller
 
 
             return $results;
-
         } catch (\Throwable $th) {
             \Log::error('Error al listar viajes pendientes ejecutivos: ' . $th->getMessage());
         }
@@ -629,7 +619,6 @@ class ViajeController extends Controller
             \Log::info(json_encode($results));
 
             return $results;
-
         } catch (\Throwable $th) {
             \Log::error('Error al obtener la ultima calificacion pendiente por revisar: ' . $th->getMessage());
         }
@@ -716,7 +705,6 @@ class ViajeController extends Controller
                 'response' => true,
                 'codigo' => 'NOPROMAN',
             ]);
-
         } catch (\Throwable $th) {
             Log::error('Error al solicitar viaje ejecutivo: ' . $th->getMessage());
             return response()->json([
@@ -728,7 +716,7 @@ class ViajeController extends Controller
 
 
     // solicitud de ruta pasajeros
-    
+
     public function solicitudViajePasajeros(Request $request)
     {
         // Obtener datos del usuario autenticado
@@ -742,10 +730,10 @@ class ViajeController extends Controller
 
         // obtener el id de la ciudad del centro de costo del empleado 
         $ciudad_centro_de_costo = DB::table('centrosdecosto as cc')
-        ->join('users as u', 'u.centrodecosto_id', '=', 'cc.id')
-        ->select('cc.fk_sede')
-        ->where('u.id', $user->id)
-        ->first();
+            ->join('users as u', 'u.centrodecosto_id', '=', 'cc.id')
+            ->select('cc.fk_sede')
+            ->where('u.id', $user->id)
+            ->first();
 
 
         // Log request all
@@ -768,7 +756,7 @@ class ViajeController extends Controller
             $viaje['fecha'] = (string) date('Y-m-d', strtotime($viaje['fecha'] . ' +1 day'));
         }
 
-        Log::info('data de la fecha: ' . $viaje['fecha'] );
+        Log::info('data de la fecha: ' . $viaje['fecha']);
 
         $fecha = $viaje['fecha'];
         $hora = $viaje['hora'];
@@ -946,7 +934,6 @@ class ViajeController extends Controller
                 'response' => true,
                 'message' => 'Pasajero agregado correctamente'
             ], 200);
-
         } catch (\Throwable $th) {
             Log::info($th);
             return Response::json([
@@ -963,13 +950,13 @@ class ViajeController extends Controller
     {
         // Ejecutamos el procedimiento almacenado
         DB::statement("CALL validar_solicitud_de_ruta(?, ?,?, @CodErr, @MsjErr)", [$fecha, $hora, $centroDeCosto]);
-    
+
         // Obtenemos los valores de salida
         $resultado = DB::select("SELECT @CodErr AS codigo, @MsjErr AS mensaje");
-    
+
         return $resultado[0] ?? null;
     }
-    
+
 
     private function redondearHora($hora, $rango)
     {
@@ -999,6 +986,4 @@ class ViajeController extends Controller
         // Retornar la hora formateada
         return $carbonHora->format('H:i');
     }
-
 }
-

@@ -394,7 +394,7 @@
                 // Correo para creacion del usuario
                 case 'nuevo_usuario':
                     try {
-                        Mail::to($validated['email'])->send(new NuevosUsuariosEmail($validated['data']['user'], $validated['data']['password'], $validated['data']['nombre'] ));
+                        Mail::to($validated['email'])->queue(new NuevosUsuariosEmail($validated['data']['user'], $validated['data']['password'], $validated['data']['nombre'] ));
                     } catch (\Throwable $th) {
                         Log::error('Error al enviar correo: '. $th);
                     }
