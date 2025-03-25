@@ -447,7 +447,7 @@
                     // Validar el correo individual
             $response = Http::get($url, [
                 'api_key' => $key,
-                'email' => $email
+                'email' => $emails
             ]);
 
             return $response->json();
