@@ -401,11 +401,6 @@
                         if (is_array($emails) && count($emails) > 1) {
                             foreach ($emails as $email) {
                                 // Validar si la respuesta trae en status "valid" o "invalid"
-                                $status = $this->validateEmails($email);
-                    
-                                Log::info("Correo validado: {$email}, Estado: {$status}");
-                    
-                                if ($status === 'valid') {
                                     Mail::to($email)->later(
                                         now()->addSeconds(10),
                                         new NuevosUsuariosEmail(
@@ -414,29 +409,20 @@
                                             $validated['data']['nombre']
                                         )
                                     );
-                                } else {
-                                    Log::info("Correo inválido: " . $email);
-                                }
+
                             }
                         } else {
                             // Si solo es un correo (string), lo validamos y enviamos si es válido
                             $email = is_array($emails) ? $emails[0] : $emails;
-                            $status = $this->validateEmails($email);
-                    
-                            Log::info("Correo validado: {$email}, Estado: {$status}");
-                    
-                            if ($status === 'valid') {
-                                Mail::to($email)->later(
-                                    now()->addSeconds(10),
-                                    new NuevosUsuariosEmail(
-                                        $validated['data']['user'],
-                                        $validated['data']['password'],
-                                        $validated['data']['nombre']
-                                    )
-                                );
-                            } else {
-                                Log::info("Correo inválido: " . $email);
-                            }
+                            Mail::to($email)->later(
+                                now()->addSeconds(10),
+                                new NuevosUsuariosEmail(
+                                    $validated['data']['user'],
+                                    $validated['data']['password'],
+                                    $validated['data']['nombre']
+                                )
+                            );
+                     
                         }
                     } catch (\Throwable $th) {
                         Log::error("Error al enviar correo: " . $th->getMessage());
@@ -451,30 +437,6 @@
             return response()->json(['message' => 'Correo enviado con éxito']);
         }
 
-        private function validateEmails($email){
-            $apiKey = env('MAILGUN_PUBLIC_KEY'); // Usar la API pública
-            $url = "https://api.mailgun.net/v4/address/validate";
-        
-            $response = Http::withHeaders([
-                'Authorization' => 'Basic ' . base64_encode("api:$apiKey")
-            ])->get($url, [
-                'address' => $email
-            ]);
-        
-            // Verificar si la API responde correctamente
-            if (!$response->successful()) {
-                Log::error("Error en la API de Mailgun: " . $response->status());
-                return 'error';
-            }
-        
-            $data = $response->json();
-        
-            // Log de la respuesta para depuración
-            Log::info("Respuesta de Mailgun: " . json_encode($data));
-        
-            // Retornar el estado del correo
-            return $data['is_valid'] ? 'valid' : 'invalid';
-        }
-        
+          
 }
     
