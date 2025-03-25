@@ -29,6 +29,7 @@
     use App\Mail\ViajeEntendido;
     use App\Mail\ViajeFinalizado;
     use Illuminate\Http\Request;
+    use Illuminate\Support\Facades\Http;
     use Illuminate\Support\Facades\Mail;
     use Illuminate\Support\Facades\Log; 
 
