@@ -57,21 +57,24 @@ class EmailController extends Controller
             $emails = $validated['email'];
             $emailClass = $templateMap[$validated['templateType']];
         
-            // Extraemos los parámetros posibles
+            // Extraemos los datos de entrada
             $emailData = $validated['data'] ?? [];
             $token = $validated['token'] ?? null;
         
-            // Obtener el número de argumentos que espera la clase
+            // Obtener los parámetros del constructor de la clase
             $reflection = new \ReflectionClass($emailClass);
             $parameters = $reflection->getConstructor()->getParameters();
         
-            // Construimos los argumentos dinámicamente según lo que necesite la clase
+            // Construimos los argumentos en orden según el constructor
             $args = [];
             foreach ($parameters as $param) {
-                if ($param->getName() === 'data') {
-                    $args[] = $emailData;
-                } elseif ($param->getName() === 'token') {
-                    $args[] = $token;
+                $paramName = $param->getName();
+                if (isset($emailData[$paramName])) {
+                    $args[] = $emailData[$paramName]; // Extraer del array de datos si está definido
+                } elseif ($paramName === 'token') {
+                    $args[] = $token; // Pasar el token si se requiere
+                } else {
+                    $args[] = $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null;
                 }
             }
         
@@ -94,6 +97,7 @@ class EmailController extends Controller
         } catch (\Throwable $th) {
             Log::error("Error al enviar correo: " . $th->getMessage());
         }
+        
         
 
         return response()->json(['message' => 'Correo enviado con éxito']);
