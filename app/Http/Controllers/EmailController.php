@@ -56,28 +56,45 @@ class EmailController extends Controller
         try {
             $emails = $validated['email'];
             $emailClass = $templateMap[$validated['templateType']];
-            
+        
+            // Extraemos los parámetros posibles
+            $emailData = $validated['data'] ?? [];
+            $token = $validated['token'] ?? null;
+        
+            // Obtener el número de argumentos que espera la clase
+            $reflection = new \ReflectionClass($emailClass);
+            $parameters = $reflection->getConstructor()->getParameters();
+        
+            // Construimos los argumentos dinámicamente según lo que necesite la clase
+            $args = [];
+            foreach ($parameters as $param) {
+                if ($param->getName() === 'data') {
+                    $args[] = $emailData;
+                } elseif ($param->getName() === 'token') {
+                    $args[] = $token;
+                }
+            }
+        
             if (is_array($emails) && count($emails) > 1) {
-                // 
-                Log::info("Estoy llegando aqui ");
+                Log::info("Estoy enviando muchos correos");
                 foreach ($emails as $email) {
-                    Log::info("Estoy enviando muchos");
                     Mail::to($email)->later(
                         now()->addSeconds(10),
-                        new $emailClass(...array_values($validated['data'] ?? []))
+                        $reflection->newInstanceArgs($args) // Crear instancia con los argumentos correctos
                     );
                 }
             } else {
                 $email = is_array($emails) ? $emails[0] : $emails;
-                Log::info("Estoy enviando uno solo  ");
+                Log::info("Estoy enviando un solo correo");
                 Mail::to($email)->later(
                     now()->addSeconds(10),
-                    new $emailClass(...array_values($validated['data'] ?? []))
+                    $reflection->newInstanceArgs($args) // Crear instancia con los argumentos correctos
                 );
             }
         } catch (\Throwable $th) {
             Log::error("Error al enviar correo: " . $th->getMessage());
         }
+        
 
         return response()->json(['message' => 'Correo enviado con éxito']);
     }
