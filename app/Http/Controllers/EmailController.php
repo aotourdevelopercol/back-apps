@@ -394,13 +394,26 @@
                 // Correo para creacion del usuario
                 case 'nuevo_usuario':
                     try {
-                        Mail::to($validated['email'])->later(now()->addSeconds(10),new NuevosUsuariosEmail($validated['data']['user'], $validated['data']['password'], $validated['data']['nombre'] ));
-                       // Mail::to($validated['email'])->queue(new NuevosUsuariosEmail($validated['data']['user'], $validated['data']['password'], $validated['data']['nombre'] ));
+                        $emails = $validated['email'];
+                    
+                        // Verifica si es un array y tiene más de un correo
+                        if (is_array($emails) && count($emails) > 1) {
+                            foreach ($emails as $email) {
+                                Mail::to($email)->later(
+                                    now()->addSeconds(10),
+                                    new NuevosUsuariosEmail($validated['data']['user'], $validated['data']['password'], $validated['data']['nombre'])
+                                );
+                            }
+                        } else {
+                            // Si solo es un correo (string), lo enviamos directamente
+                            Mail::to($emails)->later(
+                                now()->addSeconds(10),
+                                new NuevosUsuariosEmail($validated['data']['user'], $validated['data']['password'], $validated['data']['nombre'])
+                            );
+                        }
                     } catch (\Throwable $th) {
                         Log::error('Error al enviar correo: '. $th);
                     }
-
-                
 
 
                 default:
