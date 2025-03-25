@@ -395,27 +395,41 @@
                 case 'nuevo_usuario':
                     try {
                         $emails = $validated['email'];
-                    Log::info("Que es: " . json_encode($emails) . " cantidad de emails " . count($emails));
-
                         // Verifica si es un array y tiene más de un correo
                         if (is_array($emails) && count($emails) > 1) {
                             foreach ($emails as $email) {
-                                Mail::to($email)->later(
+                                // Validar si la respuesta trae en status valid o invalid
+                                $correo = $this->validateEmails($email);
+
+                                if ($correo['status'] == 'valid') {
+                                    Mail::to($email)->later(
+                                        now()->addSeconds(10),
+                                        new NuevosUsuariosEmail($validated['data']['user'], $validated['data']['password'], $validated['data']['nombre'])
+                                    );
+                                } else {
+                                    // log de correo invalido 
+                                    Log::info("Correo invalido: " . $email);
+                                }
+                            }
+                        } else {
+                            // Validar si la respuesta trae en status valid o invalid
+                            $correo = $this->validateEmails($email);
+                            if ($correo['status'] == 'valid') {
+                            // Si solo es un correo (string), lo enviamos directamente
+                                Mail::to($emails)->later(
                                     now()->addSeconds(10),
                                     new NuevosUsuariosEmail($validated['data']['user'], $validated['data']['password'], $validated['data']['nombre'])
                                 );
+                            } else {
+                                // log de correo invalido 
+                                Log::info("Correo invalido: " . $email);
                             }
-                        } else {
-                            // Si solo es un correo (string), lo enviamos directamente
-                            Mail::to($emails)->later(
-                                now()->addSeconds(10),
-                                new NuevosUsuariosEmail($validated['data']['user'], $validated['data']['password'], $validated['data']['nombre'])
-                            );
                         }
                     } catch (\Throwable $th) {
                         Log::error('Error al enviar correo: '. $th);
                     }
 
+                    break;
 
                 default:
                     return response()->json(['error' => 'Tipo de plantilla no válido'], 400);
@@ -423,4 +437,20 @@
 
             return response()->json(['message' => 'Correo enviado con éxito']);
         }
-    }
+
+        private function validateEmails($emails){
+           // validar un email https://api.zerobounce.net/v2/validate?api_key=a2261cf0ef8749398d9a106b69805115&email=teosio97@hotmail.com
+
+           $key = 'a2261cf0ef8749398d9a106b69805115';
+           $url = 'https://api.zerobounce.net/v2/validate';
+
+                    // Validar el correo individual
+            $response = Http::get($url, [
+                'api_key' => $key,
+                'email' => $email
+            ]);
+
+            return $response->json();
+        }
+}
+    
