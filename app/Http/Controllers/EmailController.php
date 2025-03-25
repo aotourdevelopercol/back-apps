@@ -58,6 +58,9 @@ class EmailController extends Controller
             $emailClass = $templateMap[$validated['templateType']];
             
             if (is_array($emails) && count($emails) > 1) {
+                // 
+
+                Log::info("Estoy llegando aqui ")
                 foreach ($emails as $email) {
                     Mail::to($email)->later(
                         now()->addSeconds(10),
