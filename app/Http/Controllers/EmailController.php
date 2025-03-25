@@ -60,7 +60,7 @@ class EmailController extends Controller
             if (is_array($emails) && count($emails) > 1) {
                 // 
 
-                Log::info("Estoy llegando aqui ")
+                Log::info("Estoy llegando aqui ");
                 foreach ($emails as $email) {
                     Mail::to($email)->later(
                         now()->addSeconds(10),
