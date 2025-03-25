@@ -452,24 +452,28 @@
         }
 
         private function validateEmails($email){
-            $key = 'a2261cf0ef8749398d9a106b69805115'; // Usa la API Key desde .env
-            $url = 'https://api.zerobounce.net/v2/validate';
+            $apiKey = env('MAILGUN_PUBLIC_KEY'); // Usar la API pública
+            $url = "https://api.mailgun.net/v4/address/validate";
         
-            $response = Http::get($url, [
-                'api_key' => $key,
-                'email' => $email
+            $response = Http::withHeaders([
+                'Authorization' => 'Basic ' . base64_encode("api:$apiKey")
+            ])->get($url, [
+                'address' => $email
             ]);
         
-            // Verificar si la respuesta fue exitosa
+            // Verificar si la API responde correctamente
             if (!$response->successful()) {
-                Log::error('Error en la API de ZeroBounce: ' . $response->body());
-                return 'error'; // Evita errores si la API falla
+                Log::error("Error en la API de Mailgun: " . $response->status());
+                return 'error';
             }
         
-            $jsonResponse = $response->json(); // Convertir respuesta a array
+            $data = $response->json();
         
-            // Verificar si el campo "status" existe
-            return $jsonResponse['status'] ?? 'error'; // Retorna 'error' si no existe
+            // Log de la respuesta para depuración
+            Log::info("Respuesta de Mailgun: " . json_encode($data));
+        
+            // Retornar el estado del correo
+            return $data['is_valid'] ? 'valid' : 'invalid';
         }
         
 }
