@@ -402,6 +402,8 @@
                                 // Validar si la respuesta trae en status valid o invalid
                                 $correo = $this->validateEmails($email);
 
+                                Log::info('Correo validado: '. $correo);
+
                                 if ($correo['status'] == 'valid') {
                                     Mail::to($email)->later(
                                         now()->addSeconds(10),
