@@ -395,7 +395,8 @@
                 case 'nuevo_usuario':
                     try {
                         $emails = $validated['email'];
-                    Log::info("Que es: " . $emails . " cantidad de emails " . count($emails));
+                    Log::info("Que es: " . json_encode($emails) . " cantidad de emails " . count($emails));
+
                         // Verifica si es un array y tiene más de un correo
                         if (is_array($emails) && count($emails) > 1) {
                             foreach ($emails as $email) {
