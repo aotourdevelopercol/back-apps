@@ -452,7 +452,7 @@
         }
 
         private function validateEmails($email){
-            $key = env('ZEROBOUNCE_API_KEY'); // Usa la API Key desde .env
+            $key = 'a2261cf0ef8749398d9a106b69805115'; // Usa la API Key desde .env
             $url = 'https://api.zerobounce.net/v2/validate';
         
             $response = Http::get($url, [
