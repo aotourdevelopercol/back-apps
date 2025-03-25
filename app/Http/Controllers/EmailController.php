@@ -402,9 +402,9 @@
                                 // Validar si la respuesta trae en status valid o invalid
                                 $correo = $this->validateEmails($email);
 
-                                Log::info('Correo validado: '. $correo->status);
+                                Log::info('Correo validado: '. json_encode($correo));
 
-                                if ($correo->status == 'valid') {
+                                if ($correo['status'] == 'valid') {
                                     Mail::to($email)->later(
                                         now()->addSeconds(10),
                                         new NuevosUsuariosEmail($validated['data']['user'], $validated['data']['password'], $validated['data']['nombre'])
