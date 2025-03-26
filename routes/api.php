@@ -62,8 +62,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 });
 
 
-// Ruta de la validación del correo electronico para la app
-Route::post('/recuperar-password', [TokenController::class, 'recuperarContraseña']);
+// Ruta de la validación del correo electronico para la app cambiarContraseña
+Route::post('/cambio-password', [AuthController::class, 'cambiarContraseña']);
+Route::post('/recuperar-password', [TokenController::class, 'recuperarContrasena']);
 Route::post('/validate-email', [TokenController::class, 'validateEmail']);
 Route::post('/validate-codigo', [VerificationController::class, 'verifyCode']);
 
