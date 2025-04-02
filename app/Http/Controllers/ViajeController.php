@@ -119,7 +119,7 @@ class ViajeController extends Controller
                 ->first();
 
 
-            $query = "SELECT
+                $query = "SELECT
                 v.id,
                 v.fecha_viaje,
                 v.hora_viaje,
@@ -167,8 +167,38 @@ class ViajeController extends Controller
             LIMIT 1;";
 
             $params = [$validateData['app_user_id'], $codigoEmpleado->codigo_empleado];
-
             $results = DB::select($query, $params);
+
+            // Si hay resultados y el tipo de ruta es 67, modificar la coordenada del orden 1
+            if (!empty($results) && $results[0]->id_tipo_ruta == 67) {
+                $destinos = json_decode($results[0]->destinos, true);
+
+                // Obtener la coordenada desde rutas_solicitadas_pasajeros
+                $coordenadasQuery = "SELECT 
+                                        CONCAT('\"{\\\"lat\\\":', latitude, ',\\\"lng\\\":', longitude, '}\"') AS coordenadas
+                                    FROM rutas_solicitadas_pasajeros 
+                                    WHERE empleado_id = ? 
+                                    AND fecha = ? 
+                                    AND hora = ?";
+                
+                $coordenadasParams = [$codigoEmpleado->codigo_empleado, '2025-04-01', '18:00'];
+                $coordenadaResult = DB::select($coordenadasQuery, $coordenadasParams);
+
+                if (!empty($coordenadaResult)) {
+                    $nuevaCoordenada = $coordenadaResult[0]->coordenadas;
+
+                    // Modificar la coordenada en el array de destinos
+                    foreach ($destinos as &$destino) {
+                        if ($destino['orden'] == 1) {
+                            $destino['coordenadas'] = $nuevaCoordenada;
+                            break;
+                        }
+                    }
+
+                    // Convertir nuevamente a JSON
+                    $results[0]->destinos = json_encode($destinos);
+                }
+            }
 
             Log::info($codigoEmpleado->codigo_empleado . " - " . $validateData['app_user_id']);
 
@@ -955,6 +985,45 @@ class ViajeController extends Controller
         $resultado = DB::select("SELECT @CodErr AS codigo, @MsjErr AS mensaje");
 
         return $resultado[0] ?? null;
+    }
+
+    public function showCentroDeCosto (Request $request){
+
+        $validateData = $request->validate (['user_id' => 'integer']);
+
+        try {
+            // Si se me envia el user id, si no lo busco mediante el auth
+            $user_id = $request->user_id ?? Auth::user()->id;
+
+            $datos = DB::table('subcentrosdecosto as s')
+            ->join('centrosdecosto as c', 'c.id', '=', 's.centrosdecosto_id')
+            ->join('users as u', function ($join) {
+                $join->on('u.centrodecosto_id', '=', 's.centrosdecosto_id')
+                    ->on('s.id', '=', 'u.subcentrodecosto_id');
+            })
+            ->where('u.id', $user_id)
+            ->select('c.id', 'c.razonsocial', 's.nombre', 's.coords')
+            ->first();
+
+            if ($datos) {
+                return Response::json([
+                    'response' => true,
+                    'data' => $datos
+                ], 200);
+            }else {
+                throw new Exception("No tiene subcentro de costo asociado."); // Lanza un error
+            }
+
+        } catch (\Throwable $th) {
+            return Response::json([
+                'response' => false,
+                'message' => $th->getMessage() 
+            ], 200);
+
+        }
+
+        
+
     }
 
 

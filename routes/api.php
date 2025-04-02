@@ -57,8 +57,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/listar-tipos-viaje', [ViajeController::class, 'listarTiposDeViaje']);
     Route::post('/listar-viajes-activos', [ViajeController::class, 'listarViajesActivos']);
     Route::post('/listar-viajes-generales', [ViajeController::class, 'listarViajesGenerales']);
-    Route::post('/crear-solicitud-viaje', [ViajeController::class, 'requesttrips']);
-
+    Route::post('/crear-solicitud-viaje', [ViajeController::class, 'requesttrips']);   
+    Route::post('/show-centro-de-costo', [ViajeController::class, 'showCentroDeCosto']);
 });
 
 
