@@ -175,11 +175,11 @@ class ViajeController extends Controller
 
                 // Obtener la coordenada desde rutas_solicitadas_pasajeros
                 $coordenadasQuery = "SELECT 
-                                        CONCAT('\"{\\\"lat\\\":', latitude, ',\\\"lng\\\":', longitude, '}\"') AS coordenadas
-                                    FROM rutas_solicitadas_pasajeros 
-                                    WHERE empleado_id = ? 
-                                    AND fecha = ? 
-                                    AND hora = ?";
+                            JSON_OBJECT('lat', latitude, 'lng', longitude) AS coordenadas
+                         FROM rutas_solicitadas_pasajeros 
+                         WHERE empleado_id = ? 
+                         AND fecha = ? 
+                         AND hora = ?";
                 
                 $coordenadasParams = [$codigoEmpleado->codigo_empleado, '2025-04-01', '18:00'];
                 $coordenadaResult = DB::select($coordenadasQuery, $coordenadasParams);
