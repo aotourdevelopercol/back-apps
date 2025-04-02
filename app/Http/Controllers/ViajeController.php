@@ -166,39 +166,44 @@ class ViajeController extends Controller
             GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
             LIMIT 1;";
 
-            $params = [$validateData['app_user_id'], $codigoEmpleado->codigo_empleado];
-            $results = DB::select($query, $params);
+$params = [$validateData['app_user_id'], $codigoEmpleado->codigo_empleado];
+$results = DB::select($query, $params);
 
-            // Si hay resultados y el tipo de ruta es 67, modificar la coordenada del orden 1
-            if (!empty($results) && $results[0]->id_tipo_ruta == 67) {
-                $destinos = json_decode($results[0]->destinos, true);
+// Si hay resultados y el tipo de ruta es 67, modificar la coordenada del orden 1
+if (!empty($results) && $results[0]->id_tipo_ruta == 67) {
+    $destinos = json_decode($results[0]->destinos, true);
 
-                // Obtener la coordenada desde rutas_solicitadas_pasajeros
-                $coordenadasQuery = "SELECT 
+    // Obtener la coordenada desde rutas_solicitadas_pasajeros
+    $coordenadasQuery = "SELECT 
                             JSON_OBJECT('lat', latitude, 'lng', longitude) AS coordenadas
                          FROM rutas_solicitadas_pasajeros 
                          WHERE empleado_id = ? 
                          AND fecha = ? 
                          AND hora = ?";
-                
-                $coordenadasParams = [$codigoEmpleado->codigo_empleado, '2025-04-01', '18:00'];
-                $coordenadaResult = DB::select($coordenadasQuery, $coordenadasParams);
+    
+    $coordenadasParams = [$codigoEmpleado->codigo_empleado, '2025-04-01', '18:00'];
+    $coordenadaResult = DB::select($coordenadasQuery, $coordenadasParams);
 
-                if (!empty($coordenadaResult)) {
-                    $nuevaCoordenada = $coordenadaResult[0]->coordenadas;
+    if (!empty($coordenadaResult)) {
+        $nuevaCoordenada = json_decode($coordenadaResult[0]->coordenadas, true);
 
-                    // Modificar la coordenada en el array de destinos
-                    foreach ($destinos as &$destino) {
-                        if ($destino['orden'] == 1) {
-                            $destino['coordenadas'] = $nuevaCoordenada;
-                            break;
-                        }
-                    }
+        // Convertir a valores numéricos para evitar comillas dobles en el JSON
+        $nuevaCoordenada['lat'] = (float) $nuevaCoordenada['lat'];
+        $nuevaCoordenada['lng'] = (float) $nuevaCoordenada['lng'];
 
-                    // Convertir nuevamente a JSON
-                    $results[0]->destinos = json_encode($destinos);
-                }
+        // Modificar la coordenada en el array de destinos
+        foreach ($destinos as &$destino) {
+            if ($destino['orden'] == 1) {
+                $destino['coordenadas'] = json_encode($nuevaCoordenada, JSON_UNESCAPED_SLASHES);
+                break;
             }
+        }
+
+        // Convertir nuevamente a JSON
+        $results[0]->destinos = json_encode($destinos, JSON_UNESCAPED_SLASHES);
+    }
+}
+
 
             Log::info(" esto es lo que viene en results " . json_encode($results));
 
