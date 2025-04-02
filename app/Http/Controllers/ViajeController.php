@@ -200,6 +200,8 @@ class ViajeController extends Controller
                 }
             }
 
+            Log::info(" esto es lo que viene en results " . json_encode($results));
+
             Log::info($codigoEmpleado->codigo_empleado . " - " . $validateData['app_user_id']);
 
             $consulta = "SELECT
