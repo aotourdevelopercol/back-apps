@@ -181,7 +181,7 @@ if (!empty($results) && $results[0]->id_tipo_ruta == 67) {
                          AND fecha = ? 
                          AND hora = ?";
     
-    $coordenadasParams = [$codigoEmpleado->codigo_empleado, $query->fecha_viaje, $query->hora_viaje];
+    $coordenadasParams = [$codigoEmpleado->codigo_empleado, $results[0]->fecha_viaje, $results[0]->hora_viaje];
     $coordenadaResult = DB::select($coordenadasQuery, $coordenadasParams);
 
     if (!empty($coordenadaResult)) {
