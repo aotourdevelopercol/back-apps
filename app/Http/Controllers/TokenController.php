@@ -74,7 +74,7 @@ class TokenController extends Controller
     }
 
 
-    public function recuperarContraseña(Request $request)
+    public function recuperarContrasena(Request $request)
     {
         // Validar el correo electrónico recibido
         $validator = Validator::make($request->all(), [
