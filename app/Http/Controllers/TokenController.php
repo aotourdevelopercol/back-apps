@@ -28,7 +28,7 @@ class TokenController extends Controller
         // Comprobar si el correo existe en la tabla users
         $userExists = User::whereRaw('LOWER(email) = ?', [strtolower($email)])->exists();
 
-        if ($userExists) {
+        if (!$userExists) {
             return response()->json(['code' => 'EXIST_EMAIL'], 200);
         }
 
@@ -64,6 +64,8 @@ class TokenController extends Controller
             $message->to($email)
                 ->subject('Tu código de verificación');
         });
+
+        
 
         return response()->json([
             'token' => $token,
