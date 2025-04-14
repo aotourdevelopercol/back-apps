@@ -39,7 +39,7 @@ class PagoProveedores extends Mailable
      public function content(): Content
      {
          return new Content(
-             view: 'emails.pago_proveedores',
+             view: 'emails.pago_proveedores'
         //     with: []
          );
      }
