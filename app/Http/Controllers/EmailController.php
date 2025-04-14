@@ -15,10 +15,10 @@ class EmailController extends Controller
 
         $validated = $request->validate([
             'email' => 'required|array',
-            'email.*' => 'email', 
-            'templateType' =>'required|string',
+            'email.*' => 'email',
+            'templateType' => 'required|string',
             'token' => 'nullable|string',
-            'data' =>'nullable|array',
+            'data' => 'nullable|array',
         ]);
 
         $templateMap = [
@@ -57,49 +57,45 @@ class EmailController extends Controller
         try {
             $emails = $validated['email'];
             $emailClass = $templateMap[$validated['templateType']];
-        
-            // Extraemos los datos de entrada
             $emailData = $validated['data'] ?? [];
             $token = $validated['token'] ?? null;
-        
-            // Obtener los parámetros del constructor de la clase
+
             $reflection = new \ReflectionClass($emailClass);
-            $parameters = $reflection->getConstructor()->getParameters();
-        
-            // Construimos los argumentos en orden según el constructor
+            $parameters = $reflection->getConstructor()?->getParameters() ?? [];
+
             $args = [];
             foreach ($parameters as $param) {
                 $paramName = $param->getName();
                 if (isset($emailData[$paramName])) {
-                    $args[] = $emailData[$paramName]; // Extraer del array de datos si está definido
+                    $args[] = $emailData[$paramName];
                 } elseif ($paramName === 'token') {
-                    $args[] = $token; // Pasar el token si se requiere
+                    $args[] = $token;
                 } else {
                     $args[] = $param->isDefaultValueAvailable() ? $param->getDefaultValue() : null;
                 }
             }
-        
-            if (is_array($emails) && count($emails) > 1) {
-                Log::info("Estoy enviando muchos correos");
+
+            $sendMail = function ($email) use ($reflection, $args) {
+                $mailable = count($args) > 0
+                    ? $reflection->newInstanceArgs($args)
+                    : new ($reflection->getName());
+
+                Mail::to($email)->later(now()->addSeconds(10), $mailable);
+            };
+
+            if (count($emails) > 1) {
+                Log::info("Enviando múltiples correos...");
                 foreach ($emails as $email) {
-                    Mail::to($email)->later(
-                        now()->addSeconds(10),
-                        $reflection->newInstanceArgs($args) // Crear instancia con los argumentos correctos
-                    );
+                    $sendMail($email);
                 }
             } else {
-                $email = is_array($emails) ? $emails[0] : $emails;
-                Log::info("Estoy enviando un solo correo");
-                Mail::to($email)->later(
-                    now()->addSeconds(10),
-                    $reflection->newInstanceArgs($args) // Crear instancia con los argumentos correctos
-                );
+                Log::info("Enviando un solo correo...");
+                $sendMail($emails[0]);
             }
         } catch (\Throwable $th) {
             Log::error("Error al enviar correo: " . $th->getMessage());
+            return response()->json(['error' => 'Error al enviar correo. Revisa logs.'], 500);
         }
-        
-        
 
         return response()->json(['message' => 'Correo enviado con éxito']);
     }
