@@ -13,6 +13,7 @@ class EmailController extends Controller
         Log::info('Solicitud recibida: ' . $request->fullUrl());
         Log::info('Solicitud completa:', ['request' => $request->all()]);
 
+        // Validar datos de entrada
         $validated = $request->validate([
             'email' => 'required|array',
             'email.*' => 'email',
@@ -21,6 +22,7 @@ class EmailController extends Controller
             'data' => 'nullable|array',
         ]);
 
+        // Mapeo de plantillas a clases de mailable
         $templateMap = [
             'inscripcion_proveedores' => \App\Mail\InscripcionProveedoresEmails::class,
             'proveedores_aviso' => \App\Mail\ProveedoresAviso::class,
@@ -50,6 +52,7 @@ class EmailController extends Controller
             'pago_proveedores' => \App\Mail\PagoProveedores::class,
         ];
 
+        // Verificar si la plantilla existe en el mapa
         if (!isset($templateMap[$validated['templateType']])) {
             return response()->json(['error' => 'Tipo de plantilla no válido'], 400);
         }
@@ -60,9 +63,11 @@ class EmailController extends Controller
             $emailData = $validated['data'] ?? [];
             $token = $validated['token'] ?? null;
 
+            // Reflexión para obtener parámetros del constructor del mailable
             $reflection = new \ReflectionClass($emailClass);
             $parameters = $reflection->getConstructor()?->getParameters() ?? [];
 
+            // Construir los argumentos para el mailable
             $args = [];
             foreach ($parameters as $param) {
                 $paramName = $param->getName();
@@ -75,14 +80,16 @@ class EmailController extends Controller
                 }
             }
 
+            // Función para enviar el correo
             $sendMail = function ($email) use ($reflection, $args) {
                 $mailable = count($args) > 0
-                    ? $reflection->newInstanceArgs($args)
-                    : new ($reflection->getName());
+                    ? $reflection->newInstanceArgs($args)  // Si requiere parámetros
+                    : new ($reflection->getName());  // Si no requiere parámetros
 
                 Mail::to($email)->later(now()->addSeconds(10), $mailable);
             };
 
+            // Enviar correos: uno o múltiples
             if (count($emails) > 1) {
                 Log::info("Enviando múltiples correos...");
                 foreach ($emails as $email) {
