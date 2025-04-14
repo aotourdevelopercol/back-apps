@@ -51,18 +51,12 @@
 
             <p>
                 Nos permitimos informarle que el pago correspondiente a la 
-                <strong>Cuenta de Cobro No. {{ $numeroCuenta }}</strong> 
+                <strong>Cuenta de Cobro</strong> 
                 ha sido realizado exitosamente.
             </p>
 
             <p>A continuación, se detallan los datos del pago:</p>
 
-            <ul>
-                <li><strong>Número de Cuenta de Cobro:</strong> {{ $numeroCuenta }}</li>
-                <li><strong>Valor Pagado:</strong> ${{ number_format($monto, 0, ',', '.') }}</li>
-                <li><strong>Fecha de Pago:</strong> {{ \Carbon\Carbon::parse($fechaPago)->format('d/m/Y') }}</li>
-                <li><strong>Medio de Pago:</strong> {{ $medioPago }}</li>
-            </ul>
 
             <p>
                 Agradecemos su gestión y quedamos atentos a cualquier inquietud adicional.
@@ -71,8 +65,7 @@
 
         <div class="footer">
             Atentamente,<br>
-            <strong>{{ $empresaNombre }}</strong><br>
-            {{ $empresaCorreo }}
+           
         </div>
     </div>
 </body>
