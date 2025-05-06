@@ -1193,64 +1193,71 @@ class Viajes extends Controller
     }
 
     
+    // Eliminacion de la solicitud de una ruta
     public function eliminarSolicitud(Request $request)
     {
-        // Validar que el ID de solicitud esté presente
+        // Request de la solicitud añadir validador 
         $validatedData = $request->validate([
             'id' => 'required|integer',
+        
         ]);
-    
-        // Obtener el usuario autenticado
+
+        // Obtener el campo codigo_empleado de la tabla users para esto validamos el usuario logueado
         $userCode = Auth::user()->codigo_empleado;
     
-        // Buscar la solicitud
+        // Bucar la solicitud y obtener el id 
         $solicitud = DB::table('rutas_solicitadas')
-            ->where('id', $validatedData['id'])
+            ->where('id', $request->id)
             ->first();
-    
-        // Validar que exista la solicitud
+
+        // Validar si existe la solicitud
         if (!$solicitud) {
-            return response()->json(['message' => 'No se encontró la solicitud'], 404);
+            return Response()->json(['message' => 'No se encontró la solicitud'], 200);
         }
 
-        Log::info('Solicitud eliminada por: ' . $solicitud);
-    
-        // Validar si la cancelación es antes de 2 horas de la hora de salida
-        $horaSolicitud = Carbon::parse($solicitud->hora);
-        $fechaSolicitud = Carbon::parse($solicitud->fecha);
-    
-        if ($horaSolicitud->lessThan(Carbon::now()->addHours(2)) && $fechaSolicitud->isToday()) {
-            return response()->json(['message' => 'No se puede cancelar la solicitud antes de las 2 horas'], 400);
+         // Antes de eliminar la solicitud debo validar si la cancelacion se esta haciendo antes de las 2 horas minina si no es asi emitimos mensaje de error
+        // Y que la fecha sea mayor o igual a la fecha actual
+        if ($solicitud->hora >= Carbon::now()->addHours(2) && $solicitud->fecha < Carbon::now()) {
+            // Return error
+            return Response->json(['message' => 'No se puede cancelar la solicitud antes de las 2 horas'], 200);
         }
-    
-        // Buscar si el pasajero está en la solicitud
+        
+        // Buscar y validar si el pasajero en la taba rutas_solicitadas_pasajeros 
         $passSolicitud = DB::table('rutas_solicitadas_pasajeros')
             ->where('fk_rutas_solicitadas', $solicitud->id)
             ->where('empleado_id', $userCode)
             ->get();
-    
-        if ($passSolicitud->isEmpty()) {
-            return response()->json(['message' => 'No se encontró el pasajero en la solicitud'], 404);
+
+   
+        if (count($passSolicitud) == 0) {
+            // retorno mensaje de error
+            return Response->json(['message' => 'No se encontro el pasajero en la solicitud'], 200);
         }
-    
-        // Eliminar pasajero
-        DB::table('rutas_solicitadas_pasajeros')
-            ->where('fk_rutas_solicitadas', $solicitud->id)
-            ->where('empleado_id', $userCode)
-            ->delete();
-    
-        // Si solo hay un pasajero, eliminar también la solicitud
-        $totalPasajeros = DB::table('rutas_solicitadas_pasajeros')
-            ->where('fk_rutas_solicitadas', $solicitud->id)
-            ->count();
-    
-        if ($totalPasajeros === 0) {
+
+        // Validar si en la solicitud solo hay un usuario para eliminar primero el pasajero y luego la solicitud
+        if (count($passSolicitud) == 1) {
+            // Eliminar el pasajero de la tabla rutas_solicitadas_pasajeros
+            DB::table('rutas_solicitadas_pasajeros')
+                ->where('fk_rutas_solicitadas', $solicitud->id)
+                ->where('empleado_id', $userCode)
+                ->delete();
+
+            // Eliminar la solicitud de la tabla rutas_solicitadas
             DB::table('rutas_solicitadas')
                 ->where('id', $solicitud->id)
                 ->delete();
+
+            return Response::json(['message' => 'Solicitud eliminada correctamente'], 200);
+        } else {
+            // Eliminar solo el pasajero de la tabla rutas_solicitadas_pasajeros
+            DB::table('rutas_solicitadas_pasajeros')
+                ->where('fk_rutas_solicitadas', $solicitud->id)
+                ->where('empleado_id', $userCode)
+                ->delete();
+            
+            return Response::json(['message' => 'Solicitud eliminada correctamente'], 200);
         }
-    
-        return response()->json(['message' => 'Solicitud eliminada correctamente'], 200);
+
+        
     }
-    
 }
