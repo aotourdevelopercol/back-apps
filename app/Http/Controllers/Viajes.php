@@ -1219,8 +1219,7 @@ class Viajes extends Controller
         $ahora = Carbon::now();
         $fechaHoraSolicitud = Carbon::parse($solicitud->fecha . ' ' . $solicitud->hora);
 
-
-        if ($fechaHoraSolicitud->isPast() || $fechaHoraSolicitud->lte($ahora->copy()->addHours(2))) {
+        if ($fechaHoraSolicitud->lessThanOrEqualTo($ahora->copy()->addHours(2))) {
             return Response()->json(['message' => 'No se puede cancelar la solicitud antes de las 2 horas'], 200);
         }
         
