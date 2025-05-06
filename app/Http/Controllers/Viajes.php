@@ -1246,6 +1246,8 @@ class Viajes extends Controller
             return Response()->json(['message' => 'No se encontro el pasajero en la solicitud'], 200);
         }
 
+        Log::info('Pasajero encontrado: ' .  count($passSolicitud));
+
         // Validar si en la solicitud solo hay un usuario para eliminar primero el pasajero y luego la solicitud
         if (count($passSolicitud) == 1) {
             // Eliminar el pasajero de la tabla rutas_solicitadas_pasajeros
