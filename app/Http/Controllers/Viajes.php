@@ -1216,12 +1216,11 @@ class Viajes extends Controller
             return Response()->json(['message' => 'No se encontró la solicitud'], 200);
         }
 
-         // Antes de eliminar la solicitud debo validar si la cancelacion se esta haciendo antes de las 2 horas minina si no es asi emitimos mensaje de error
-        // Y que la fecha sea mayor o igual a la fecha actual
+        $ahora = Carbon::now();
         $fechaHoraSolicitud = Carbon::parse($solicitud->fecha . ' ' . $solicitud->hora);
-        
 
-        if ($fechaHoraSolicitud->isPast() || $fechaHoraSolicitud->lte(Carbon::now()->addHours(2))) {
+
+        if ($fechaHoraSolicitud->isPast() || $fechaHoraSolicitud->lte($ahora->copy()->addHours(2))) {
             return Response()->json(['message' => 'No se puede cancelar la solicitud antes de las 2 horas'], 200);
         }
         
