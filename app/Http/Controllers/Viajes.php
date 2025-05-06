@@ -1200,7 +1200,6 @@ class Viajes extends Controller
         // Request de la solicitud añadir validador 
         $validatedData = $request->validate([
             'id' => 'required|integer',
-        
         ]);
 
         // Obtener el campo codigo_empleado de la tabla users para esto validamos el usuario logueado
@@ -1220,10 +1219,6 @@ class Viajes extends Controller
         $fechaHoraSolicitud = Carbon::parse($solicitud->fecha . ' ' . $solicitud->hora);
         $ahora = Carbon::now();
         $limiteMinimo = $ahora->copy()->addHours(2);
-
-        Log::info('FechaHoraSolicitud: ' . $fechaHoraSolicitud);
-        Log::info('Ahora: ' . $ahora);
-        Log::info('Límite mínimo: ' . $limiteMinimo);
 
         // CASOS EN LOS QUE NO SE PERMITE CANCELAR
         if ($fechaHoraSolicitud->lt($ahora)) {
@@ -1249,8 +1244,6 @@ class Viajes extends Controller
             // retorno mensaje de error
             return Response()->json(['message' => 'No se encontro el pasajero en la solicitud'], 200);
         }
-
-        Log::info('Pasajero encontrado: ' .  count($passSolicitud));
 
         // Validar si en la solicitud solo hay un usuario para eliminar primero el pasajero y luego la solicitud
         if (count($passSolicitud) == 1) {
