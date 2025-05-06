@@ -1203,12 +1203,7 @@ class Viajes extends Controller
         ]);
 
         
-         // Antes de eliminar la solicitud debo validar si la cancelacion se esta haciendo antes de las 2 horas minina si no es asi emitimos mensaje de error
-        // Y que la fecha sea mayor o igual a la fecha actual
-        if ($solicitud->hora >= Carbon::now()->addHours(2) && $solicitud->fecha < Carbon::now()) {
-            // Return error
-            return Response->json(['message' => 'No se puede cancelar la solicitud antes de las 2 horas'], 200);
-        }
+        
 
 
         // Obtener el campo codigo_empleado de la tabla users para esto validamos el usuario logueado
@@ -1218,6 +1213,13 @@ class Viajes extends Controller
         $solicitud = DB::table('rutas_solicitadas')
             ->where('id', $request->id)
             ->first();
+
+         // Antes de eliminar la solicitud debo validar si la cancelacion se esta haciendo antes de las 2 horas minina si no es asi emitimos mensaje de error
+        // Y que la fecha sea mayor o igual a la fecha actual
+        if ($solicitud->hora >= Carbon::now()->addHours(2) && $solicitud->fecha < Carbon::now()) {
+            // Return error
+            return Response->json(['message' => 'No se puede cancelar la solicitud antes de las 2 horas'], 200);
+        }
         
         // Buscar y validar si el pasajero en la taba rutas_solicitadas_pasajeros 
         $passSolicitud = DB::table('rutas_solicitadas_pasajeros')
