@@ -1216,14 +1216,22 @@ class Viajes extends Controller
             return Response()->json(['message' => 'No se encontró la solicitud'], 200);
         }
 
+        // Combina fecha y hora en un solo objeto Carbon
         $fechaHoraSolicitud = Carbon::parse($solicitud->fecha . ' ' . $solicitud->hora);
         $ahora = Carbon::now();
+        $limiteMinimo = $ahora->copy()->addHours(2);
 
-        if (
-            $fechaHoraSolicitud->isPast() ||                // Bloquea si ya pasó
-            $fechaHoraSolicitud->lte($ahora->copy()->addHours(2)) // Bloquea si está dentro de las 2 horas
-        ) {
-            return Response()->json(['message' => 'No se puede cancelar la solicitud antes de las 2 horas'], 200);
+        Log::info('FechaHoraSolicitud: ' . $fechaHoraSolicitud);
+        Log::info('Ahora: ' . $ahora);
+        Log::info('Límite mínimo: ' . $limiteMinimo);
+
+        // CASOS EN LOS QUE NO SE PERMITE CANCELAR
+        if ($fechaHoraSolicitud->lt($ahora)) {
+            return Response()->json(['message' => 'No se puede cancelar solicitudes de fechas pasadas'], 200);
+        }
+
+        if ($fechaHoraSolicitud->lte($limiteMinimo)) {
+            return Response()->json(['message' => 'No se puede cancelar la solicitud con menos de 2 horas de anticipación'], 200);
         }
         
         // Buscar y validar si el pasajero en la taba rutas_solicitadas_pasajeros 
