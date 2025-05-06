@@ -21,6 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 // Rutas con el midelware de autenticación
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/solicitudViajePasajeros', [ViajeController::class, 'solicitudViajePasajeros']);
+    Route::post('/eliminarSolicitud', [ViajeController::class, 'eliminarSolicitud']);
 
     //Rutas de viajes controller
     Route::post('/actualizar-ubicacion', [Viajes::class, 'actualizarubicacion']);
