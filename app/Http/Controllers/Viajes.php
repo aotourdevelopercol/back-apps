@@ -1219,8 +1219,7 @@ class Viajes extends Controller
          // Antes de eliminar la solicitud debo validar si la cancelacion se esta haciendo antes de las 2 horas minina si no es asi emitimos mensaje de error
         // Y que la fecha sea mayor o igual a la fecha actual
         $fechaHoraSolicitud = Carbon::parse($solicitud->fecha . ' ' . $solicitud->hora);
-        Log::info('FechaHoraSolicitud: ' . $fechaHoraSolicitud);
-        Log::info('Ahora +2 horas: ' . Carbon::now()->addHours(2));
+        
 
         if ($fechaHoraSolicitud->isPast() || $fechaHoraSolicitud->lte(Carbon::now()->addHours(2))) {
             return Response()->json(['message' => 'No se puede cancelar la solicitud antes de las 2 horas'], 200);
