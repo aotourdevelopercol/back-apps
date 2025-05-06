@@ -16,7 +16,7 @@ use App\Models\ViajeAplicacion;
 use App\Models\TokenPayU;
 use Auth;
 use Illuminate\Support\Facades\Log;
-use Carbon\Carbon;
+use Carbon\carbon;
 
 use Illuminate\Http\Request;
 use Response;
