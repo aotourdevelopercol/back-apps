@@ -1237,7 +1237,6 @@ class Viajes extends Controller
         // Buscar y validar si el pasajero en la taba rutas_solicitadas_pasajeros 
         $passSolicitud = DB::table('rutas_solicitadas_pasajeros')
             ->where('fk_rutas_solicitadas', $solicitud->id)
-            ->where('empleado_id', $userCode)
             ->get();
 
    
