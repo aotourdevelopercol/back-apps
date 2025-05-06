@@ -1222,7 +1222,7 @@ class Viajes extends Controller
         Log::info('Fecha actual: ' . Carbon::now()->addHours(2));
         if ($solicitud->hora >= Carbon::now()->addHours(2) || $solicitud->fecha < Carbon::now()) {
             // Return error
-            return Response->json(['message' => 'No se puede cancelar la solicitud antes de las 2 horas'], 200);
+            return Response()->json(['message' => 'No se puede cancelar la solicitud antes de las 2 horas'], 200);
         }
         
         // Buscar y validar si el pasajero en la taba rutas_solicitadas_pasajeros 
@@ -1234,7 +1234,7 @@ class Viajes extends Controller
    
         if (count($passSolicitud) == 0) {
             // retorno mensaje de error
-            return Response->json(['message' => 'No se encontro el pasajero en la solicitud'], 200);
+            return Response()->json(['message' => 'No se encontro el pasajero en la solicitud'], 200);
         }
 
         // Validar si en la solicitud solo hay un usuario para eliminar primero el pasajero y luego la solicitud
