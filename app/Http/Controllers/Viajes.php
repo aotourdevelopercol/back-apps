@@ -1212,6 +1212,8 @@ class Viajes extends Controller
         if (!$solicitud) {
             return response()->json(['message' => 'No se encontró la solicitud'], 404);
         }
+
+        Log::info('Solicitud eliminada por: ' . $solicitud);
     
         // Validar si la cancelación es antes de 2 horas de la hora de salida
         $horaSolicitud = Carbon::parse($solicitud->hora);
