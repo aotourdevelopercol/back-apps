@@ -1239,8 +1239,13 @@ class Viajes extends Controller
             ->where('fk_rutas_solicitadas', $solicitud->id)
             ->get();
 
+        $passId = DB::table('rutas_solicitadas_pasajeros')
+        ->where('fk_rutas_solicitadas', $solicitud->id)
+        ->where('empleado_id', $userCode)
+        ->get();
+
    
-        if (count($passSolicitud) == 0) {
+        if (count($passId) == 0) {
             // retorno mensaje de error
             return Response()->json(['message' => 'No se encontro el pasajero en la solicitud'], 200);
         }
