@@ -1267,6 +1267,19 @@ class Viajes extends Controller
                     'codigo_empleado' => $userCode,
                 ]);
 
+            // Obtener el nombre del cliente 
+
+            //Push para web
+            $channel = 'eliminacion';
+            $name = 'eliminacion_solicitud';
+
+            $data = json_encode([
+                'estado' => "El usuario ". Auth::user()->first_name . " Realizo cancelacion de solicitud # " . $solicitud->id,
+            ]);
+
+            // canal, nombre, data
+            $this->Pusher($channel, $name, $data);
+
             return Response::json(['message' => 'Solicitud eliminada correctamente'], 200);
         } else {
             // Eliminar solo el pasajero de la tabla rutas_solicitadas_pasajeros
@@ -1284,8 +1297,63 @@ class Viajes extends Controller
                     'codigo_empleado' => $userCode,
                 ]);
 
+            //Push para web
+
+            $channel = 'eliminacion';
+            $name = 'eliminacion_solicitud';
+
+            $data = json_encode([
+                'estado' => "El usuario ". Auth::user()->first_name . " Realizo cancelacion de solicitud # " . $solicitud->id,
+            ]);
+
+            // canal, nombre, data
+            $this->Pusher($channel, $name, $data);
+
             return Response::json(['message' => 'Solicitud eliminada correctamente'], 200);
         }
 
+    }
+
+    // Envio de notificaciones 
+    private function Pusher($channel, $name, $data)
+    {
+        $app_id = env('PUSHER_APP_ID');
+        $key = env('PUSHER_APP_KEY');
+        $secret = env('PUSHER_APP_SECRET');
+
+        $body = [
+            'data' => $data,
+            'name' => $name,
+            'channel' => $channel
+        ];
+        $auth_timestamp = strtotime('now');
+        $auth_version = '1.0';
+        $body_md5 = md5(json_encode($body));
+
+        $string_to_sign =
+            "POST\n/apps/" . $app_id .
+            "/events\nauth_key=" . $key .
+            "&auth_timestamp=" . $auth_timestamp .
+            "&auth_version=" . $auth_version .
+            "&body_md5=" . $body_md5;
+
+        $auth_signature = hash_hmac('SHA256', $string_to_sign, $secret);
+
+        $ch = curl_init();
+
+        curl_setopt($ch, CURLOPT_URL, 'https://api-us2.pusher.com/apps/' . $app_id . '/events?auth_key=' . $key . '&body_md5=' . $body_md5 . '&auth_version=1.0&auth_timestamp=' . $auth_timestamp . '&auth_signature=' . $auth_signature . '&');
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        $headers = [
+            'Content-Type: application/json'
+        ];
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
+        $response = curl_exec($ch);
+
+
+        Log::info("Respuesta del push: " . $response);
     }
 }
