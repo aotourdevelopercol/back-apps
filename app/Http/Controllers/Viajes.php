@@ -1258,6 +1258,15 @@ class Viajes extends Controller
                 ->where('id', $solicitud->id)
                 ->delete();
 
+            // Guardar en la tabla novedades_solicitudes los datos de la solicitud eliminada
+            DB::table('novedades_solicitudes')
+                ->insert([
+                    'fk_rutas_solicitadas' => $solicitud->id,
+                    'hora' => $solicitud->hora,
+                    'fecha' => $solicitud->fecha,
+                    'codigo_empleado' => $userCode,
+                ]);
+
             return Response::json(['message' => 'Solicitud eliminada correctamente'], 200);
         } else {
             // Eliminar solo el pasajero de la tabla rutas_solicitadas_pasajeros
@@ -1265,10 +1274,18 @@ class Viajes extends Controller
                 ->where('fk_rutas_solicitadas', $solicitud->id)
                 ->where('empleado_id', $userCode)
                 ->delete();
-            
+
+            // Guardar en la tabla novedades_solicitudes los datos de la solicitud eliminada
+            DB::table('novedades_solicitudes')
+                ->insert([
+                    'fk_rutas_solicitadas' => $solicitud->id,
+                    'hora' => $solicitud->hora,
+                    'fecha' => $solicitud->fecha,
+                    'codigo_empleado' => $userCode,
+                ]);
+
             return Response::json(['message' => 'Solicitud eliminada correctamente'], 200);
         }
 
-        
     }
 }
