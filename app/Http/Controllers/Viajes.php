@@ -1261,7 +1261,7 @@ class Viajes extends Controller
             // Guardar en la tabla novedades_solicitudes los datos de la solicitud eliminada
             DB::table('novedades_solicitudes')
                 ->insert([
-                    'fk_rutas_solicitadas' => $solicitud->id,
+                    'fk_ruta_solicitada' => $solicitud->id,
                     'hora' => $solicitud->hora,
                     'fecha' => $solicitud->fecha,
                     'codigo_empleado' => $userCode,
@@ -1278,7 +1278,7 @@ class Viajes extends Controller
             // Guardar en la tabla novedades_solicitudes los datos de la solicitud eliminada
             DB::table('novedades_solicitudes')
                 ->insert([
-                    'fk_rutas_solicitadas' => $solicitud->id,
+                    'fk_ruta_solicitada' => $solicitud->id,
                     'hora' => $solicitud->hora,
                     'fecha' => $solicitud->fecha,
                     'codigo_empleado' => $userCode,
