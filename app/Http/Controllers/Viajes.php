@@ -1256,7 +1256,7 @@ class Viajes extends Controller
             // Eliminar la solicitud de la tabla rutas_solicitadas
             DB::table('rutas_solicitadas')
                 ->where('id', $solicitud->id)
-                ->delete();
+                ->update(['visible' => 1]);
 
             // Guardar en la tabla novedades_solicitudes los datos de la solicitud eliminada
             DB::table('novedades_solicitudes')
@@ -1274,7 +1274,7 @@ class Viajes extends Controller
             $name = 'eliminacion_solicitud';
 
             $data = json_encode([
-                'estado' => "El usuario ". Auth::user()->first_name . " Realizo cancelacion de solicitud # " . $solicitud->id,
+                'estado' => "El usuario ". Auth::user()->first_name . " Realizo cancelación de solicitud # " . $solicitud->id,
             ]);
 
             // canal, nombre, data
@@ -1303,7 +1303,7 @@ class Viajes extends Controller
             $name = 'eliminacion_solicitud';
 
             $data = json_encode([
-                'estado' => "El usuario ". Auth::user()->first_name . " Realizo cancelacion de solicitud # " . $solicitud->id,
+                'estado' => "El usuario ". Auth::user()->first_name . " Realizo cancelación de solicitud # " . $solicitud->id,
             ]);
 
             // canal, nombre, data
