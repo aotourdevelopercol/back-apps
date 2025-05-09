@@ -1280,7 +1280,7 @@ class Viajes extends Controller
             // canal, nombre, data
             $this->Pusher($channel, $name, $data);
 
-            return Response::json(['message' => 'Solicitud eliminada correctamente'], 200);
+         //   return Response::json(['message' => 'Solicitud eliminada correctamente'], 200);
         } else {
             // Eliminar solo el pasajero de la tabla rutas_solicitadas_pasajeros
             DB::table('rutas_solicitadas_pasajeros')
