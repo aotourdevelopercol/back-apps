@@ -14,14 +14,6 @@ class PagoProveedores extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     */
-     public function __construct()
-     {
-       
-     }
- 
      /**
       * Get the message envelope.
       */
