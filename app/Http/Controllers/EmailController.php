@@ -83,7 +83,7 @@ class EmailController extends Controller
                 }
             }
 
-            Log::info('argumentos: ' . $args);
+            Log::info('argumentos: ' . json_encode($args));
 
             // Función para enviar el correo
             $sendMail = function ($email) use ($reflection, $args) {
