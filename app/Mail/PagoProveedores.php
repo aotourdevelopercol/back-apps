@@ -5,10 +5,10 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class PagoProveedores extends Mailable 
 {
@@ -47,6 +47,7 @@ class PagoProveedores extends Mailable
     public function build()
     {
         try {
+            Log::info('Cargando correo PagoProveedores');
             return $this
             ->from(config('mail.from.address'), config('mail.from.name'))
                 ->subject('Asignacion de viaje')
@@ -64,13 +65,5 @@ class PagoProveedores extends Mailable
     }
 
  
-     /**
-      * Get the attachments for the message.
-      *
-      * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-      */
-     public function attachments(): array
-     {
-         return [];
-     }
+ 
 }
