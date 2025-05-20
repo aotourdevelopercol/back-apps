@@ -49,8 +49,9 @@ class EmailController extends Controller
             'cuenta_cobro_radicada' => \App\Mail\CuentaDeCobroRadicada::class,
             'forgot_password' => \App\Mail\ContraseñaOlvidada::class,
             'nuevo_usuario' => \App\Mail\NuevosUsuariosEmail::class,
-            'pago_proveedores' => \App\Mail\PagoProveedores::class
+            'pago_proveedores' => \App\Mail\PagoProveedor::class
         ];
+        Log::info('Clase de correo seleccionada: ' . $emailClass);
 
         // Verificar si la plantilla existe en el mapa
         if (!isset($templateMap[$validated['templateType']])) {
