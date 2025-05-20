@@ -83,6 +83,8 @@ class EmailController extends Controller
                 }
             }
 
+            Log::info('argumentos: ' . $args);
+
             // Función para enviar el correo
             $sendMail = function ($email) use ($reflection, $args) {
                 $mailable = count($args) > 0
@@ -91,6 +93,8 @@ class EmailController extends Controller
 
                 Mail::to($email)->later(now()->addSeconds(10), $mailable);
             };
+
+            Log::info('?????: ' . $sendMail);
 
             // Enviar correos: uno o múltiples
             if (count($emails) > 1) {
