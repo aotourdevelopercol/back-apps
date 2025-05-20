@@ -33,7 +33,7 @@ class PagoProveedores extends Mailable
      {
         \Log::info('Cargando correo PagoProveedores');
          return new Content(
-             view: 'inscripcion_proveedores_emails.email_cuenta_de_cobro_radicada'
+             view: 'proveedores_email.pago_proveedor'
         //     with: []
          );
      }
