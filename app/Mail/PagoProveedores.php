@@ -14,6 +14,12 @@ class PagoProveedores extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
+
+    public function __construct()
+    {
+        \Log::info('Constructor de PagoProveedores ejecutado');
+    }
+
      /**
       * Get the message envelope.
       */
