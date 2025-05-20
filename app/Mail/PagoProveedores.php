@@ -19,7 +19,7 @@ class PagoProveedores extends Mailable
       */
      public function envelope(): Envelope
      {
-        \Log::info('Cargando correo PagoProveedores');
+        
          return new Envelope(
              subject: 'Pago proveedore',
              from: new Address(config('mail.from.address'), config('mail.from.name'))
@@ -31,6 +31,7 @@ class PagoProveedores extends Mailable
       */
      public function content(): Content
      {
+        \Log::info('Cargando correo PagoProveedores');
          return new Content(
              view: 'proveedores_email.pago_proveedor'
         //     with: []
