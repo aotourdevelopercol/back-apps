@@ -49,7 +49,7 @@ class EmailController extends Controller
             'cuenta_cobro_radicada' => \App\Mail\CuentaDeCobroRadicada::class,
             'forgot_password' => \App\Mail\ContraseñaOlvidada::class,
             'nuevo_usuario' => \App\Mail\NuevosUsuariosEmail::class,
-            'pago_proveedores' => \App\Mail\PagoProveedor::class
+            'pago_proveedores' => \App\Mail\PagoProveedores::class
         ];
        
 
@@ -95,7 +95,7 @@ class EmailController extends Controller
                     Log::info("Argumentos usados: ", $args);
                     Log::info("Clase instanciada: " . $reflection->getName());
 
-                Mail::to($email)->send($mailable);  
+                Mail::to($email)->later(now()->addSeconds(10), $mailable);  
             };
 
 
