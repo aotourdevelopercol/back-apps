@@ -95,7 +95,7 @@ class EmailController extends Controller
                     Log::info("Argumentos usados: ", $args);
                     Log::info("Clase instanciada: " . $reflection->getName());
 
-                Mail::to($email)->later(now()->addSeconds(10), $mailable);
+                Mail::to($email)->send( $mailable);  
             };
 
 
