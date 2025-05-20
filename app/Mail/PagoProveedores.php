@@ -33,7 +33,7 @@ class PagoProveedores extends Mailable implements ShouldQueue
      {
         \Log::info('Cargando correo PagoProveedores');
          return new Content(
-             view: 'proveedores_email.pago_proveedor'
+             view: 'inscripcion_proveedores_emails.email_cuenta_de_cobro_corregir'
         //     with: []
          );
      }
