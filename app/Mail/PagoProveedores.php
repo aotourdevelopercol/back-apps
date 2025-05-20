@@ -19,6 +19,7 @@ class PagoProveedores extends Mailable
       */
      public function envelope(): Envelope
      {
+        \Log::info('Cargando correo PagoProveedores');
          return new Envelope(
              subject: 'Pago proveedore',
              from: new Address(config('mail.from.address'), config('mail.from.name'))
