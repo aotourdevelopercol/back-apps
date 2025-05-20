@@ -91,10 +91,13 @@ class EmailController extends Controller
                     ? $reflection->newInstanceArgs($args)  // Si requiere parámetros
                     : new ($reflection->getName());  // Si no requiere parámetros
 
-                Mail::to($email)->later(now()->addSeconds(10), $mailable);
+                    Log::info("Probando creación de mailable para: $email");
+Log::info("Argumentos usados: ", $args);
+Log::info("Clase instanciada: " . $reflection->getName());
+
+                Mail::to($email)->send($mailable);
             };
 
-            Log::info('?????: ' . $sendMail);
 
             // Enviar correos: uno o múltiples
             if (count($emails) > 1) {
