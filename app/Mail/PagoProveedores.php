@@ -50,7 +50,7 @@ class PagoProveedores extends Mailable
             Log::info('Cargando correo PagoProveedores');
             return $this
             ->from(config('mail.from.address'), config('mail.from.name'))
-                ->subject('Asignacion de viaje')
+                ->subject('Pago aprovado')
                 ->view('proveedores_email.pago_proveedor'); // Ensure the view name is correct
         } catch (\Throwable $th) {
             Log::error(
