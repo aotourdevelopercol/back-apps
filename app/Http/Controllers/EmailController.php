@@ -86,24 +86,17 @@ class EmailController extends Controller
             Log::info('argumentos: ' . json_encode($args));
 
             // Función para enviar el correo
-            // $sendMail = function ($email) use ($reflection, $args) {
-            //     $mailable = count($args) > 0
-            //         ? $reflection->newInstanceArgs($args)  // Si requiere parámetros
-            //         : new ($reflection->getName());  // Si no requiere parámetros
+            $sendMail = function ($email) use ($reflection, $args) {
+                $mailable = count($args) > 0
+                    ? $reflection->newInstanceArgs($args)  // Si requiere parámetros
+                    : new ($reflection->getName());  // Si no requiere parámetros
 
-            //         Log::info("Probando creación de mailable para: $email");
-            //         Log::info("Argumentos usados: ", $args);
-            //         Log::info("Clase instanciada: " . $reflection->getName());
+                    Log::info("Probando creación de mailable para: $email");
+                    Log::info("Argumentos usados: ", $args);
+                    Log::info("Clase instanciada: " . $reflection->getName());
 
-            //     Mail::to($email)->later(now()->addSeconds(10), $mailable);
-            // };
-
-            $sendMail = function ($email) use ($emailClass) {
-                $mailable = new $emailClass();  // Instancia directa sin reflexión
-                \Log::info("Instanciado mailable directo para $email");
-                Mail::to($email)->send($mailable);  // Envío inmediato para prueba
+                Mail::to($email)->later(now()->addSeconds(10), $mailable);
             };
-            
 
 
             // Enviar correos: uno o múltiples
