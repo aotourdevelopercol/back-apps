@@ -21,7 +21,7 @@ class PagoProveedores extends Mailable
      {
         
          return new Envelope(
-             subject: 'Pago proveedore',
+             subject: 'Pago proveedores',
              from: new Address(config('mail.from.address'), config('mail.from.name'))
          );
      }
@@ -33,7 +33,7 @@ class PagoProveedores extends Mailable
      {
         \Log::info('Cargando correo PagoProveedores');
          return new Content(
-             view: 'proveedores_email.pago_proveedor'
+             view: 'inscripcion_proveedores_emails.email_cuenta_de_cobro_radicada'
         //     with: []
          );
      }
