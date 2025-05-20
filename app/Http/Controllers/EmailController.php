@@ -51,7 +51,7 @@ class EmailController extends Controller
             'nuevo_usuario' => \App\Mail\NuevosUsuariosEmail::class,
             'pago_proveedores' => \App\Mail\PagoProveedor::class
         ];
-        Log::info('Clase de correo seleccionada: ' . $emailClass);
+       
 
         // Verificar si la plantilla existe en el mapa
         if (!isset($templateMap[$validated['templateType']])) {
@@ -63,6 +63,8 @@ class EmailController extends Controller
             $emailClass = $templateMap[$validated['templateType']];
             $emailData = $validated['data'] ?? [];
             $token = $validated['token'] ?? null;
+
+            Log::info('Clase de correo seleccionada: ' . $emailClass);
 
             // Reflexión para obtener parámetros del constructor del mailable
             $reflection = new \ReflectionClass($emailClass);
