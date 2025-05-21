@@ -27,7 +27,7 @@
             </p>
 
             <div style="margin-top: 30px;">
-                <a href="{{ url('/') }}" style="display: inline-block; background-color: #3490dc; color: #ffffff; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
+                <a href="{{ url('https://www.upnetweb.com/') }}" style="display: inline-block; background-color: #db4403; color: #ffffff; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-size: 16px;">
                     Ir a la plataforma
                 </a>
             </div>
