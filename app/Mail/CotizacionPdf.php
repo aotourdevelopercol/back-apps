@@ -28,9 +28,11 @@ class CotizacionPdf extends Mailable
 
 
 
-    public function __construct($url)
+    public function __construct($url, $token)
     {
         $this->url = $url;
+
+        $this->token = $token;
     }
 
     /**
