@@ -24,6 +24,10 @@ class CotizacionPdf extends Mailable
      */
     public $url;
 
+    public $token;
+
+
+
     public function __construct($url)
     {
         $this->url = $url;
@@ -47,6 +51,7 @@ class CotizacionPdf extends Mailable
     {
         return new Content(
             view: 'comercial_emails.cotizacion',
+            with: ['token' => $this->token]
         );
     }
 
