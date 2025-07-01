@@ -964,7 +964,7 @@ class ViajeController extends Controller
             ]);
 
             // If que valida si la solicitud tiene una autroización en caso de ser no la respuesta deberia agregar una autorizacion 
-            if ($solicitud->autorizacion_id == null) {
+            if ($rutas_solicitadas->autorizacion_id == null) {
 
                 $autorizacion_de_rutas = DB::table('autorizacion_de_rutas')->insertGetId([
                     'estado_autorizacion' => 0,
