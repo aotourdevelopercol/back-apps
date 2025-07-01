@@ -166,48 +166,44 @@ class ViajeController extends Controller
             GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
             LIMIT 1;";
 
-$params = [$validateData['app_user_id'], $codigoEmpleado->codigo_empleado];
-$results = DB::select($query, $params);
+            $params = [$validateData['app_user_id'], $codigoEmpleado->codigo_empleado];
+            $results = DB::select($query, $params);
 
-// Si hay resultados y el tipo de ruta es 67, modificar la coordenada del orden 1
-if (!empty($results) && $results[0]->id_tipo_ruta == 67) {
-    $destinos = json_decode($results[0]->destinos, true);
+            // Si hay resultados y el tipo de ruta es 67, modificar la coordenada del orden 1
+            if (!empty($results) && $results[0]->id_tipo_ruta == 67) {
+                $destinos = json_decode($results[0]->destinos, true);
 
-    // Obtener la coordenada desde rutas_solicitadas_pasajeros
-    $coordenadasQuery = "SELECT 
-                            JSON_OBJECT('lat', latitude, 'lng', longitude) AS coordenadas
-                         FROM rutas_solicitadas_pasajeros 
-                         WHERE empleado_id = ? 
-                         AND fecha = ? 
-                         AND hora = ?";
-    
-    $coordenadasParams = [$codigoEmpleado->codigo_empleado, $results[0]->fecha_viaje, $results[0]->hora_viaje];
-    $coordenadaResult = DB::select($coordenadasQuery, $coordenadasParams);
+                // Obtener la coordenada desde rutas_solicitadas_pasajeros
+                $coordenadasQuery = "SELECT 
+                                        JSON_OBJECT('lat', latitude, 'lng', longitude) AS coordenadas
+                                    FROM rutas_solicitadas_pasajeros 
+                                    WHERE empleado_id = ? 
+                                    AND fecha = ? 
+                                    AND hora = ?";
+                
+                $coordenadasParams = [$codigoEmpleado->codigo_empleado, $results[0]->fecha_viaje, $results[0]->hora_viaje];
+                $coordenadaResult = DB::select($coordenadasQuery, $coordenadasParams);
 
-    if (!empty($coordenadaResult)) {
-        $nuevaCoordenada = json_decode($coordenadaResult[0]->coordenadas, true);
+                if (!empty($coordenadaResult)) {
+                    $nuevaCoordenada = json_decode($coordenadaResult[0]->coordenadas, true);
 
-        // Convertir a valores numéricos para evitar comillas dobles en el JSON
-        $nuevaCoordenada['lat'] = (float) $nuevaCoordenada['lat'];
-        $nuevaCoordenada['lng'] = (float) $nuevaCoordenada['lng'];
+                    // Convertir a valores numéricos para evitar comillas dobles en el JSON
+                    $nuevaCoordenada['lat'] = (float) $nuevaCoordenada['lat'];
+                    $nuevaCoordenada['lng'] = (float) $nuevaCoordenada['lng'];
 
-        // Modificar la coordenada en el array de destinos
-        foreach ($destinos as &$destino) {
-            if ($destino['orden'] == 1) {
-                $destino['coordenadas'] = json_encode($nuevaCoordenada, JSON_UNESCAPED_SLASHES);
-                break;
+                    // Modificar la coordenada en el array de destinos
+                    foreach ($destinos as &$destino) {
+                        if ($destino['orden'] == 1) {
+                            $destino['coordenadas'] = json_encode($nuevaCoordenada, JSON_UNESCAPED_SLASHES);
+                            break;
+                        }
+                    }
+
+                    // Convertir nuevamente a JSON
+                    $results[0]->destinos = json_encode($destinos, JSON_UNESCAPED_SLASHES);
+                }
             }
-        }
 
-        // Convertir nuevamente a JSON
-        $results[0]->destinos = json_encode($destinos, JSON_UNESCAPED_SLASHES);
-    }
-}
-
-
-            Log::info(" esto es lo que viene en results " . json_encode($results));
-
-            Log::info($codigoEmpleado->codigo_empleado . " - " . $validateData['app_user_id']);
 
             $consulta = "SELECT
                     v.id
@@ -966,6 +962,24 @@ if (!empty($results) && $results[0]->id_tipo_ruta == 67) {
                 'correo' => $empleado->correo,
                 'fk_rutas_solicitadas' => is_object($rutas_solicitadas) ? $rutas_solicitadas->id : $rutas_solicitadas,
             ]);
+
+            // If que valida si la solicitud tiene una autroización en caso de ser no la respuesta deberia agregar una autorizacion 
+            if ($solicitud->autorizacion_id == null) {
+
+                $autorizacion_de_rutas = DB::table('autorizacion_de_rutas')->insertGetId([
+                    'estado_autorizacion' => 0,
+                    'created_at' => now(),
+                ]);
+
+                  // Actualiza el registro encontrado
+                DB::table('rutas_solicitadas')
+                    ->where('id', $rutas_solicitadas->id)
+                    ->update([
+                        'autorizacion_id' => $autorizacion_de_rutas,
+                        'updated_at' => now() // si usas timestamps
+                    ]);
+            }
+
 
             return Response::json([
                 'response' => true,
