@@ -942,6 +942,10 @@ class ViajeController extends Controller
                     'autorizacion_id' => $autorizacion_de_rutas,
                     'created_at' => now(),
                 ]);
+
+                 // Recuperar el objeto completo de la ruta
+                $rutas_solicitadas = DB::table('rutas_solicitadas')->where('id', $rutas_solicitadas_id)->first();
+
             }
 
             // Insertar pasajero en la ruta solicitada
