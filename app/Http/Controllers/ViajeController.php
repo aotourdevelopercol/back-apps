@@ -944,7 +944,7 @@ class ViajeController extends Controller
                 ]);
 
                  // Recuperar el objeto completo de la ruta
-                $rutas_solicitadas = DB::table('rutas_solicitadas')->where('id', $rutas_solicitadas_id)->first();
+                $rutas_solicitadas = DB::table('rutas_solicitadas')->where('id', $rutas_solicitadas)->first();
 
             }
 
