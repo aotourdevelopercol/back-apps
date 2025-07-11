@@ -480,7 +480,7 @@ class ViajeController extends Controller
                     centrosdecosto c ON c.id = rs.fk_centrodecosto
                 LEFT JOIN
                     rutas_solicitadas_pasajeros rsp ON rsp.fk_rutas_solicitadas = rs.id
-                        where rsp.empleado_id = ? and rs.montado is null and rs.visible is null";
+                        where rsp.empleado_id = ? and rs.montado is null and rs.visible is null and rsp.fk_estado != 80";
 
             $params = [
                 $idEmpleado
