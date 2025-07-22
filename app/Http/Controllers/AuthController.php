@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\Subcentro;
 use Illuminate\Support\Facades\Log;
 use App\Models\TempToken;
+use Illuminate\Database\QueryException;
 
 use Illuminate\Support\Facades\Mail;
 
@@ -92,30 +93,29 @@ class AuthController extends Controller
             // Inicializa una nueva instancia de User
             $user = new User();
 
-            // Asigna propiedades al usuario con datos normalizados
+            // Asigna propiedades al usuario
             $user->first_name = strtoupper(strtolower($request->nombre));
             $user->last_name = strtoupper(strtolower($request->apellido));
             $user->email = strtolower($request->email);
             $user->username = strtolower($request->email);
             $user->telefono = $request->telefono;
             $user->password = Hash::make($request->password);
-            $user->id_perfil = 23; // ID de perfil por defecto
-            $user->fk_tipo_usuario = 4; // Tipo de usuario por defecto
-            $user->id_tipo_usuario = 0; // ID de tipo de usuario
-            $user->master = 0; // Indicador de maestro
+            $user->id_perfil = 23;
+            $user->fk_tipo_usuario = 4;
+            $user->id_tipo_usuario = 0;
+            $user->master = 0;
 
-            // Intenta guardar el usuario
             if ($user->save()) {
-                // Crea una nueva instancia de Subcentro
+                // Crea el subcentro
                 $sub = new Subcentro();
                 $sub->nombre = strtoupper(strtolower($request->nombre));
                 $sub->apellido = strtoupper(strtolower($request->apellido));
                 $sub->correo = strtolower($request->email);
                 $sub->celular = $request->telefono;
-                $sub->centrosdecosto_id = 100; // ID de centro de costo por defecto
-                $sub->save(); // Guarda el subcentro
+                $sub->centrosdecosto_id = 100;
+                $sub->save();
 
-                // Actualiza al usuario con el subcentro y el centro de costo
+                // Actualiza el usuario
                 DB::table('users')
                     ->where('id', $user->id)
                     ->update([
@@ -123,17 +123,29 @@ class AuthController extends Controller
                         'subcentrodecosto_id' => $sub->id
                     ]);
 
-                // Retorna una respuesta JSON exitosa
                 return Response::json(['code' => 'SUCCESFULLY']);
             }
 
-            // Retorna una respuesta de error si no se pudo guardar el usuario
             return Response::json(['code' => 'FAILS'], 500);
+        } catch (QueryException $e) {
+            // Código 23000 indica violación de restricción (como UNIQUE)
+            if ($e->getCode() == 23000 && str_contains($e->getMessage(), 'users_email_unique')) {
+                return Response::json([
+                    'code' => 'EMAIL_EXISTS',
+                    'message' => 'El correo ya está registrado.'
+                ], 409); // 409 Conflict
+            }
+
+            return Response::json([
+                'code' => 'DB_ERROR',
+                'message' => 'Error en la base de datos.',
+                'debug' => app()->environment('local') ? $e->getMessage() : null
+            ], 500);
         } catch (\Exception $e) {
-            // Captura cualquier excepción y retorna un mensaje de error
             return Response::json([
                 'code' => 'EXCEPTION',
-                'message' => $e->getMessage()
+                'message' => 'Error general al registrar usuario.',
+                'debug' => app()->environment('local') ? $e->getMessage() : null
             ], 500);
         }
     }
