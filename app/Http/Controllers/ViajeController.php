@@ -328,112 +328,114 @@ class ViajeController extends Controller
 
 
     // Consulta de viajes
-    function listarViajesGenerales(Request $request)
-    {
+   function listarViajesGenerales(Request $request)
+{
+    $validatedData = $request->validate([
+        'fecha' => ['nullable','string'],
+        'app_user_id' => ['required'],
+        'codigo_viaje' => ['nullable','string'],
+        'estado_viaje' => ['nullable','array'],
+    ]);
 
-        $validatedData = $request->validate([
-            'fecha' => ['nullable', 'string'],
-            'app_user_id' => ['nullable', 'string'],
-            'codigo_viaje' => ['nullable', 'string'],
-            'estado_viaje' => ['nullable', 'array'],
-        ]);
+    $codigoEmpleado = DB::table('users as u')
+        ->join('empleados_clientes as ec', 'ec.id', '=', 'u.id_empleado_cliente')
+        ->where('u.id', $validatedData['app_user_id'])
+        ->value('ec.codigo_empleado');
 
-        $codigoEmpleado = DB::table('users as u')
-            ->join('empleados_clientes as ec', 'ec.id', '=', 'u.id_empleado_cliente')
-            ->where('u.id', '=', $validatedData['app_user_id'])
-            ->select('ec.codigo_empleado')
-            ->first();
+    $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
 
-        try {
-            $query = "SELECT
-                 v.id,
-                 v.fecha_viaje,
-                 v.hora_viaje,
-                 v.cantidad as cantidad_pasajeros,
-                 e.id AS id_estado,
-                 e.codigo AS codigo_estado,
-                 e.nombre AS nombre_estado,
-                 t.id AS id_tipo_ruta,
-                 t.codigo AS codigo_tipo_ruta,
-                 t.nombre AS nombre_tipo_ruta,
-                 v2.placa,
-                 v2.modelo,
-                 v2.marca,
-                 v2.color,
-                 prq.hora_min,
-                 prq.hora_max,
-                 e2.codigo as codigo_tipo_vehiculo,
-                 e2.nombre as nombre_tipo_vehiculo,
-                 UPPER(CONCAT(c2.primer_nombre, ' ', c2.primer_apellido)) AS nombre_completo,
-                 JSON_ARRAYAGG(JSON_OBJECT('direccion', d.direccion, 'coordenadas', d.coordenadas, 'orden', d.orden)) AS destinos
-             FROM
-                 viajes v
-             LEFT JOIN centrosdecosto c ON c.id = v.fk_centrodecosto
-             LEFT JOIN conductores c2 ON c2.id = v.fk_conductor
-             LEFT JOIN vehiculos v2 ON v2.id = v.fk_vehiculo
-             LEFT JOIN destinos d ON d.fk_viaje = v.id
-             LEFT JOIN tipos t ON t.id = v.tipo_traslado
-             LEFT JOIN estados e ON e.id = v.fk_estado
-             LEFT JOIN estados e2 ON e2.id = v2.fk_tipo_vehiculo
-             LEFT JOIN pasajeros_rutas_qr prq ON prq.fk_viaje = v.id
-             LEFT JOIN pasajeros_ejecutivos pe ON pe.fk_viaje = v.id
-             WHERE
-                 v.estado_eliminacion IS NULL
-                 AND (
-                     prq.id_empleado = ?
-                     OR
-                     pe.app_user_id = ?)
-                 AND (t.codigo = ? or ? is null)";
+    // =========================
+    // 1️⃣ VIAJES BASE (SIN 1-N)
+    // =========================
+    $query = "
+    SELECT DISTINCT
+        v.id,
+        v.fecha_viaje,
+        v.hora_viaje,
+        v.cantidad AS cantidad_pasajeros,
 
-            $params = [
-                $codigoEmpleado->codigo_empleado,
-                $validatedData['app_user_id'],
-                $validatedData['codigo_viaje'] ?? null,
-                $validatedData['codigo_viaje'] ?? null, // Este es para la comparación "OR NULL"
-            ];
+        e.id AS id_estado,
+        e.codigo AS codigo_estado,
+        e.nombre AS nombre_estado,
 
-            $fechaHoy = Carbon::now('America/Bogota')->format('Y-m-d');
-            $query .= " AND v.fecha_viaje " . ($request->fecha ? ("= '" . $request->fecha . "'") : (">= '" . $fechaHoy . "'"));
-            // Comprobar si hay múltiples estados de viaje
-            if (!isset($validatedData['estado_viaje']) || !empty($validatedData['estado_viaje'])) {
-                $placeholders = implode(',', array_fill(0, count($validatedData['estado_viaje']), '?'));
-                $query .= " AND e.codigo IN ($placeholders)";
-                $params = array_merge($params, $validatedData['estado_viaje']);
-            }
+        t.id AS id_tipo_ruta,
+        t.codigo AS codigo_tipo_ruta,
+        t.nombre AS nombre_tipo_ruta,
 
-            $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18;";
+        v2.placa,
+        v2.modelo,
+        v2.marca,
+        v2.color,
 
-            // Aqui se ejecutaria la consulta y se obtendrian los resultados.
-            // En este caso, se retornan los resultados de la consulta.
-            $results = DB::select($query, $params);
+        e2.codigo AS codigo_tipo_vehiculo,
+        e2.nombre AS nombre_tipo_vehiculo,
 
-            \Log::info(json_encode($query));
+        UPPER(CONCAT(c2.primer_nombre,' ',c2.primer_apellido)) AS nombre_completo
+    FROM viajes v
+    LEFT JOIN conductores c2 ON c2.id = v.fk_conductor
+    LEFT JOIN vehiculos v2 ON v2.id = v.fk_vehiculo
+    LEFT JOIN tipos t ON t.id = v.tipo_traslado
+    LEFT JOIN estados e ON e.id = v.fk_estado
+    LEFT JOIN estados e2 ON e2.id = v2.fk_tipo_vehiculo
+    LEFT JOIN pasajeros_rutas_qr prq ON prq.fk_viaje = v.id
+    LEFT JOIN pasajeros_ejecutivos pe ON pe.fk_viaje = v.id
+    WHERE v.estado_eliminacion IS NULL
+      AND (prq.id_empleado = ? OR pe.app_user_id = ?)
+      AND (t.codigo = ? OR ? IS NULL)
+      AND v.fecha_viaje ".($request->fecha ? "= ?" : ">= ?");
 
-            if (!empty($validatedData['estado_viaje'])) {
-                $estadoViaje = (array) $validatedData['estado_viaje']; // Convierte a array si no lo es
-                // Si estado_viaje es un array, verifica si alguno de sus elementos está en la lista
-                if (is_array($estadoViaje) && array_intersect($estadoViaje, ["ENTEND", "NOPROMAN", "PORAUTORIZAR", "PROGRAM"])) {
-                    $listaVijesPendientes = $this->listarViajesPendientesRutas($codigoEmpleado->codigo_empleado, $fechaHoy);
+    $params = [
+        $codigoEmpleado,
+        $validatedData['app_user_id'],
+        $validatedData['codigo_viaje'],
+        $validatedData['codigo_viaje'],
+        $request->fecha ?? $fechaHoy
+    ];
 
-                    $listaVijesPendientesEjecutivos = $this->listarViajesPendientesEjecutivos($validatedData['app_user_id'], $fechaHoy);
-                    // Combina todos los resultados en un solo array si existen datos
-                    if (!empty($listaVijesPendientes)) {
-                        $results = array_merge($results, $listaVijesPendientes);
-                    }
-                    if (!empty($listaVijesPendientesEjecutivos)) {
-                        $results = array_merge($results, $listaVijesPendientesEjecutivos);
-                    }
-                }
-            }
-
-            return Response::json([
-                'response' => true,
-                'listado' => $results,
-            ]);
-        } catch (\Throwable $th) {
-            \Log::error('Error al listar viajes generales: ' . $th->getMessage());
-        }
+    if (!empty($validatedData['estado_viaje'])) {
+        $placeholders = implode(',', array_fill(0, count($validatedData['estado_viaje']), '?'));
+        $query .= " AND e.codigo IN ($placeholders)";
+        $params = array_merge($params, $validatedData['estado_viaje']);
     }
+
+    $viajes = DB::select($query, $params);
+
+    // =========================
+    // 2️⃣ DESTINOS
+    // =========================
+    $destinos = DB::select("
+        SELECT fk_viaje,
+        JSON_ARRAYAGG(JSON_OBJECT('direccion',direccion,'coordenadas',coordenadas,'orden',orden)) AS destinos
+        FROM destinos GROUP BY fk_viaje
+    ");
+
+    $destinos = collect($destinos)->keyBy('fk_viaje');
+
+    // =========================
+    // 3️⃣ ENSAMBLE
+    // =========================
+    $results = collect($viajes)->map(function($v) use ($destinos){
+        $v->destinos = json_decode($destinos[$v->id]->destinos ?? '[]');
+        return $v;
+    })->toArray();
+
+    // =========================
+    // 4️⃣ PENDIENTES (se mantiene)
+    // =========================
+    if (!empty($validatedData['estado_viaje']) && array_intersect($validatedData['estado_viaje'], ["ENTEND","NOPROMAN","PORAUTORIZAR","PROGRAM"])) {
+
+        $pendRutas = $this->listarViajesPendientesRutas($codigoEmpleado, $fechaHoy);
+        $pendEjecutivos = $this->listarViajesPendientesEjecutivos($validatedData['app_user_id'], $fechaHoy);
+
+        if (!empty($pendRutas)) $results = array_merge($results, $pendRutas);
+        if (!empty($pendEjecutivos)) $results = array_merge($results, $pendEjecutivos);
+    }
+
+    return response()->json([
+        'response' => true,
+        'listado' => $results
+    ]);
+}
 
 
     // Consulta de viajes pendientes Rutas
