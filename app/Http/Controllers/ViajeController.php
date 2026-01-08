@@ -401,7 +401,7 @@ class ViajeController extends Controller
                 $params = array_merge($params, $validatedData['estado_viaje']);
             }
 
-            $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19;";
+            $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18;";
 
             // Aqui se ejecutaria la consulta y se obtendrian los resultados.
             // En este caso, se retornan los resultados de la consulta.
