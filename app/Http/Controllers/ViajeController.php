@@ -238,6 +238,16 @@ class ViajeController extends Controller
                 }
             }
 
+            \Log::info('Respuesta listarViajes =>', [
+    'hay_calificacion' => !empty($calification),
+    'id_calificacion'  => $calification->id_calificacion ?? null,
+    'hay_calificationResult' => !empty($calificationResult),
+    'cantidad_results' => is_array($results) ? count($results) : 0,
+    'devuelve_calificacion' => (!empty($calification) && empty($calification->id_calificacion)),
+    'devuelve_listado' => (!empty($results) && empty($calification) && empty($calificationResult)),
+]);
+
+
             return Response::json([
                 'response' => true,
                 'calificacion' => !empty($calification) && empty($calification->id_calificacion) ? $calification : null,
