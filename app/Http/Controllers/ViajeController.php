@@ -358,6 +358,8 @@ class ViajeController extends Controller
                  v2.modelo,
                  v2.marca,
                  v2.color,
+                 prq.hora_min,
+                 prq.hora_max,
                  e2.codigo as codigo_tipo_vehiculo,
                  e2.nombre as nombre_tipo_vehiculo,
                  UPPER(CONCAT(c2.primer_nombre, ' ', c2.primer_apellido)) AS nombre_completo,
