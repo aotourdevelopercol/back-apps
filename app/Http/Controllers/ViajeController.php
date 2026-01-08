@@ -141,6 +141,8 @@ class ViajeController extends Controller
                 t4.nombre as nombre_estado_pasajero_ruta,
                 prq.recoger_a as recoger_ruta_pasajero,
                 prq.codigo_viaje as codigo_ruta_pasajero,
+                prq.hora_max,
+                prq.hora_min,
                 v2.placa,
                 v2.modelo,
                 v2.marca,
@@ -163,7 +165,7 @@ class ViajeController extends Controller
             left join tipos t3 on t3.id = v.tipo_ruta
             left join tipos t4 on t4.id = prq.estado_ruta
             where (pe.app_user_id = ? or prq.id_empleado = ?) and e.codigo = 'INICIADO'
-            GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30
+            GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32
             LIMIT 1;";
 
             $params = [$validateData['app_user_id'], $codigoEmpleado->codigo_empleado];
