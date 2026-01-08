@@ -360,8 +360,6 @@ class ViajeController extends Controller
                  v2.modelo,
                  v2.marca,
                  v2.color,
-                 prq.hora_min,
-                 prq.hora_max,
                  e2.codigo as codigo_tipo_vehiculo,
                  e2.nombre as nombre_tipo_vehiculo,
                  UPPER(CONCAT(c2.primer_nombre, ' ', c2.primer_apellido)) AS nombre_completo,
@@ -401,7 +399,7 @@ class ViajeController extends Controller
                 $params = array_merge($params, $validatedData['estado_viaje']);
             }
 
-            $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18;";
+            $query .= " GROUP BY 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17;";
 
             // Aqui se ejecutaria la consulta y se obtendrian los resultados.
             // En este caso, se retornan los resultados de la consulta.
