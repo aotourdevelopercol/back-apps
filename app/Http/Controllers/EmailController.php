@@ -10,8 +10,7 @@ class EmailController extends Controller
 {
     public function sendEmail(Request $request)
     {
-        Log::info('Solicitud recibida: ' . $request->fullUrl());
-        Log::info('Solicitud completa:', ['request' => $request->all()]);
+       
 
         // Validar datos de entrada
         $validated = $request->validate([
@@ -65,8 +64,6 @@ class EmailController extends Controller
             $emailData = $validated['data'] ?? [];
             $token = $validated['token'] ?? null;
 
-            Log::info('Clase de correo seleccionada: ' . $emailClass);
-
             // Reflexión para obtener parámetros del constructor del mailable
             $reflection = new \ReflectionClass($emailClass);
             $parameters = $reflection->getConstructor()?->getParameters() ?? [];
@@ -84,7 +81,6 @@ class EmailController extends Controller
                 }
             }
 
-            Log::info('argumentos: ' . json_encode($args));
 
             // Función para enviar el correo
             $sendMail = function ($email) use ($reflection, $args) {
@@ -102,12 +98,10 @@ class EmailController extends Controller
 
             // Enviar correos: uno o múltiples
             if (count($emails) > 1) {
-                Log::info("Enviando múltiples correos...");
                 foreach ($emails as $email) {
                     $sendMail($email);
                 }
             } else {
-                Log::info("Enviando un solo correo...");
                 $sendMail($emails[0]);
             }
         } catch (\Throwable $th) {

@@ -152,7 +152,6 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         try {
-            Log::info('Me estoy intentando loguear ' );
             // Validar credenciales
             $credentials = $request->validate([
                 'username' => 'required|string',
